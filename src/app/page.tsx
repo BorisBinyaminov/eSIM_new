@@ -78,13 +78,13 @@ const advantages = [
 export default function Home() {
   // const { t } = useTranslation(['common'])
   return (
-    <main className="flex flex-col">
+    <main className="flex flex-col bg-[#05081A]">
       <div className="bg-bglight flex flex-col items-center rounded-[16px] pb-[53px]">
         <Image className="absolute" src="/images/mainpage/WorldMap.svg" width={332} height={332} alt="World map"/>
-        <p className="z-30 mt-[53px] text-[32px] text-center">Stay Connected Anywhere</p>
-        <p className="text-[16px] text-center mt-[16px]">with</p>
+        <p className="z-30 mt-[53px] text-[32px] text-center text-white">Stay Connected Anywhere</p>
+        <p className="text-[16px] text-center mt-[16px] text-white">with</p>
         <h1 className="mt-[48px] text-[48px] bg-gradient-to-b from-[#27A6E1] to-[#4381EB] bg-clip-text text-transparent font-bold">eSim Unlimited</h1>
-        <p className="text-[16px] text-center mt-[16px] px-[40px]">High-speed internet in 150+ countries. No roaming fees, no hidden charges, and no physical SIM required</p>
+        <p className="text-[16px] text-center mt-[16px] px-[40px] text-white">High-speed internet in 150+ countries. No roaming fees, no hidden charges, and no physical SIM required</p>
         <motion.div 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -98,14 +98,14 @@ export default function Home() {
           </Link>
         </motion.div>
       </div>
-      <div className="mt-[50px]">
-        <h3 className="text-[32px] text-center">Our Advantages</h3>
+      <div className="pt-[50px] bg-[#05081A]">
+        <h3 className="text-[32px] text-center text-white">Our Advantages</h3>
         <div className="mt-[24px] flex flex-col items-center gap-[16px]">
           {advantages.map(advantage=> 
               <div key={advantage.id} className="max-w-[328px] w-full bg-gradient-to-r from-[#1D2240] to-[#000625] rounded-[16px] flex flex-col items-center text-center py-[18px] gap-[16px] px-[18px]">
                 <Image src={advantage.image.path} width={advantage.image.width} height={advantage.image.height} alt={advantage.image.alt} className=""/>
-                <p className="text-[16px] font-[600] font-roboto">{advantage.text}</p>
-                <p className="text-[16px] font-[300]">{advantage.description}</p>
+                <p className="text-[16px] font-[600] font-roboto text-white">{advantage.text}</p>
+                <p className="text-[16px] font-[300] text-white">{advantage.description}</p>
               </div>
           )}
            <motion.div 

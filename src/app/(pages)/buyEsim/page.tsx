@@ -159,7 +159,7 @@ export default function BuyESIM() {
   );
 
   return (
-    <div className="mt-6 flex flex-col items-center mb-18">
+    <div className="pt-6 flex flex-col items-center mb-18 bg-[#05081A]">
       <h2 className="text-2xl font-bold">Buy eSim</h2>
 
       <div className="bg-bglight w-full max-w-md h-14 rounded-lg flex items-center justify-center mt-2">

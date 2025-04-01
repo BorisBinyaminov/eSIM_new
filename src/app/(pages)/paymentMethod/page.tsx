@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 const page = () => {
   return (
     <motion.div 
-      className='px-6'
+      className='px-6 bg-[#05081A] min-h-screen'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

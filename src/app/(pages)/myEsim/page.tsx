@@ -5,13 +5,13 @@ import React, { useState } from 'react'
 const esims = [
     { id: 1, name: 'Global 5 GB', status: 'Active', usage: '200mb', orderDate: '22.02.2025', expiryDate: '22.03.2025' },
     { id: 2, name: 'Global 5 GB', status: 'Disactive', usage: '200mb', orderDate: '22.02.2025', expiryDate: '22.03.2025' },
-  ];
+  ];  
 
 const MySims = () => {
     const [sims] = useState(esims);
 
     return (
-      <div className="min-h-screen bg-black text-white p-6">
+      <div className="min-h-screen bg-[#05081A] text-white p-6">
         <h1 className="text-3xl font-bold mb-6">My eSims</h1>
         <div className="space-y-6">
           {sims.map((sim) => (

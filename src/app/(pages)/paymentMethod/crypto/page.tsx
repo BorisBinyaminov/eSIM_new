@@ -29,7 +29,7 @@ const CryptoPayment = () => {
 
   return (
     <motion.div 
-      className="px-6 py-4 bg-dark text-white min-h-screen"
+      className="px-6 py-4 bg-[#05081A] text-white min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

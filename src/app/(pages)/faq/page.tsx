@@ -161,7 +161,7 @@ const FAQItem = ({ question, answer,index}: { question: string; answer: string ;
 
 const FAQPage = () => {
   return (
-    <div className="mx-[16px] mb-[70px]">        
+    <div className="px-[16px] mb-[70px] bg-[#05081A]">        
         <h1 className="text-left text-[32px] ">FAQ</h1>
         <div className="flex flex-col gap-[16px] max-w-lg mx-auto mt-10 text-white rounded-lg shadow-lg overflow-hidden items-center">
             {faqs.map((faq, index) => (

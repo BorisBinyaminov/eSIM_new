@@ -44,7 +44,7 @@ export default function EsimSlider() {
       <div className="relative mt-4 max-w-[328px] w-full bg-gradient-to-r from-[#1D2240] to-[#000625] rounded-[16px] h-[293px] flex justify-center items-center overflow-hidden">
       <button 
         onClick={prevSlide} 
-        className="absolute left-4 z-10"
+        className="absolute left-4 z-10 cursor-pointer"
         >
             <motion.div
                 whileHover={{ scale: 1.1 }} // Увеличивается при наведении
@@ -62,7 +62,7 @@ export default function EsimSlider() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute flex flex-col items-center"
+            className="absolute flex flex-col items-center "
           >
             <Image src={slides[index].image} alt={slides[index].title} width={115} height={149} />
           </motion.div>
@@ -70,7 +70,7 @@ export default function EsimSlider() {
 
         <button 
             onClick={nextSlide} 
-            className="absolute right-4 z-10"
+            className="absolute right-4 z-10 cursor-pointer"
             >
             <motion.div
                 whileHover={{ scale: 1.1 }} // Немного увеличивается при наведении
@@ -101,7 +101,7 @@ export default function EsimSlider() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="font-light max-w-[328px] w-full text-white"
+          className="font-light max-w-[328px] w-full text-white "
         >
           {slides[index].text}
         </motion.p>
@@ -112,7 +112,7 @@ export default function EsimSlider() {
             <button
               key={i}
               onClick={() => setIndex(i)}
-              className={`py-[10px] px-[16px] rounded-full font-medium text-[16px] transition-all ${
+              className={`py-[10px] px-[16px] rounded-full font-medium text-[16px] transition-all cursor-pointer ${
                 index === i
                   ? "bg-white text-black"
                   : "bg-gradient-to-r from-[#1D2240] to-[#000625] text-white"

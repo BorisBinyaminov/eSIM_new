@@ -405,9 +405,9 @@ const slides = [
     }
   
     return (
-      <div className="flex flex-col items-center text-white bg-[#0A0D1E] min-h-screen mb-14">
+      <div className="flex flex-col items-center text-white bg-[#05081A] min-h-screen mb-17">
         <h2 className="text-[32px] max-w-[328px] font-bold text-left w-full">Guides</h2>
-        <div className="bg-bglight w-full max-w-[328px] h-14 rounded-lg flex items-center justify-center mt-2">
+        <div className=" w-full max-w-[328px] h-14 rounded-lg flex items-center justify-center mt-2">
           {(["IOS", "Android"] as const).map((item) => (
             <motion.div
               key={item}
@@ -441,11 +441,15 @@ const slides = [
             </motion.div>
           ))}
         </div>
+        <div className="flex items-center justify-between max-w-[328px] w-full">
+            <h3 className="mt-4 text-xl font-semibold">{filteredSlides[index].title}</h3>
+            <p className="text-sm text-gray-400">{filteredSlides[index].step}</p>
+          </div>
         
-        <div className="relative w-full max-w-md mt-6 flex flex-col items-center">
+        <div className="relative w-full max-w-[327px] mt-6 flex flex-col items-center bg-gradient-to-r from-[#1D2240] to-[#000625] rounded-[16px]">
           <button 
             onClick={prevSlide} 
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
           >
             <motion.div
               whileHover={{ scale: 1.1 }}
@@ -455,10 +459,7 @@ const slides = [
               <Image src="/images/mainpage/arrowL.svg" alt="Previous" width={44} height={44} />
             </motion.div>
           </button>
-          <div className="flex items-center justify-between max-w-[328px] w-full">
-            <h3 className="mt-4 text-xl font-semibold">{filteredSlides[index].title}</h3>
-            <p className="text-sm text-gray-400">{filteredSlides[index].step}</p>
-          </div>
+          
           
           <AnimatePresence mode="wait">
             <motion.div
@@ -467,7 +468,7 @@ const slides = [
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.5 }}
-              className="flex flex-col items-center"
+              className="flex flex-col mt-[20px] items-center"
             >
               <Image
                 src={filteredSlides[index].image}
@@ -476,13 +477,12 @@ const slides = [
                 height={600}
                 className="rounded-md"
               />
-              <p className="mt-2 text-[16px] text-left w-full">{filteredSlides[index].instruction}</p>
             </motion.div>
           </AnimatePresence>
           
           <button 
             onClick={nextSlide} 
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
           >
             <motion.div
               whileHover={{ scale: 1.1 }}
@@ -493,6 +493,10 @@ const slides = [
             </motion.div>
           </button>   
         </div>
+        <div className="max-w-[326px] w-full flex items-center">
+          <p className="mt-2 text-[16px] text-left w-full ">{filteredSlides[index].instruction}</p>
+        </div>
+        
       </div>
     );
   }
