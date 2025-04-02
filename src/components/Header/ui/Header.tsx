@@ -23,8 +23,12 @@ const Header = () => {
     if(cookieLocale){
       setLocale(cookieLocale);
     }else{
-      const browserLocale = navigator.language.slice(0,2);
-      setLocale(browserLocale);
+      const browserLocale = typeof window !== 'undefined' ?  navigator.language.slice(0,2) : 'en';
+      if (languages.some(lang => lang.code === browserLocale)) {
+        setLocale(browserLocale);
+      } else {
+        setLocale('en');
+      }
       document.cookie = `MYNEXTAPP_LOCALE=${browserLocale};`;
       router.refresh();
     }
