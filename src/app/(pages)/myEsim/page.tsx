@@ -1,5 +1,6 @@
 'use client'
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import React, { useState } from 'react'
 
 const esims = [
@@ -9,10 +10,11 @@ const esims = [
 
 const MySims = () => {
     const [sims] = useState(esims);
+    const t = useTranslations("myeSim");
 
     return (
       <div className="min-h-screen bg-[#05081A] text-white p-6">
-        <h1 className="text-3xl font-bold mb-6">My eSims</h1>
+        <h1 className="text-3xl font-bold mb-6">{t("title")}</h1>
         <div className="space-y-6">
           {sims.map((sim) => (
             <motion.div
@@ -33,9 +35,9 @@ const MySims = () => {
                 </span>
               </div>
               <div className="space-y-2 text-gray-300">
-                <p><strong>Usage:</strong> {sim.usage}</p>
-                <p><strong>Order date:</strong> {sim.orderDate}</p>
-                <p><strong>Expired time:</strong> {sim.expiryDate}</p>
+                <p><strong>{t("usage")}</strong> {sim.usage}</p>
+                <p><strong>{t("order")}</strong> {sim.orderDate}</p>
+                <p><strong>{t("expired")}</strong> {sim.expiryDate}</p>
               </div>
               <div className="mt-4 flex items-center gap-3">
                 <motion.div
@@ -43,7 +45,7 @@ const MySims = () => {
                  whileTap={{ scale: 0.95 }}
                  className="text-center w-full max-w-[85px]"
                 >
-                    <button className=" max-w-[85px] w-full px-4 py-2 border-[#27A6E1] border-[1px] rounded-[16px] transition">Cancel</button>
+                    <button className=" max-w-[85px] w-full px-4 py-2 border-[#27A6E1] border-[1px] rounded-[16px] transition">{t("cancel")}</button>
                 </motion.div>
                 
                 <motion.div 
@@ -54,7 +56,7 @@ const MySims = () => {
                     <div 
                         className="w-full max-w-[328px] block bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] py-[10px] text-[16px] font-bold text-white"
                     >
-                       Tup-up
+                       {t("top-up")}
                     </div>
                     </motion.div>
               </div>

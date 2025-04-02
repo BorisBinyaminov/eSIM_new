@@ -4,35 +4,40 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
-const slides = [
-  {
-    id: 1,
-    title: "Choose eSIM Data Plan",
-    text: "Pick an eSIM data plan that suits your needs. Stay connected with the entire world, anytime, anywhere.",
-    image: "/images/mainpage/buyNow.svg",
-  },
-  {
-    id: 2,
-    title: "Easy Installation of eSIM",
-    text: "Follow our simple step-by-step guide and scan the QR code for digital installation.",
-    image: "/images/mainpage/installation.svg",
-  },
-  {
-    id: 3,
-    title: "Easy Activation of eSIM",
-    text: "Follow our simple step-by-step guide for digital activation.",
-    image: "/images/mainpage/activation.svg",
-  },
-  {
-    id: 4,
-    title: "Enjoy Your Connection",
-    text: "Your eSIM is now activated! Enjoy seamless connectivity anywhere in the world.",
-    image: "/images/mainpage/enjoy.svg",
-  },
-];
+
 
 export default function EsimSlider() {
+
+  const t = useTranslations("MainPage");
+
+  const slides = [
+    {
+      id: 1,
+      title: t("Slider.slides.1.title"),
+      text: t("Slider.slides.1.text"),
+      image: "/images/mainpage/buyNow.svg",
+    },
+    {
+      id: 2,
+      title: t("Slider.slides.2.title"),
+      text: t("Slider.slides.2.text"),
+      image: "/images/mainpage/installation.svg",
+    },
+    {
+      id: 3,
+      title: t("Slider.slides.3.title"),
+      text: t("Slider.slides.3.text"),
+      image: "/images/mainpage/activation.svg",
+    },
+    {
+      id: 4,
+      title: t("Slider.slides.4.title"),
+      text: t("Slider.slides.4.text"),
+      image: "/images/mainpage/enjoy.svg",
+    },
+  ];
   const [index, setIndex] = useState(0);
 
   const nextSlide = () => setIndex((prev) => (prev + 1) % slides.length);
@@ -133,7 +138,7 @@ export default function EsimSlider() {
             href="/buyEsim" 
             className="w-full max-w-[328px] block bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] py-[10px] text-[24px] font-bold text-white"
           >
-            Get mobile data
+            {t("Get mobile data")}
           </Link>
         </motion.div>
       </div>

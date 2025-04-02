@@ -2,8 +2,12 @@
 import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 
-const page = () => {
+const Page = () => {
+  const router = useRouter();
+  const t = useTranslations("payment");
   return (
     <motion.div 
       className='px-6 bg-[#05081A] min-h-screen'
@@ -15,6 +19,7 @@ const page = () => {
         <motion.button
           className="mb-3 text-blue-400 hover:underline"
           whileHover={{ scale: 1.1 }}
+          onClick={() => router.back()}
         >
           <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow"/>
         </motion.button>
@@ -24,7 +29,7 @@ const page = () => {
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Select a payment method
+          {t("select")}
         </motion.h1>
       </div>
       <div className='mt-[36px] flex flex-col gap-[9px]'>
@@ -37,7 +42,7 @@ const page = () => {
           transition={{ duration: 0.4 }}
         >
           <Image src="/images/PaymentMethod/bank.svg" width={32} height={32} alt="Bank" />
-          <p className="text-[16px] font-bold">Bank card</p>
+          <p className="text-[16px] font-bold">{t("bank")}</p>
         </motion.a>
         <motion.a 
           href="paymentMethod/crypto" 
@@ -48,11 +53,11 @@ const page = () => {
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           <Image src="/images/PaymentMethod/crypto.svg" width={32} height={32} alt="Cryptocurrency"/>
-          <p className='text-[16px] font-bold'>Cryptocurrency</p>
+          <p className='text-[16px] font-bold'>{t("crypto")}</p>
         </motion.a>
       </div>
     </motion.div>
   )
 }
 
-export default page
+export default Page

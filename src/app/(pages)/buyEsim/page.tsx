@@ -1,6 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
@@ -43,6 +44,7 @@ type GlobalItem = {
 };
 
 export default function BuyESIM() {
+  const t = useTranslations("buyeSim");
   const [query, setQuery] = useState("");
   const [type, setType] = useState<"Local" | "Regional" | "Global">("Local");
   const [localCountries, setLocalCountries] = useState<CountryItem[]>([]);
@@ -52,24 +54,27 @@ export default function BuyESIM() {
   const [availableLocal, setAvailableLocal] = useState<CountryItem[]>([]);
   const [availableRegional, setAvailableRegional] = useState<RegionalItem[]>([]);
   const [availableGlobal, setAvailableGlobal] = useState<GlobalItem[]>([]);
+  
+  // Добавляем состояние для показа/скрытия полного списка стран
+  const [showAll, setShowAll] = useState(false);
 
   // Оборачиваем массивы в useMemo, чтобы их ссылка оставалась стабильной
   const regionalItems = useMemo<RegionalItem[]>(() => [
-    { id: 1, name: "Europe", filter: "eu", image: { path: "/images/buyEsimPage/region/1.svg", alt: "Europe" } },
-    { id: 2, name: "South america", filter: "sa", image: { path: "/images/buyEsimPage/region/2.svg", alt: "South america" } },
-    { id: 3, name: "North america", filter: "na", image: { path: "/images/buyEsimPage/region/3.svg", alt: "North america" } },
-    { id: 4, name: "Africa", filter: "af", image: { path: "/images/buyEsimPage/region/4.svg", alt: "Africa" } },
-    { id: 5, name: "Asia", filter: "as", image: { path: "/images/buyEsimPage/region/5.svg", alt: "Asia" } },
-    { id: 6, name: "Carribean", filter: "ca", image: { path: "/images/buyEsimPage/region/6.svg", alt: "Carribean" } },
-  ], []);
+    { id: 1, name: t("regions.europe"), filter: "eu", image: { path: "/images/buyEsimPage/region/1.svg", alt: t("regions.europe") } },
+    { id: 2, name: t("regions.southAmerica"), filter: "sa", image: { path: "/images/buyEsimPage/region/2.svg", alt: t("regions.southAmerica") } },
+    { id: 3, name: t("regions.northAmerica"), filter: "na", image: { path: "/images/buyEsimPage/region/3.svg", alt: t("regions.northAmerica") } },
+    { id: 4, name: t("regions.africa"), filter: "af", image: { path: "/images/buyEsimPage/region/4.svg", alt: t("regions.africa") } },
+    { id: 5, name: t("regions.asia"), filter: "as", image: { path: "/images/buyEsimPage/region/5.svg", alt: t("regions.asia") } },
+    { id: 6, name: t("regions.caribbean"), filter: "ca", image: { path: "/images/buyEsimPage/region/6.svg", alt: t("regions.caribbean") } },
+  ], [t]);
 
   const globalItems = useMemo<GlobalItem[]>(() => [
-    { id: 1, name: "Global 1GB", filter: "1gb", image: { path: "/images/buyEsimPage/global/1.svg", alt: "Global 1GB" } },
-    { id: 2, name: "Global 3 GB", filter: "3gb", image: { path: "/images/buyEsimPage/global/2.svg", alt: "Global 3 GB" } },
-    { id: 3, name: "Global 5 GB", filter: "5gb", image: { path: "/images/buyEsimPage/global/3.svg", alt: "Global 5 GB" } },
-    { id: 4, name: "Global 10 GB", filter: "10gb", image: { path: "/images/buyEsimPage/global/4.svg", alt: "Global 10 GB" } },
-    { id: 5, name: "Global 20 GB", filter: "20gb", image: { path: "/images/buyEsimPage/global/5.svg", alt: "Global 20 GB" } },
-  ], []);
+    { id: 1, name: t("global.1gb"), filter: "1gb", image: { path: "/images/buyEsimPage/global/1.svg", alt: t("global.1gb") } },
+    { id: 2, name: t("global.3gb"), filter: "3gb", image: { path: "/images/buyEsimPage/global/2.svg", alt: t("global.3gb") } },
+    { id: 3, name: t("global.5gb"), filter: "5gb", image: { path: "/images/buyEsimPage/global/3.svg", alt: t("global.5gb") } },
+    { id: 4, name: t("global.10gb"), filter: "10gb", image: { path: "/images/buyEsimPage/global/4.svg", alt: t("global.10gb") } },
+    { id: 5, name: t("global.20gb"), filter: "20gb", image: { path: "/images/buyEsimPage/global/5.svg", alt: t("global.20gb") } },
+  ], [t]);
 
   // Загрузка данных
   useEffect(() => {
@@ -158,9 +163,12 @@ export default function BuyESIM() {
     item.name.toLowerCase().includes(query.toLowerCase())
   );
 
+  // Если тип Local и список не развёрнут, показываем только первые 10 элементов
+  const itemsToDisplay = type === "Local" && !showAll ? filteredItems.slice(0, 10) : filteredItems;
+
   return (
     <div className="pt-6 flex flex-col items-center mb-18 bg-[#05081A]">
-      <h2 className="text-2xl font-bold">Buy eSim</h2>
+      <h2 className="text-2xl font-bold text-white">{t("title")}</h2>
 
       <div className="bg-bglight w-full max-w-md h-14 rounded-lg flex items-center justify-center mt-2">
         {(["Local", "Regional", "Global"] as const).map((item) => (
@@ -171,7 +179,11 @@ export default function BuyESIM() {
                 ? "bg-gradient-to-r from-[#27A6E1] to-[#4381EB] text-white"
                 : "text-gray-400"
             }`}
-            onClick={() => setType(item)}
+            onClick={() => {
+              setType(item);
+              // При переключении типа сбрасываем состояние развёрнутости списка
+              setShowAll(false);
+            }}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -206,7 +218,7 @@ export default function BuyESIM() {
           transition={{ duration: 0.3 }}
           className="mt-6 flex flex-col gap-4 w-full max-w-md"
         >
-          {filteredItems.map((item) => {
+          {itemsToDisplay.map((item) => {
             const slug =
               type === "Local" && "code" in item
                 ? item.code.toLowerCase()
@@ -228,6 +240,18 @@ export default function BuyESIM() {
           })}
         </motion.div>
       </AnimatePresence>
+
+      {/* Кнопка для показа/скрытия дополнительных стран (только для Local) */}
+      {type === "Local" && filteredItems.length > 10 && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => setShowAll(prev => !prev)}
+            className="text-blue-500 font-semibold"
+          >
+            {showAll ? "Show less" : "Show more"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -41,6 +41,8 @@ interface Package {
   supportTopUpType: number;
   fupPolicy: string;
   locationNetworkList: LocationNetwork[];
+  // Дополнительное поле для отформатированного объёма (для local)
+  volumeGB?: string;
 }
 
 export default function CountryPage() {
@@ -49,6 +51,13 @@ export default function CountryPage() {
   const [packagesData, setPackagesData] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
+  const convertVolumeToGB = (volume: number) => {
+    let volumeGB = volume / (1024 * 1024 * 1024);
+    volumeGB = volumeGB < 0.5 ? 0.5 : Math.ceil(volumeGB);
+    return volumeGB;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -56,15 +65,36 @@ export default function CountryPage() {
         if (type === 'local') {
           const res = await fetch('/countryPackages.json');
           data = await res.json();
-          data = data.filter(pkg => pkg.location.toLowerCase() === slug.toLowerCase());
+          data = data
+            .filter(pkg => pkg.location.toLowerCase() === slug.toLowerCase())
+            .map(pkg => ({
+              ...pkg,
+              volumeGB: convertVolumeToGB(pkg.volume) + "GB"
+            }))
+            .sort((a, b) => a.retailPrice - b.retailPrice);
         } else if (type === 'regional') {
           const res = await fetch('/regionalPackages.json');
           data = await res.json();
-          data = data.filter(pkg => pkg.slug.toLowerCase().startsWith(slug));
+          data = data
+            .filter(pkg => pkg.slug.toLowerCase().startsWith(slug))
+            .sort((a, b) => a.retailPrice - b.retailPrice);
         } else if (type === 'global') {
           const res = await fetch('/globalPackages.json');
           data = await res.json();
-          data = data.filter(pkg => pkg.name.toLowerCase().includes(slug));
+          const packageMapping: Record<string, number> = {
+            "1gb": 1,
+            "3gb": 3,
+            "5gb": 5,
+            "10gb": 10,
+            "20gb": 20,
+          };
+          const targetVolume = packageMapping[slug.toLowerCase()];
+          data = data
+            .filter(pkg => {
+              const volumeGB = Math.ceil(pkg.volume / (1024 * 1024 * 1024));
+              return volumeGB === targetVolume;
+            })
+            .sort((a, b) => a.retailPrice - b.retailPrice);
         }
         setPackagesData(data);
       } catch (error) {
@@ -73,7 +103,7 @@ export default function CountryPage() {
         setLoading(false);
       }
     };
-  
+
     fetchData();
     const interval = setInterval(() => fetchData(), 7200000);
     return () => clearInterval(interval);
@@ -112,7 +142,7 @@ export default function CountryPage() {
                   name={packagesData[0].name}
                   description={packagesData[0].description}
                   price={packagesData[0].price}
-                  data={`${packagesData[0].volume}`}
+                  data={packagesData[0].volumeGB || `${packagesData[0].volume}`}
                   duration={`${packagesData[0].duration} ${packagesData[0].durationUnit}`}
                   supportTopUpType={packagesData[0].supportTopUpType}
                   locations={packagesData[0].locationNetworkList.map((network) => network.locationName)}
@@ -126,7 +156,7 @@ export default function CountryPage() {
                           name={pkg.name}
                           description={pkg.description}
                           price={pkg.price}
-                          data={`${pkg.volume}`}
+                          data={pkg.volumeGB || `${pkg.volume}`}
                           duration={`${pkg.duration} ${pkg.durationUnit}`}
                           supportTopUpType={pkg.supportTopUpType}
                           locations={pkg.locationNetworkList.map((network) => network.locationName)}
