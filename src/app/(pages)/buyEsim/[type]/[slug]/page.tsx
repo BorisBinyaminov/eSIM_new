@@ -54,7 +54,7 @@ export default function CountryPage() {
   // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
   const convertVolumeToGB = (volume: number) => {
     let volumeGB = volume / (1024 * 1024 * 1024);
-    volumeGB = volumeGB < 0.5 ? 0.5 : Math.ceil(volumeGB);
+    volumeGB = Math.ceil(volumeGB * 10) / 10;
     return volumeGB;
   };
 
@@ -149,9 +149,24 @@ export default function CountryPage() {
                 />
                 <h2 className="text-lg text-white font-semibold">All tariffs</h2>
                 <div className="w-full max-w-5xl">
-                  <Swiper spaceBetween={20} slidesPerView={1}>
+                  <Swiper 
+                    spaceBetween={10} 
+                    slidesPerView={1}
+                    grabCursor={true} 
+                    breakpoints={{
+                      640: {
+                        slidesPerView: 1.1,
+                      },
+                      768: {
+                        slidesPerView: 2.2,
+                      },
+                      1024: {
+                        slidesPerView: 2.2,
+                      },
+                    }}
+                  >
                     {packagesData.map((pkg, index) => (
-                      <SwiperSlide key={index}>
+                      <SwiperSlide key={index} className='w-full max-w-[320px]'>
                         <PricingCard
                           name={pkg.name}
                           description={pkg.description}

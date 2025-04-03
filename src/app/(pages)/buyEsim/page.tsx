@@ -167,7 +167,7 @@ export default function BuyESIM() {
   const itemsToDisplay = type === "Local" && !showAll ? filteredItems.slice(0, 10) : filteredItems;
 
   return (
-    <div className="pt-6 flex flex-col items-center mb-18 bg-[#05081A]">
+    <div className="pt-6 flex flex-col items-center mb-18 bg-[# ] h-full">
       <h2 className="text-2xl font-bold text-white">{t("title")}</h2>
 
       <div className="bg-bglight w-full max-w-md h-14 rounded-lg flex items-center justify-center mt-2">
@@ -191,7 +191,7 @@ export default function BuyESIM() {
           </motion.div>
         ))}
       </div>
-      <p className="mt-[24px]">
+      <p className="mt-[24px] text-white">
         {type === "Local"
           ? "Select a Country"
           : type === "Regional"
@@ -200,13 +200,16 @@ export default function BuyESIM() {
       </p>
 
       <div className="mt-6 w-full max-w-md">
+        { type === "Local" ? 
         <input
-          type="text"
-          placeholder="Search..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-full rounded-lg bg-bglight text-white px-4 py-2 border border-gray-700 focus:border-blue-500 outline-none"
-        />
+        type="text"
+        placeholder="Search..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="w-full rounded-lg bg-bglight text-white px-4 py-2 border border-gray-700 focus:border-blue-500 outline-none"
+      />
+        : ""
+        }
       </div>
 
       <AnimatePresence mode="wait">
@@ -246,7 +249,7 @@ export default function BuyESIM() {
         <div className="flex justify-center mt-4">
           <button
             onClick={() => setShowAll(prev => !prev)}
-            className="text-blue-500 font-semibold"
+            className="text-white text-[20px] font-semibold cursor-pointer"
           >
             {showAll ? "Show less" : "Show more"}
           </button>

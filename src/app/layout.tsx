@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { AuthProvider } from "@/components/AuthProvider/AuthProvider";
 
 
 export const metadata: Metadata = {
@@ -20,13 +21,16 @@ async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`font-roboto antialiased`}
+        className={`font-roboto antialiased bg-mainbg`}
       >
-        <NextIntlClientProvider messages={messages}>
-          <Header/>
-          {children}
-          <Navbar/>
-        </NextIntlClientProvider>
+        <AuthProvider>
+          <NextIntlClientProvider messages={messages}>
+            <Header/>
+            {children}
+            <Navbar/>
+          </NextIntlClientProvider>
+        </AuthProvider>
+
 
       </body>
     </html>
