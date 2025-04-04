@@ -24,8 +24,7 @@ const PricingCard = ({
   locations?: string[];
   packageName?: string;
 }) => {
-  const [expanded] = useState(false);
-
+  const [expanded, setExpanded] = useState(false);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -52,39 +51,51 @@ const PricingCard = ({
         </motion.div>
       <div className="mt-4 space-y-2">
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
-          <span className='flex gap-[8px] items-center'>
+          <span className='flex gap-[8px] items-center bg-[]'>
             <Image src="/images/buyEsimPage/PricingCard/DataVolume.svg" width={24} height={24} alt="Data volume"/> Data volume
           </span>
-          <span className="text-[14px] text-[#6170C3] font-[400]">{data}</span>
+          <span className="text-[14px] text-[#27A6E1] font-[400]">{data}</span>
         </div>
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
           <span className='flex gap-[8px] items-center'>
             <Image src="/images/buyEsimPage/PricingCard/Duration.svg" width={24} height={24} alt="Duration"/> Duration
           </span>
-          <span className="text-[14px] text-[#6170C3] font-[400]">{duration}</span>
+          <span className="text-[14px] text-[#27A6E1] font-[400]">{duration}</span>
         </div>
         {coverage && (
           <div className="flex justify-between text-sm bg-mainbg p-2 rounded-lg">
             <span className='flex gap-[8px] items-center'>
               <Image src="/images/buyEsimPage/PricingCard/Coverage.svg" width={24} height={24} alt="Coverage"/> Coverage
             </span>
-            <span className="text-[14px] text-[#6170C3] font-[400]">{coverage}</span>
+            <span className="text-[14px] text-[#27A6E1] font-[400]">{coverage}</span>
           </div>
         )}
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
           <span className='flex gap-[8px] items-center'>
             <Image src="/images/buyEsimPage/PricingCard/TopUpSupport.svg" width={24} height={24} alt="Top-Up Support"/> Top-Up Support
           </span>
-          <span className="text-[14px] text-[#6170C3] font-[400]">{supportTopUpType === 2 ? "Yes" : "No"}</span>
+          <span className="text-[14px] text-[#27A6E1] font-[400]">{supportTopUpType === 2 ? "Yes" : "No"}</span>
         </div>
         {locations && (
-          <div className="flex justify-between text-sm bg-mainbg p-2 rounded-lg">
-            <span className='flex gap-[8px] items-center'>
-              <Image src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> Locations
-            </span>
-            <span className="font-semibold">{expanded ? locations.join(', ') : locations.slice(0, 3).join(', ')}</span>
-          </div>
-        )}
+      <div className="relative group flex flex-col text-sm bg-mainbg p-2 rounded-lg">
+        <div className={`flex justify-between ${expanded ? "flex-col" : ""}`}>
+          <span className='flex gap-[8px] items-center'>
+            <Image src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> Locations
+          </span>
+          <span className="font-semibold">
+            {expanded ? locations.join(', ') : locations.slice(0, 1).join(', ')}
+          </span>
+        </div>
+
+        {/* Show More Button */}
+        <button 
+          onClick={() => setExpanded(!expanded)} 
+          className="mt-2 w-full bg-[#0a0a2c] text-white py-2 rounded-full text-center text-sm transition hover:opacity-80"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      </div>
+    )}
       </div>
     </motion.div>
   );

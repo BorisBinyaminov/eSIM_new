@@ -77,6 +77,10 @@ export default function CountryPage() {
           data = await res.json();
           data = data
             .filter(pkg => pkg.slug.toLowerCase().startsWith(slug))
+            .map(pkg => ({
+              ...pkg,
+              volumeGB: convertVolumeToGB(pkg.volume) + "GB"
+            }))
             .sort((a, b) => a.retailPrice - b.retailPrice);
         } else if (type === 'global') {
           const res = await fetch('/globalPackages.json');
@@ -90,12 +94,15 @@ export default function CountryPage() {
           };
           const targetVolume = packageMapping[slug.toLowerCase()];
           data = data
-            .filter(pkg => {
-              const volumeGB = Math.ceil(pkg.volume / (1024 * 1024 * 1024));
-              return volumeGB === targetVolume;
-            })
+            .map(pkg => ({
+              ...pkg,
+              volumeGBNumeric: convertVolumeToGB(pkg.volume), // для фильтра
+              volumeGB: convertVolumeToGB(pkg.volume) + "GB" // для отображения
+            }))
+            .filter(pkg => pkg.volumeGBNumeric === targetVolume)
             .sort((a, b) => a.retailPrice - b.retailPrice);
         }
+  
         setPackagesData(data);
       } catch (error) {
         console.error("Error fetching package data:", error);
@@ -103,11 +110,12 @@ export default function CountryPage() {
         setLoading(false);
       }
     };
-
+  
     fetchData();
     const interval = setInterval(() => fetchData(), 7200000);
     return () => clearInterval(interval);
   }, [type, slug]);
+  
 
   return (
     <div className="container mx-auto p-4 bg-mainbg">
@@ -122,11 +130,11 @@ export default function CountryPage() {
           />
         </Link>
         {displayType === 'Global' ? 
-          <h1 className="text-[16px] font-bold">
+          <h1 className="text-[16px] font-bold text-white">
             {slug.replace(/-/g, " ")}
           </h1>
         : 
-          <h1 className="text-[16px] font-bold">
+          <h1 className="text-[16px] font-bold text-white">
             Available Packages for {slug.replace(/-/g, " ")}
           </h1>
         }

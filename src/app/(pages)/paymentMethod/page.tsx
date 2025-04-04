@@ -42,7 +42,7 @@ const Page = () => {
           transition={{ duration: 0.4 }}
         >
           <Image src="/images/PaymentMethod/bank.svg" width={32} height={32} alt="Bank" />
-          <p className="text-[16px] font-bold">{t("bank")}</p>
+          <p className="text-[16px] font-bold text-white">{t("bank")}</p>
         </motion.a>
         <motion.a 
           href="paymentMethod/crypto" 
@@ -53,7 +53,7 @@ const Page = () => {
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           <Image src="/images/PaymentMethod/crypto.svg" width={32} height={32} alt="Cryptocurrency"/>
-          <p className='text-[16px] font-bold'>{t("crypto")}</p>
+          <p className='text-[16px] font-bold text-white'>{t("crypto")}</p>
         </motion.a>
       </div>
     </motion.div>

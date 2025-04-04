@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { AuthContext } from '@/components/AuthProvider/AuthProvider'
+import Link from 'next/link'
 
 const languages = [
   { code: 'ru', name: 'Russian', flag: '/images/langs/ru.svg' },
@@ -46,10 +47,10 @@ const Header = () => {
 
   return (
     <header className="flex justify-between items-center bg-mainbg py-4 px-6 relative">
-      <div className="flex items-center gap-5">
+      <Link href="/" className="flex items-center gap-5">
         <Image src="/images/logos/logo.svg" width={34} height={54} alt="logo" />
         <h3 className='text-white text-[20px]'>{t("title")}</h3>
-      </div>
+      </Link>
       
       <div className="flex items-center gap-4">
         <div className="relative">
