@@ -171,39 +171,38 @@ export default function BuyESIM() {
       <h2 className="text-2xl font-bold text-white">{t("title")}</h2>
 
       <div className="bg-bglight w-full max-w-md h-14 rounded-lg flex items-center justify-center mt-2">
-        {(["Local", "Regional", "Global"] as const).map((item) => (
-          <motion.div
-            key={item}
-            className={`cursor-pointer w-1/3 h-10 flex justify-center items-center rounded-md text-lg font-semibold transition-colors ${
-              type === item
-                ? "bg-gradient-to-r from-[#27A6E1] to-[#4381EB] text-white"
-                : "text-gray-400"
-            }`}
-            onClick={() => {
-              setType(item);
-              // При переключении типа сбрасываем состояние развёрнутости списка
-              setShowAll(false);
-            }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            {item}
-          </motion.div>
-        ))}
+      {(["Local", "Regional", "Global"] as const).map((item) => (
+        <motion.div
+          key={item}
+          className={`cursor-pointer w-1/3 h-10 flex justify-center items-center rounded-md text-lg font-semibold transition-colors ${
+            type === item
+              ? "bg-gradient-to-r from-[#27A6E1] to-[#4381EB] text-white"
+              : "text-gray-400"
+          }`}
+          onClick={() => {
+            setType(item); // сохраняем английский ключ
+            setShowAll(false);
+          }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          {t(`types.${item}`)} {/* локализованная надпись */}
+        </motion.div>
+      ))}
       </div>
       <p className="mt-[24px] text-white">
         {type === "Local"
-          ? "Select a Country"
+          ? t("Select a Country")
           : type === "Regional"
-          ? "Select a Region"
-          : "Select a Global eSim Package"}
+          ? t("Select a Region")
+          : t("Select a Global eSim Package")}
       </p>
 
       <div className="mt-6 w-full max-w-md">
         { type === "Local" ? 
         <input
         type="text"
-        placeholder="Search..."
+        placeholder={t("Search")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full rounded-lg bg-bglight text-white px-4 py-2 border border-gray-700 focus:border-blue-500 outline-none"
@@ -251,7 +250,7 @@ export default function BuyESIM() {
             onClick={() => setShowAll(prev => !prev)}
             className="text-white text-[20px] font-semibold cursor-pointer"
           >
-            {showAll ? "Show less" : "Show more"}
+            {showAll ? t("Show less") : t("Show more")}
           </button>
         </div>
       )}

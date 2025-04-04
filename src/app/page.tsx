@@ -84,7 +84,7 @@ function Home() {
       <div className="bg-bglight flex flex-col items-center rounded-[16px] pb-[53px]">
         <Image className="absolute" src="/images/mainpage/WorldMap.svg" width={332} height={332} alt="World map"/>
         <p className="z-30 mt-[53px] text-[32px] text-center text-white">{t("Stay-Connected-Anywhere")}</p>
-        <p className="text-[16px] text-center mt-[16px] text-white">with</p>
+        <p className="text-[16px] text-center mt-[16px] text-white">{t("with")}</p>
         <h1 className="mt-[48px] text-[48px] bg-gradient-to-b from-[#27A6E1] to-[#4381EB] bg-clip-text text-transparent font-bold">{t("eSim Unlimited")}</h1>
         <p className="text-[16px] text-center mt-[16px] px-[40px] text-white">{t("High-speed")}</p>
         <motion.div 

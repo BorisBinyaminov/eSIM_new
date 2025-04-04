@@ -1,7 +1,8 @@
 {
     "MainPage": {
         "Stay-Connected-Anywhere": "Оставайтесь на связи везде",
-        "eSim Unlimited": "Безлимитная eSIM",
+        "with": "с",
+        "eSim Unlimited": "eSim Unlimited",
         "High-speed": "Высокоскоростной интернет в 150+ странах. Без роуминга, скрытых платежей и физической SIM-карты",
         "Buy eSim": "Купить eSIM",
         "Our Advantages": "Наши преимущества",
@@ -57,7 +58,7 @@
         "Get mobile data": "Подключить мобильный интернет"
     },
     "Header": {
-        "title": "Безлимитная eSIM",
+        "title": "eSim Unlimited",
         "guides": "Руководства",
         "faq": "Частые вопросы",
         "supportDevices": "Поддерживаемые устройства",
@@ -72,6 +73,25 @@
     },
     "buyeSim": {
         "title": "Выберите eSIM",
+        "Select a Country": "Выберите страну",
+        "Select a Region": "Выберите регион",
+        "Select a Global eSim Package": "Выберите глобальный пакет",
+        "Show more": "Показать больше",
+        "Show less": "Свернуть",
+        "Available Packages for": "Существующие пакеты для",
+        "All tariffs": "Все тарифы",
+        "Buy now": "Купить сейчас",
+        "Search":"Поиск...",
+        "Data volume": "Объем данных",
+        "Duration": "Длительность",
+        "Coverage": "Покрытие",
+        "Top-Up Support": "Поддержка пополнения счета",
+        "Locations": "Локации",
+        "types":{
+            "Local": "Локальный",
+            "Regional": "Региональный",
+            "Global": "Глобальный"
+        },
         "categories": {
             "local": "Локальный",
             "regional": "Региональный",

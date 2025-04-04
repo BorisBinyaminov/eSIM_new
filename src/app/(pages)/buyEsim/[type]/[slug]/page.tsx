@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useParams } from 'next/navigation';
 import 'swiper/css';
+import { useTranslations } from 'next-intl';
 
 interface Operator {
   operatorName: string;
@@ -115,6 +116,8 @@ export default function CountryPage() {
     const interval = setInterval(() => fetchData(), 7200000);
     return () => clearInterval(interval);
   }, [type, slug]);
+
+  const t = useTranslations("buyeSim");
   
 
   return (
@@ -135,7 +138,7 @@ export default function CountryPage() {
           </h1>
         : 
           <h1 className="text-[16px] font-bold text-white">
-            Available Packages for {slug.replace(/-/g, " ")}
+            {t("Available Packages for")} {slug.replace(/-/g, " ")}
           </h1>
         }
       </div>
@@ -155,7 +158,7 @@ export default function CountryPage() {
                   supportTopUpType={packagesData[0].supportTopUpType}
                   locations={packagesData[0].locationNetworkList.map((network) => network.locationName)}
                 />
-                <h2 className="text-lg text-white font-semibold">All tariffs</h2>
+                <h2 className="text-lg text-white font-semibold">{t("All tariffs")}</h2>
                 <div className="w-full max-w-5xl">
                   <Swiper 
                     spaceBetween={10} 

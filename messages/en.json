@@ -1,6 +1,7 @@
 {
     "MainPage": {
         "Stay-Connected-Anywhere": "Stay Connected Anywhere",
+        "with": "with",
         "eSim Unlimited": "eSim Unlimited",
         "High-speed": "High-speed internet in 150+ countries. No roaming fees, no hidden charges, and no physical SIM required",
         "Buy eSim": "Buy eSim",
@@ -73,6 +74,25 @@
     },
     "buyeSim": {
         "title": "Choose eSIM",
+        "Select a Country": "Select a Country",
+        "Select a Region": "Select a Region",
+        "Select a Global eSim Package": "Select a Global eSim Package",
+        "Search":"Search...",
+        "Show more": "Show more",
+        "Show less": "Show less",
+        "Available Packages for": "Available Packages for",
+        "All tariffs": "All tariffs",
+        "Buy now": "Buy now",
+        "Data volume": "Data volume",
+        "Duration": "Duration",
+        "Coverage": "Coverage",
+        "Top-Up Support": "Top-Up Support",
+        "Locations": "Locations",
+        "types":{
+            "Local": "Local",
+            "Regional": "Regional",
+            "Global": "Global"
+        },
         "categories": {
             "local": "Local",
             "regional": "Regional",
