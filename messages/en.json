@@ -449,6 +449,34 @@
         "crypto": "Cryptocurrency"
     },
     "bank": {
-        
+        "Replenishment eSim": "Replenishment eSim",
+        "total": "total",
+        "Card number": "Card number",
+        "Term": "Term",
+        "PROMOCODE": "PROMOCODE",
+        "Remember card for future purchases": "Remember card for future purchases",
+        "Buy now": "Buy now",
+        "The card number must contain 16 digits": "The card number must contain 16 digits.",
+        "The expiration date must be in MM/YY format": "The expiration date must be in MM/YY format.",
+        "CVC must contain 3 digits": "CVC must contain 3 digits.",
+        "The promo code must contain 4 digits": "The promo code must contain 4 digits.",
+        "Form sending": "Form sending"
+    },
+    "crypto": {
+        "Replenishment eSim": "Replenishment eSim",
+        "Connect wallet": "Connect wallet",
+        "Min replenishment amount": "Min. replenishment amount",
+        "When paying, please indicate eSim id": "When paying, please indicate eSim id",
+        "QR - for payment": "QR - for payment",
+        "Address": "Address",
+        "Required Comment": "Required Comment",
+        "Promocode": "Promocode",
+        "The promo code must contain exactly 4 digits": "The promo code must contain exactly 4 digits."
+    },
+    "sms": {
+        "Replenishment eSim": "Replenishment eSim",
+        "SMS from your phone": "SMS from your phone",
+        "Send SMS again": "Send SMS again",
+        "Confirm": "Confirm"
     }
 }   

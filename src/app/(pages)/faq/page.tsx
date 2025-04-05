@@ -17,6 +17,7 @@ const FAQItem = ({ question, answer,index}: { question: string; answer: string ;
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className="bg-bglight rounded-[16px] w-full mx-[16px] " 
+      
     >
       <button
         className="w-full text-left p-4 bg-bglight text-white flex justify-between items-center rounded-[16px]"
@@ -36,7 +37,14 @@ const FAQItem = ({ question, answer,index}: { question: string; answer: string ;
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <div className="p-4 bg-bglight text-gray-300">{answer}</div>
+        <div className="p-4 bg-bglight text-gray-300" >
+        {answer.split('\n').map((line, index) => (
+          <span key={index}>
+            {line}
+            <br />
+          </span>
+        ))}
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -446,5 +446,36 @@
         "bank": "Банковская карта",
         "crypto": "Криптовалюта"
     },
-    "bank": {}
+    "bank": {
+    "Replenishment eSim": "Пополнение eSim",
+    "total": "итого",
+    "Card number": "Номер карты",
+    "Term": "Срок",
+    "PROMOCODE": "ПРОМОКОД",
+    "Remember card for future purchases": "Запомнить карту для будущих покупок",
+    "Buy now": "Купить сейчас",
+    "The card number must contain 16 digits": "Номер карты должен содержать 16 цифр.",
+    "The expiration date must be in MM/YY format": "Дата окончания должна быть в формате ММ/ГГ.",
+    "CVC must contain 3 digits": "CVC должен содержать 3 цифры.",
+    "The promo code must contain 4 digits": "Промокод должен содержать 4 цифры.",
+    "Form sending": "Отправка формы"
+},
+"crypto": {
+    "Replenishment eSim": "Пополнение eSim",
+    "Connect wallet": "Подключить кошелёк",
+    "Min replenishment amount": "Мин. сумма пополнения",
+    "When paying, please indicate eSim id": "При оплате укажите ID eSim",
+    "QR - for payment": "QR - для оплаты",
+    "Address": "Адрес",
+    "Required Comment": "Обязательный комментарий",
+    "Promocode": "Промокод",
+    "The promo code must contain exactly 4 digits": "Промокод должен содержать ровно 4 цифры."
+},
+"sms": {
+    "Replenishment eSim": "Пополнение eSim",
+    "SMS from your phone": "СМС с вашего телефона",
+    "Send SMS again": "Отправить СМС снова",
+    "Confirm": "Подтвердить"
+}
+
 }

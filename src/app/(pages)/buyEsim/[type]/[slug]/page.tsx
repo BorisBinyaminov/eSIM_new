@@ -138,7 +138,7 @@ export default function CountryPage() {
           </h1>
         : 
           <h1 className="text-[16px] font-bold text-white">
-            {t("Available Packages for")} {slug.replace(/-/g, " ")}
+            {t("Available Packages for")} {loading ? "Loading" : packagesData[0].name.split(/[\s(]/)[0]}
           </h1>
         }
       </div>
@@ -152,11 +152,13 @@ export default function CountryPage() {
                 <PricingCard
                   name={packagesData[0].name}
                   description={packagesData[0].description}
-                  price={packagesData[0].price}
+                  price={packagesData[0].retailPrice}
                   data={packagesData[0].volumeGB || `${packagesData[0].volume}`}
                   duration={`${packagesData[0].duration} ${packagesData[0].durationUnit}`}
                   supportTopUpType={packagesData[0].supportTopUpType}
                   locations={packagesData[0].locationNetworkList.map((network) => network.locationName)}
+                  type={type}
+                  coverage={packagesData[0].locationNetworkList.map((network) => network.locationName).length}
                 />
                 <h2 className="text-lg text-white font-semibold">{t("All tariffs")}</h2>
                 <div className="w-full max-w-5xl">

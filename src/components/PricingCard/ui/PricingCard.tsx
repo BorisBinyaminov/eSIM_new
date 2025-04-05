@@ -11,7 +11,7 @@ const PricingCard = ({
   price,
   data,
   duration,
-  coverage,
+  coverage = 0,
   supportTopUpType,
   locations,
 }: {
@@ -20,10 +20,11 @@ const PricingCard = ({
   price:  number;
   data: string;
   duration: string;
-  coverage?: string;
+  coverage?: number;
   supportTopUpType: number;
   locations?: string[];
   packageName?: string;
+  type?: string
 }) => {
   const [expanded, setExpanded] = useState(false);
   const t = useTranslations("buyeSim");
@@ -64,7 +65,7 @@ const PricingCard = ({
           </span>
           <span className="text-[14px] text-[#27A6E1] font-[400]">{duration}</span>
         </div>
-        {coverage && (
+        {coverage > 1 && (
           <div className="flex justify-between text-sm bg-mainbg p-2 rounded-lg">
             <span className='flex gap-[8px] items-center'>
               <Image src="/images/buyEsimPage/PricingCard/Coverage.svg" width={24} height={24} alt="Coverage"/> {t("Coverage")}
@@ -85,7 +86,7 @@ const PricingCard = ({
             <Image src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> {t("Locations")}
           </span>
           <span className="font-semibold">
-            {expanded ? locations.join(', ') : locations.slice(0, 1).join(', ')}
+            {expanded ? locations.join(', ') : locations.slice(0, 3).join(', ')}
           </span>
         </div>
 

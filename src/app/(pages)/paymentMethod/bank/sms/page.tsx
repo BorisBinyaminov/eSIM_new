@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 
 export default function ReplenishmentEsimPage() {
   const [code, setCode] = useState('');
   const router = useRouter();
   const [timer, setTimer] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(true);
+  const t = useTranslations("sms");
 
   useEffect(() => {
     let interval = null;
@@ -49,10 +51,10 @@ export default function ReplenishmentEsimPage() {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  Replenishment eSim
+                 {t("Replenishment eSim")}
                 </motion.h1>
               </div>
-      <h2 className="text-white text-2xl mb-4 text-left w-full max-w-[328px] mt-[48px]">SMS from your phone</h2>
+      <h2 className="text-white text-2xl mb-4 text-left w-full max-w-[328px] mt-[48px]">{t("SMS from your phone")}</h2>
 
       <input
         type="text"
@@ -76,8 +78,8 @@ export default function ReplenishmentEsimPage() {
         }`}
       >
         {isTimerActive
-          ? `Send SMS again (${timer}s)`
-          : 'Send SMS again'}
+          ? `${t("Send SMS again")} (${timer}s)`
+          : t("Send SMS again")}
       </motion.button>
 
       {/* Кнопка "Confirm" */}
@@ -89,7 +91,7 @@ export default function ReplenishmentEsimPage() {
         transition={{ delay: 0.5, duration: 0.5 }}
         className="max-w-[328px] w-full mt-[48px] py-4 bg-gradient-to-r from-blue-500 to-blue-400 text-lg font-bold rounded-[16px] shadow-lg"
       >
-        Confirm
+        {t("Confirm")}
       </motion.button>
     </motion.div>
   );

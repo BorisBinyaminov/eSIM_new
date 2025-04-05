@@ -43,7 +43,7 @@ const Header = () => {
   }
 
   const flagSrc = languages.find(lang => lang.code === locale)?.flag;
-  const { user, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <header className="flex justify-between items-center bg-mainbg py-4 px-6 relative">
@@ -119,7 +119,7 @@ const Header = () => {
               <a href="/guides" className="hover:text-blue-400">{t("guides")}</a>
               <a href="/faq" className="hover:text-blue-400">{t("faq")}</a>
               <a href="/support-device" className="hover:text-blue-400">{t("supportDevices")}</a>
-              <button onClick={logout} className="hover:text-blue-400 text-left">{t("logout")}</button>
+              {/* <button onClick={logout} className="hover:text-blue-400 text-left">{t("logout")}</button> */}
             </nav>
             <div className='flex gap-[4px] mt-[24px]'>
               <a target='_blank' href='https://t.me/eSIM_Unlimited' className='p-[16px] flex rounded-[20px] gap-[10px] items-center bg-mainbg border-1 border-[#27A6E1]'>
