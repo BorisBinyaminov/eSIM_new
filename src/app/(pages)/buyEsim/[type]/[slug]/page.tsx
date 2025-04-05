@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useParams } from 'next/navigation';
 import 'swiper/css';
+import { useTranslations } from 'next-intl';
 
 interface Operator {
   operatorName: string;
@@ -41,6 +42,8 @@ interface Package {
   supportTopUpType: number;
   fupPolicy: string;
   locationNetworkList: LocationNetwork[];
+  // Дополнительное поле для отформатированного объёма (для local)
+  volumeGB?: string;
 }
 
 export default function CountryPage() {
@@ -49,6 +52,13 @@ export default function CountryPage() {
   const [packagesData, setPackagesData] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
+  const convertVolumeToGB = (volume: number) => {
+    let volumeGB = volume / (1024 * 1024 * 1024);
+    volumeGB = Math.ceil(volumeGB * 10) / 10;
+    return volumeGB;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -56,16 +66,44 @@ export default function CountryPage() {
         if (type === 'local') {
           const res = await fetch('/countryPackages.json');
           data = await res.json();
-          data = data.filter(pkg => pkg.location.toLowerCase() === slug.toLowerCase());
+          data = data
+            .filter(pkg => pkg.location.toLowerCase() === slug.toLowerCase())
+            .map(pkg => ({
+              ...pkg,
+              volumeGB: convertVolumeToGB(pkg.volume) + "GB"
+            }))
+            .sort((a, b) => a.retailPrice - b.retailPrice);
         } else if (type === 'regional') {
           const res = await fetch('/regionalPackages.json');
           data = await res.json();
-          data = data.filter(pkg => pkg.slug.toLowerCase().startsWith(slug));
+          data = data
+            .filter(pkg => pkg.slug.toLowerCase().startsWith(slug))
+            .map(pkg => ({
+              ...pkg,
+              volumeGB: convertVolumeToGB(pkg.volume) + "GB"
+            }))
+            .sort((a, b) => a.retailPrice - b.retailPrice);
         } else if (type === 'global') {
           const res = await fetch('/globalPackages.json');
           data = await res.json();
-          data = data.filter(pkg => pkg.name.toLowerCase().includes(slug));
+          const packageMapping: Record<string, number> = {
+            "1gb": 1,
+            "3gb": 3,
+            "5gb": 5,
+            "10gb": 10,
+            "20gb": 20,
+          };
+          const targetVolume = packageMapping[slug.toLowerCase()];
+          data = data
+            .map(pkg => ({
+              ...pkg,
+              volumeGBNumeric: convertVolumeToGB(pkg.volume), // для фильтра
+              volumeGB: convertVolumeToGB(pkg.volume) + "GB" // для отображения
+            }))
+            .filter(pkg => pkg.volumeGBNumeric === targetVolume)
+            .sort((a, b) => a.retailPrice - b.retailPrice);
         }
+  
         setPackagesData(data);
       } catch (error) {
         console.error("Error fetching package data:", error);
@@ -78,6 +116,9 @@ export default function CountryPage() {
     const interval = setInterval(() => fetchData(), 7200000);
     return () => clearInterval(interval);
   }, [type, slug]);
+
+  const t = useTranslations("buyeSim");
+  
 
   return (
     <div className="container mx-auto p-4 bg-mainbg">
@@ -92,12 +133,12 @@ export default function CountryPage() {
           />
         </Link>
         {displayType === 'Global' ? 
-          <h1 className="text-[16px] font-bold">
+          <h1 className="text-[16px] font-bold text-white">
             {slug.replace(/-/g, " ")}
           </h1>
         : 
-          <h1 className="text-[16px] font-bold">
-            Available Packages for {slug.replace(/-/g, " ")}
+          <h1 className="text-[16px] font-bold text-white">
+            {t("Available Packages for")} {loading ? "Loading" : packagesData[0].name.split(/[\s(]/)[0]}
           </h1>
         }
       </div>
@@ -111,22 +152,39 @@ export default function CountryPage() {
                 <PricingCard
                   name={packagesData[0].name}
                   description={packagesData[0].description}
-                  price={packagesData[0].price}
-                  data={`${packagesData[0].volume}`}
+                  price={packagesData[0].retailPrice}
+                  data={packagesData[0].volumeGB || `${packagesData[0].volume}`}
                   duration={`${packagesData[0].duration} ${packagesData[0].durationUnit}`}
                   supportTopUpType={packagesData[0].supportTopUpType}
                   locations={packagesData[0].locationNetworkList.map((network) => network.locationName)}
+                  type={type}
+                  coverage={packagesData[0].locationNetworkList.map((network) => network.locationName).length}
                 />
-                <h2 className="text-lg text-white font-semibold">All tariffs</h2>
+                <h2 className="text-lg text-white font-semibold">{t("All tariffs")}</h2>
                 <div className="w-full max-w-5xl">
-                  <Swiper spaceBetween={20} slidesPerView={1}>
+                  <Swiper 
+                    spaceBetween={10} 
+                    slidesPerView={1}
+                    grabCursor={true} 
+                    breakpoints={{
+                      640: {
+                        slidesPerView: 1.1,
+                      },
+                      768: {
+                        slidesPerView: 2.2,
+                      },
+                      1024: {
+                        slidesPerView: 2.2,
+                      },
+                    }}
+                  >
                     {packagesData.map((pkg, index) => (
-                      <SwiperSlide key={index}>
+                      <SwiperSlide key={index} className='w-full max-w-[320px]'>
                         <PricingCard
                           name={pkg.name}
                           description={pkg.description}
                           price={pkg.price}
-                          data={`${pkg.volume}`}
+                          data={pkg.volumeGB || `${pkg.volume}`}
                           duration={`${pkg.duration} ${pkg.durationUnit}`}
                           supportTopUpType={pkg.supportTopUpType}
                           locations={pkg.locationNetworkList.map((network) => network.locationName)}

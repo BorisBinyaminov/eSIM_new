@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 const BankPayment = () => {
   const router = useRouter();
@@ -10,6 +11,7 @@ const BankPayment = () => {
   const [term, setTerm] = useState("");
   const [cvc, setCvc] = useState("");
   const [promocode, setPromocode] = useState("");
+  const t = useTranslations("bank");
 
   const [errors, setErrors] = useState({
     cardNumber: "",
@@ -21,28 +23,28 @@ const BankPayment = () => {
   const validateCardNumber = (number : string) => {
     const sanitized = number.replace(/\s+/g, "");
     if (!/^\d{16}$/.test(sanitized)) {
-      return "Номер карты должен содержать 16 цифр.";
+      return t("The card number must contain 16 digits");
     }
     return "";
   };
 
   const validateTerm = (term: string) => {
     if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(term)) {
-      return "Срок действия должен быть в формате MM/YY.";
+      return t("The expiration date must be in MM/YY format");
     }
     return "";
   };
 
   const validateCvc = (cvc: string) => {
     if (!/^\d{3}$/.test(cvc)) {
-      return "CVC должен содержать 3 цифры.";
+      return t("CVC must contain 3 digits");
     }
     return "";
   };
 
   const validatePromocode = (code: string) => {
     if (code && !/^\d{4}$/.test(code)) {
-      return "Промокод должен содержать 4 цифры.";
+      return t("The promo code must contain 4 digits");
     }
     return "";
   };
@@ -60,13 +62,13 @@ const BankPayment = () => {
       promocode: promoError,
     });
     if (!cardError && !termError && !cvcError && !promoError) {
-      console.log("Отправка формы", { cardNumber, term, cvc, promocode });
+      console.log(t("Form sending"), { cardNumber, term, cvc, promocode });
     }
   };
 
   return (
     <motion.div 
-      className="px-6 py-4 bg-dark text-white min-h-screen"
+      className="px-6 py-4 bg-[#05081A] text-white min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -85,7 +87,7 @@ const BankPayment = () => {
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Replenishment eSim
+          {t("Replenishment eSim")}
         </motion.h1>
       </div>
 
@@ -95,7 +97,7 @@ const BankPayment = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.5 }}
       >
-        <p className="text-gray-400">total</p>
+        <p className="text-gray-400">{t("total")}</p>
         <p className="text-3xl font-bold">$33.00</p>
       </motion.div>
 
@@ -107,7 +109,7 @@ const BankPayment = () => {
         transition={{ delay: 0.4, duration: 0.5 }}
       >
         <div className="mb-4">
-          <label className="block text-gray-400">Card number</label>
+          <label className="block text-gray-400">{t("Card number")}</label>
           <input
             type="text"
             placeholder="0000 0000 0000 0000"
@@ -122,7 +124,7 @@ const BankPayment = () => {
 
         <div className="flex gap-4 mb-4">
           <div className="w-1/2">
-            <label className="block text-gray-400">Term</label>
+            <label className="block text-gray-400">{t("Term")}</label>
             <input
               type="text"
               placeholder="MM/YY"
@@ -150,7 +152,7 @@ const BankPayment = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-400">PROMOCODE</label>
+          <label className="block text-gray-400">{t("PROMOCODE")}</label>
           <input
             type="text"
             placeholder="0000"
@@ -165,7 +167,7 @@ const BankPayment = () => {
 
         <div className="flex items-center mb-4">
           <input type="checkbox" className="w-5 h-5 text-blue-500" />
-          <p className="ml-2 text-gray-400">Remember card for future purchases</p>
+          <p className="ml-2 text-gray-400">{t("Remember card for future purchases")}</p>
         </div>
 
         <motion.button 
@@ -176,7 +178,7 @@ const BankPayment = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
         >
-          Buy now
+          {t("Buy now")}
         </motion.button>
       </motion.form>
     </motion.div>

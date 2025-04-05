@@ -1,0 +1,482 @@
+{
+    "MainPage": {
+        "Stay-Connected-Anywhere": "Stay Connected Anywhere",
+        "with": "with",
+        "eSim Unlimited": "eSim Unlimited",
+        "High-speed": "High-speed internet in 150+ countries. No roaming fees, no hidden charges, and no physical SIM required",
+        "Buy eSim": "Buy eSim",
+        "Our Advantages": "Our Advantages",
+        "advantages": {
+            "twoWay": { 
+                "name": "Two-way Calls and Messages",
+                "desc": "Stay connected: make calls and send messages on any device, anytime, anywhere."
+            },
+            "convenient": {
+                "name": "Convenient Payment Options",
+                "desc": "Securely complete transactions with our advanced payment system, supporting both credit cards and cryptocurrency"
+            },
+            "24/7":{
+                "name": "24/7 Customer Support",
+                "desc": "If you have any queries, simply contact us and we'll get back to you right away."
+            },
+            "transparent":{
+                "name": "Transparent Conditions",
+                "desc": "No extra charges, no roaming costs—only clear, straightforward pricing"
+            },
+            "user-friendly":{
+                "name": "User-friendly Interface",
+                "desc": "Thanks to our user-friendly design and extensive multilingual support, convenience is just one tap away"
+            },
+            "quick": {
+                "name": "Quick and Seamless Setup",
+                "desc": "Set up your eSIM in no time—just choose your perfect plan from our diverse selection and activate it right away"
+            }
+        },
+        "Try Now": "Try Now",
+        "eSIM Setup Guide": "eSIM Setup Guide",
+        "Take these": "Take these 3 easy steps to get eSIM on your phone!",
+        "Slider": {
+            "slides":{
+                "1": {
+                    "title": "Choose eSIM Data Plan",
+                    "text": "Pick an eSIM data plan that suits your needs. Stay connected with the entire world, anytime, anywhere."
+                },
+                "2": {
+                    "title": "Easy Installation of eSIM",
+                    "text": "Follow our simple step-by-step guide and scan the QR code for digital installation."
+                },
+                "3": {
+                    "title": "Easy Activation of eSIM",
+                    "text": "Follow our simple step-by-step guide for digital activation."
+                },
+                "4": {
+                    "title": "Enjoy Your Connection",
+                    "text": "Your eSIM is now activated! Enjoy seamless connectivity anywhere in the world."
+                }
+            }
+        },
+        "Get mobile data": "Get mobile data"
+
+    },
+    "Header": {
+        "title": "eSIM Unlimited",
+        "guides": "Guides",
+        "faq": "FAQ",
+        "supportDevices": "Supported Devices",
+        "logout": "Log out",
+        "community": "Community",
+        "support": "Support"
+    },
+    "Navbar":{
+        "home": "Home",
+        "buyeSim": "Buy eSim",
+        "myeSim": "My eSim"
+    },
+    "buyeSim": {
+        "title": "Choose eSIM",
+        "Select a Country": "Select a Country",
+        "Select a Region": "Select a Region",
+        "Select a Global eSim Package": "Select a Global eSim Package",
+        "Search":"Search...",
+        "Show more": "Show more",
+        "Show less": "Show less",
+        "Available Packages for": "Available Packages for",
+        "All tariffs": "All tariffs",
+        "Buy now": "Buy now",
+        "Data volume": "Data volume",
+        "Duration": "Duration",
+        "Coverage": "Coverage",
+        "Top-Up Support": "Top-Up Support",
+        "Locations": "Locations",
+        "types":{
+            "Local": "Local",
+            "Regional": "Regional",
+            "Global": "Global"
+        },
+        "categories": {
+            "local": "Local",
+            "regional": "Regional",
+            "global": "Global"
+        },
+        "select": {
+            "local": "Select a country to purchase an eSIM",
+            "regional": "Select a region to purchase an eSIM",
+            "global": "Select a global eSIM package"
+        },
+        "regions": {
+            "europe": "Europe",
+            "southAmerica": "South America",
+            "northAmerica": "North America",
+            "africa": "Africa",
+            "asia": "Asia",
+            "caribbean": "Caribbean"
+        },
+        "global": {
+            "1gb": "Global Package 1GB",
+            "3gb": "Global Package 3GB",
+            "5gb": "Global Package 5GB",
+            "10gb": "Global Package 10GB",
+            "20gb": "Global Package 20GB"
+        }
+    },
+    "faq": {
+        "1": {
+        "question": "Which devices and software versions support eSIM?",
+        "answer": "- **iOS:** You must have iOS 12.1 or later and an unlocked iPhone. iPhones older than XR or XS support eSIM.\n(Note: If you purchased your phone under a contract, check with your carrier to unlock eSIM compatibility.)\n- **Android:** Samsung, Pixel, and many Android devices support eSIM."
+        },
+        "2": {
+        "question": "In what scenarios can eSIM service be used?",
+        "answer": "- Add a local data plan when traveling internationally.\n- Use eSIM for data while keeping your primary SIM for voice and SMS."
+        },
+        "3": {
+        "question": "How to set up eSIM for iOS/Android?",
+        "answer": "- Purchase an eSIM data plan on our website.\n- Receive the eSIM QR code by email.\n- Follow instructions in our Help Center->Guides"
+        },
+        "4": {
+        "question": "How fast is the network speed?",
+        "answer": "4G/LTE service is available in most countries, in some countries 5G is also available."
+        },
+        "5": {
+        "question": "Are voice calls and SMS included?",
+        "answer": "Only data service is available."
+        },
+        "6": {
+        "question": "Can I use more than one eSIM provider when traveling abroad?",
+        "answer": "Yes, iPhones can store 10 eSIMs, and Androids can store 5-7 eSIMs. Only one eSIM can be active at a time. Label eSIMs to avoid confusion."
+        },
+        "7": {
+        "question": "How to use hotspots with eSIM?",
+        "answer": "On iOS, APNs are preconfigured except for Japan (set APN to be “vmobile.jp”). For Android issues, contact customer service for support."
+        },
+        "8": {
+        "question": "How to use dual SIM on iPhone and set up eSIM?",
+        "answer": "Dual SIM offers separate voice/SMS and data plans. Follow specific iPhone steps to configure eSIM for cellular data only."
+        },
+        "9": {
+        "question": "Should I switch on Data Roaming when using eSIM?",
+        "answer": "Yes. Ensure that \"Data Roaming\" is turned ON during use."
+        },
+        "10": {
+        "question": "How to remove the eSIM data plan after use?",
+        "answer": "Use your phone's delete eSIM function in settings."
+        },
+        "11": {
+        "question": "How do I get my eSIM after payment?",
+        "answer": "You will receive an email with your QR code. Check your spam folder if it doesn't arrive within a minute."
+        },
+        "12": {
+        "question": "How is the validity period of the plan calculated?",
+        "answer": "Validity starts from your eSIM's first connection, as described in the package information."
+        },
+        "13": {
+        "question": "When does the billing period or validity start?",
+        "answer": "Data plans will only begin counting usage once customers make their first connection to the local network."
+        },
+        "14": {
+        "question": "How to check the balance of remaining data?",
+        "answer": "Check \"My eSIMs\" tab in our mini app or telegram bot."
+        },
+        "15": {
+        "question": "How to Top Up a data plan?",
+        "answer": "Top Up is available in My eSIMs tab."
+        },
+        "16": {
+        "question": "How do I refund an unused order?",
+        "answer": "In My eSIMs tab, you can use the Cancel feature to refund an unused (not installed) eSIM order."
+        },
+        "17": {
+        "question": "What does each eSIM status mean?",
+        "answer": "Here are the eSIM status and their definitions:\n- Provisioning - Newly purchased eSIM being created by the server.\n- New - Newly created eSIM, ready for installation.\n- Onboard - Newly installed eSIM, waiting for first use, no data use.\n- In Use - Installed eSIM serving data from a data plan.\n- Depleted - Installed eSIM having consumed available data.\n- Canceled - Newly purchased eSIM, refunded and returned to inventory.\n- Deleted - eSIM uninstalled from user device or revoked/invalid eSIM.\n- Suspended - Installed eSIM currently disabled."
+        },
+        "18": {
+        "question": "Can I use one eSIM for two devices?",
+        "answer": "No, an eSIM can only be used on one device at a time. If you want to use eSIM services on another device, you will need to transfer the eSIM."
+        },
+        "19": {
+        "question": "If I lost my eSIM QR code, what can I do?",
+        "answer": "Check your email or contact support."
+        },
+        "20": {
+        "question": "Will my physical SIM still work while eSIM is installed?",
+        "answer": "Yes, your physical SIM will still work. Turn off data roaming for it and enable \"WiFi calling.\""
+        },
+        "21": {
+        "question": "What devices are supported?",
+        "answer": "eSIM is compatible with a wide range of devices that support eSIM technology. For a detailed list of supported devices, please visit our Help Center->Supported Devices."
+        },
+        "22": {
+        "question": "Can I reuse an eSIM?",
+        "answer": "Your eSIM won't be available to transfer if you have already activated. You could still enjoy eSIM if you haven't activated it before changing the device."
+        },
+        "23": {
+        "question": "How do I transfer an eSIM to another device?",
+        "answer": "You can transfer your not activated eSIM to another device.\nTo transfer:\n- Remove the eSIM from the current device (uninstall or delete from settings).\n- Use the same QR code or activation method on the new device.\n- Follow the on-screen instructions to complete the setup on the new device."
+        },
+        "24": {
+        "question": "What if I erased my eSIM plan by accident?",
+        "answer": "DO NOT delete your eSIM when you haven't used up your data.\n- Try to reinstall from the original QR code.\n- If you accidentally delete your eSIM after your activation, you may have to purchase a new eSIM."
+        }
+    },
+    "guides": {
+        "1": {
+            "title": "IOS Installation",
+            "step": "Step 1 of 12",
+            "instruction": "On Settings > Tap Connections."
+        },
+        "2": {
+            "title": "IOS Installation",
+            "step": "Step 2 of 12",
+            "instruction": "Select the appropriate network option."
+        },
+        "3": {
+            "title": "IOS Installation",
+            "step": "Step 3 of 12",
+            "instruction": "Tap on eSIM Settings."
+        },
+        "4": {
+            "title": "IOS Installation",
+            "step": "Step 4 of 12",
+            "instruction": "Press Add Cellular Plan."
+        },
+        "5": {
+            "title": "IOS Installation",
+            "step": "Step 5 of 12",
+            "instruction": "Scan the QR code provided."
+        },
+        "6": {
+            "title": "IOS Installation",
+            "step": "Step 6 of 12",
+            "instruction": "Wait for the plan to download."
+        },
+        "7": {
+            "title": "IOS Installation",
+            "step": "Step 7 of 12",
+            "instruction": "Confirm the installation details."
+        },
+        "8": {
+            "title": "IOS Installation",
+            "step": "Step 8 of 12",
+            "instruction": "Review the plan options."
+        },
+        "9": {
+            "title": "IOS Installation",
+            "step": "Step 9 of 12",
+            "instruction": "Select your preferred plan."
+        },
+        "10": {
+            "title": "IOS Installation",
+            "step": "Step 10 of 12",
+            "instruction": "Confirm your selection."
+        },
+        "11": {
+            "title": "IOS Installation",
+            "step": "Step 11 of 12",
+            "instruction": "Finalize installation settings."
+        },
+        "12": {
+            "title": "IOS Installation",
+            "step": "Step 12 of 12",
+            "instruction": "Installation complete. Enjoy your connection."
+        },
+        "13": {
+            "title": "IOS Activation",
+            "step": "Step 1 of 9",
+            "instruction": "Follow the activation guide to enable your eSIM."
+        },
+        "14": {
+            "title": "IOS Activation",
+            "step": "Step 2 of 9",
+            "instruction": "Confirm your device details."
+        },
+        "15": {
+            "title": "IOS Activation",
+            "step": "Step 3 of 9",
+            "instruction": "Tap on Activate eSIM."
+        },
+        "16": {
+            "title": "IOS Activation",
+            "step": "Step 4 of 9",
+            "instruction": "Verify your network connection."
+        },
+        "17": {
+            "title": "IOS Activation",
+            "step": "Step 5 of 9",
+            "instruction": "Wait for the activation process to start."
+        },
+        "18": {
+            "title": "IOS Activation",
+            "step": "Step 6 of 9",
+            "instruction": "Review the activation instructions."
+        },
+        "19": {
+            "title": "IOS Activation",
+            "step": "Step 7 of 9",
+            "instruction": "Confirm activation details."
+        },
+        "20": {
+            "title": "IOS Activation",
+            "step": "Step 8 of 9",
+            "instruction": "Select your data plan."
+        },
+        "21": {
+            "title": "IOS Activation",
+            "step": "Step 9 of 9",
+            "instruction": "Verify your plan details."
+        },
+        "25": {
+            "title": "Android Installation",
+            "step": "Step 1 of 11",
+            "instruction": "On Settings > Go to Connections."
+        },
+        "26": {
+            "title": "Android Installation",
+            "step": "Step 2 of 11",
+            "instruction": "Open Network & Internet settings."
+        },
+        "27": {
+            "title": "Android Installation",
+            "step": "Step 3 of 11",
+            "instruction": "Tap on Mobile Network."
+        },
+        "28": {
+            "title": "Android Installation",
+            "step": "Step 4 of 11",
+            "instruction": "Select Add Carrier."
+        },
+        "29": {
+            "title": "Android Installation",
+            "step": "Step 5 of 11",
+            "instruction": "Scan the provided QR code."
+        },
+        "30": {
+            "title": "Android Installation",
+            "step": "Step 6 of 11",
+            "instruction": "Wait for the carrier to be added."
+        },
+        "31": {
+            "title": "Android Installation",
+            "step": "Step 7 of 11",
+            "instruction": "Confirm the plan details."
+        },
+        "32": {
+            "title": "Android Installation",
+            "step": "Step 8 of 11",
+            "instruction": "Review your network settings."
+        },
+        "33": {
+            "title": "Android Installation",
+            "step": "Step 9 of 11",
+            "instruction": "Select your data plan."
+        },
+        "34": {
+            "title": "Android Installation",
+            "step": "Step 10 of 11",
+            "instruction": "Confirm your selection."
+        },
+        "35": {
+            "title": "Android Installation",
+            "step": "Step 11 of 11",
+            "instruction": "Finalize installation settings."
+        },
+        "37": {
+            "title": "Android Activation",
+            "step": "Step 1 of 9",
+            "instruction": "Follow the steps to activate your eSIM."
+        },
+        "38": {
+            "title": "Android Activation",
+            "step": "Step 2 of 9",
+            "instruction": "Confirm your device settings."
+        },
+        "39": {
+            "title": "Android Activation",
+            "step": "Step 3 of 9",
+            "instruction": "Tap on Activate eSIM."
+        },
+        "40": {
+            "title": "Android Activation",
+            "step": "Step 4 of 9",
+            "instruction": "Verify your network connection."
+        },
+        "41": {
+            "title": "Android Activation",
+            "step": "Step 5 of 9",
+            "instruction": "Wait for the activation process to start."
+        },
+        "42": {
+            "title": "Android Activation",
+            "step": "Step 6 of 9",
+            "instruction": "Review the activation instructions."
+        },
+        "43": {
+            "title": "Android Activation",
+            "step": "Step 7 of 9",
+            "instruction": "Confirm activation details."
+        },
+        "44": {
+            "title": "Android Activation",
+            "step": "Step 8 of 9",
+            "instruction": "Select your data plan."
+        },
+        "45": {
+            "title": "Android Activation",
+            "step": "Step 9 of 9",
+            "instruction": "Verify your plan details."
+        },
+        "46": {
+            "title": "Android Installation",
+            "step": "Step 10 of 11",
+            "instruction": "Confirm your selection."
+        },
+        "47": {
+            "title": "Android Installation",
+            "step": "Step 11 of 11",
+            "instruction": "Finalize installation settings."
+        }
+
+    },
+    "myeSim":{
+        "title": "My eSims",
+        "usage": "Usage",
+        "order": "Order date:",
+        "expired": "Expired time:",
+        "cancel": "Cancel",
+        "top-up": "Top-up"
+    },
+    "payment":{
+        "select": "Select a payment method",
+        "bank":"Bank card",
+        "crypto": "Cryptocurrency"
+    },
+    "bank": {
+        "Replenishment eSim": "Replenishment eSim",
+        "total": "total",
+        "Card number": "Card number",
+        "Term": "Term",
+        "PROMOCODE": "PROMOCODE",
+        "Remember card for future purchases": "Remember card for future purchases",
+        "Buy now": "Buy now",
+        "The card number must contain 16 digits": "The card number must contain 16 digits.",
+        "The expiration date must be in MM/YY format": "The expiration date must be in MM/YY format.",
+        "CVC must contain 3 digits": "CVC must contain 3 digits.",
+        "The promo code must contain 4 digits": "The promo code must contain 4 digits.",
+        "Form sending": "Form sending"
+    },
+    "crypto": {
+        "Replenishment eSim": "Replenishment eSim",
+        "Connect wallet": "Connect wallet",
+        "Min replenishment amount": "Min. replenishment amount",
+        "When paying, please indicate eSim id": "When paying, please indicate eSim id",
+        "QR - for payment": "QR - for payment",
+        "Address": "Address",
+        "Required Comment": "Required Comment",
+        "Promocode": "Promocode",
+        "The promo code must contain exactly 4 digits": "The promo code must contain exactly 4 digits."
+    },
+    "sms": {
+        "Replenishment eSim": "Replenishment eSim",
+        "SMS from your phone": "SMS from your phone",
+        "Send SMS again": "Send SMS again",
+        "Confirm": "Confirm"
+    }
+}   

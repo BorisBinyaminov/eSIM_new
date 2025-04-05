@@ -4,16 +4,18 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 const CryptoPayment = () => {
   const router = useRouter();
   const [promocode, setPromocode] = useState("");
   const [promoError, setPromoError] = useState("");
+  const t = useTranslations("crypto");
 
   const validatePromoCode = (code: string) => {
     const regex = /^\d{4}$/;
     if (!regex.test(code)) {
-      setPromoError("Промокод должен содержать ровно 4 цифры.");
+      setPromoError(t("The promo code must contain exactly 4 digits"));
     } else {
       setPromoError("");
     }
@@ -29,7 +31,7 @@ const CryptoPayment = () => {
 
   return (
     <motion.div 
-      className="px-6 py-4 bg-dark text-white min-h-screen"
+      className="px-6 py-4 bg-[#05081A] text-white min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -48,7 +50,7 @@ const CryptoPayment = () => {
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Replenishment eSim
+          {t("Replenishment eSim")}
         </motion.h1>
       </div>
 
@@ -59,7 +61,7 @@ const CryptoPayment = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
       >
-        🔹 Connect wallet
+        🔹 {t("Connect wallet")}
       </motion.button>
 
       <motion.p 
@@ -68,7 +70,7 @@ const CryptoPayment = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.5 }}
       >
-        Min. replenishment amount <span className="font-bold text-white">5 USDT</span>
+        {t("Min replenishment amount")} <span className="font-bold text-white">5 USDT</span>
       </motion.p>
       <motion.p 
         className="text-xs text-gray-500"
@@ -76,7 +78,7 @@ const CryptoPayment = () => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.45, duration: 0.5 }}
       >
-        When paying, please indicate eSim id <span className="text-white">12232344</span>
+        {t("When paying, please indicate eSim id ")}<span className="text-white">12232344</span>
       </motion.p>
 
       <motion.div 
@@ -85,7 +87,7 @@ const CryptoPayment = () => {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.5 }}
       >
-        <p className="text-center text-sm text-gray-300">QR - for payment</p>
+        <p className="text-center text-sm text-gray-300">{t("QR - for payment")}</p>
         <div className="mt-2 flex justify-center">
           <Image src="/images/qr-code.svg" width={200} height={200} alt="QR Code" />
         </div>
@@ -97,7 +99,7 @@ const CryptoPayment = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
       >
-        <label className="bg-bglight text-sm">Address</label>
+        <label className="bg-bglight text-sm">{t("Address")}</label>
         <div className="mt-1 flex items-center bg-bglight rounded-lg px-3 py-2">
           <input
             type="text"
@@ -115,7 +117,7 @@ const CryptoPayment = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.65, duration: 0.5 }}
       >
-        <label className="text-red-400 text-sm">Required Comment</label>
+        <label className="text-red-400 text-sm">{t("Required Comment")}</label>
         <div className="mt-1 flex items-center bg-bglight rounded-lg px-3 py-2">
           <input
             type="text"
@@ -133,7 +135,7 @@ const CryptoPayment = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, duration: 0.5 }}
       >
-        <label className="text-gray-400 text-sm">Promocode</label>
+        <label className="text-gray-400 text-sm">{t("Promocode")}</label>
         <input
           type="text"
           placeholder="0000"

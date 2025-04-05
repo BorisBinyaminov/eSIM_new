@@ -1,14 +1,11 @@
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // i18n: {
-  //   locales: ['en', 'ru'],
-  //   defaultLocale: 'en',
-  //   localeDetection: false,
-  //   localePrefix: 'never',  
-  // },
-  // ns: ['common'], 
-  // defaultNS: 'common',
+    allowedDevOrigins: ['https://fd6a-212-45-81-45.ngrok-free.app'],    
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

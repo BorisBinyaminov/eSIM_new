@@ -1,7 +1,4 @@
 {
-    "mainPage":{
-        "unlimited": "eSim Unlimited",
-        "highSpeed": "High-speed internet in 150+ countries. No roaming fees, no hidden charges, and no physical SIM required"
-
-    }
+    "welcome": "Welcomee",
+    "hel": "Hola"
 }

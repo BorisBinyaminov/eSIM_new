@@ -3,384 +3,227 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
-const slides = [
-    // IOS Installation
-    {
-      id: 1,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 1 of 12",
-      instruction: "On Settings > Tap Connections.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-001.png",
-    },
-    {
-      id: 2,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 2 of 12",
-      instruction: "Select the appropriate network option.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-002.png",
-    },
-    {
-      id: 3,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 3 of 12",
-      instruction: "Tap on eSIM Settings.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-003.png",
-    },
-    {
-      id: 4,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 4 of 12",
-      instruction: "Press Add Cellular Plan.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-004.png",
-    },
-    {
-      id: 5,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 5 of 12",
-      instruction: "Scan the QR code provided.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-005.png",
-    },
-    {
-      id: 6,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 6 of 12",
-      instruction: "Wait for the plan to download.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-006.png",
-    },
-    {
-      id: 7,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 7 of 12",
-      instruction: "Confirm the installation details.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-007.png",
-    },
-    {
-      id: 8,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 8 of 12",
-      instruction: "Review the plan options.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-008.png",
-    },
-    {
-      id: 9,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 9 of 12",
-      instruction: "Select your preferred plan.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-009.png",
-    },
-    {
-      id: 10,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 10 of 12",
-      instruction: "Confirm your selection.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-010.png",
-    },
-    {
-      id: 11,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 11 of 12",
-      instruction: "Finalize installation settings.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-011.png",
-    },
-    {
-      id: 12,
-      type: "IOS",
-      preType: "Installation",
-      title: "IOS Installation",
-      step: "Step 12 of 12",
-      instruction: "Installation complete. Enjoy your connection.",
-      image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-012.png",
-    },
-    // IOS Activation
-    {
-      id: 13,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 1 of 9",
-      instruction: "Follow the activation guide to enable your eSIM.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-001.png",
-    },
-    {
-      id: 14,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 2 of 9",
-      instruction: "Confirm your device details.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-002.png",
-    },
-    {
-      id: 15,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 3 of 9",
-      instruction: "Tap on Activate eSIM.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-003.png",
-    },
-    {
-      id: 16,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 4 of 9",
-      instruction: "Verify your network connection.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-004.png",
-    },
-    {
-      id: 17,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 5 of 9",
-      instruction: "Wait for the activation process to start.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-005.png",
-    },
-    {
-      id: 18,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 6 of 9",
-      instruction: "Review the activation instructions.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-006.png",
-    },
-    {
-      id: 19,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 7 of 9",
-      instruction: "Confirm activation details.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-007.png",
-    },
-    {
-      id: 20,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 8 of 9",
-      instruction: "Select your data plan.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-008.png",
-    },
-    {
-      id: 21,
-      type: "IOS",
-      preType: "Activation",
-      title: "IOS Activation",
-      step: "Step 9 of 9",
-      instruction: "Verify your plan details.",
-      image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-009.png",
-    },
-    // Android Installation 
-    {
-      id: 25,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 1 of 11",
-      instruction: "On Settings > Go to Connections.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-001.png",
-    },
-    {
-      id: 26,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 2 of 11",
-      instruction: "Open Network & Internet settings.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-002.png",
-    },
-    {
-      id: 27,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 3 of 11",
-      instruction: "Tap on Mobile Network.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-003.png",
-    },
-    {
-      id: 28,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 4 of 11",
-      instruction: "Select Add Carrier.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-004.png",
-    },
-    {
-      id: 29,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 5 of 11",
-      instruction: "Scan the provided QR code.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-005.png",
-    },
-    {
-      id: 30,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 6 of 11",
-      instruction: "Wait for the carrier to be added.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-006.png",
-    },
-    {
-      id: 31,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 7 of 11",
-      instruction: "Confirm the plan details.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-007.png",
-    },
-    {
-      id: 32,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 8 of 11",
-      instruction: "Review your network settings.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-008.png",
-    },
-    {
-      id: 33,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 9 of 11",
-      instruction: "Select your data plan.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-009.png",
-    },
-    {
-      id: 34,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 10 of 11",
-      instruction: "Confirm your selection.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-010.png",
-    },
-    {
-      id: 35,
-      type: "Android",
-      preType: "Installation",
-      title: "Android Installation",
-      step: "Step 11 of 11",
-      instruction: "Finalize installation settings.",
-      image: "/images/Android_installation/eSIM-EN-Orbister-Android-installation-011.png",
-    },
-    {
-      id: 37,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 1 of 9",
-      instruction: "Follow the steps to activate your eSIM.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-001.png",
-    },
-    {
-      id: 38,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 2 of 9",
-      instruction: "Confirm your device settings.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-002.png",
-    },
-    {
-      id: 39,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 3 of 9",
-      instruction: "Tap on Activate eSIM.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-003.png",
-    },
-    {
-      id: 40,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 4 of 9",
-      instruction: "Verify your network connection.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-004.png",
-    },
-    {
-      id: 41,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 5 of 9",
-      instruction: "Wait for the activation process to start.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-005.png",
-    },
-    {
-      id: 42,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 6 of 9",
-      instruction: "Review the activation instructions.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-006.png",
-    },
-    {
-      id: 43,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 7 of 9",
-      instruction: "Confirm activation details.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-007.png",
-    },
-    {
-      id: 44,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 8 of 9",
-      instruction: "Select your data plan.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-008.png",
-    },
-    {
-      id: 45,
-      type: "Android",
-      preType: "Activation",
-      title: "Android Activation",
-      step: "Step 9 of 9",
-      instruction: "Verify your plan details.",
-      image: "/images/Android_activation/eSIM-EN-Orbister-Android-activation-009.png",
-    },
-  ];
+
   
 
   export default function InstallationGuide() {
+    const t = useTranslations("guides");
+    const slides = [
+      // IOS Installation
+      {
+        id: 1,
+        type: "IOS",
+        preType: "Installation",
+        title: t("1.title"),
+        step: t("1.step"),
+        instruction: t("1.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-001.png",
+      },
+      {
+        id: 2,
+        type: "IOS",
+        preType: "Installation",
+        title: t("2.title"),
+        step: t("2.step"),
+        instruction: t("2.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-002.png",
+      },
+      {
+        id: 3,
+        type: "IOS",
+        preType: "Installation",
+        title: t("3.title"),
+        step: t("3.step"),
+        instruction: t("3.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-003.png",
+      },
+      {
+        id: 4,
+        type: "IOS",
+        preType: "Installation",
+        title: t("4.title"),
+        step: t("4.step"),
+        instruction: t("4.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-004.png",
+      },
+      {
+        id: 5,
+        type: "IOS",
+        preType: "Installation",
+        title: t("5.title"),
+        step: t("5.step"),
+        instruction: t("5.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-005.png",
+      },
+      {
+        id: 6,
+        type: "IOS",
+        preType: "Installation",
+        title: t("6.title"),
+        step: t("6.step"),
+        instruction: t("6.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-006.png",
+      },
+      {
+        id: 7,
+        type: "IOS",
+        preType: "Installation",
+        title: t("7.title"),
+        step: t("7.step"),
+        instruction: t("7.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-007.png",
+      },
+      {
+        id: 8,
+        type: "IOS",
+        preType: "Installation",
+        title: t("8.title"),
+        step: t("8.step"),
+        instruction: t("8.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-008.png",
+      },
+      {
+        id: 9,
+        type: "IOS",
+        preType: "Installation",
+        title: t("9.title"),
+        step: t("9.step"),
+        instruction: t("9.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-009.png",
+      },
+      {
+        id: 10,
+        type: "IOS",
+        preType: "Installation",
+        title: t("10.title"),
+        step: t("10.step"),
+        instruction: t("10.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-010.png",
+      },
+      {
+        id: 11,
+        type: "IOS",
+        preType: "Installation",
+        title: t("11.title"),
+        step: t("11.step"),
+        instruction: t("11.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-011.png",
+      },
+      {
+        id: 12,
+        type: "IOS",
+        preType: "Installation",
+        title: t("12.title"),
+        step: t("12.step"),
+        instruction: t("12.instruction"),
+        image: "/images/IOS_installation/eSIM-EN-Orbister-iOS-installation-012.png",
+      },
+      // IOS Activation
+      {
+        id: 13,
+        type: "IOS",
+        preType: "Activation",
+        title: t("13.title"),
+        step: t("13.step"),
+        instruction: t("13.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-001.png",
+      },
+      {
+        id: 14,
+        type: "IOS",
+        preType: "Activation",
+        title: t("14.title"),
+        step: t("14.step"),
+        instruction: t("14.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-002.png",
+      },
+      {
+        id: 15,
+        type: "IOS",
+        preType: "Activation",
+        title: t("15.title"),
+        step: t("15.step"),
+        instruction: t("15.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-003.png",
+      },
+      {
+        id: 16,
+        type: "IOS",
+        preType: "Activation",
+        title: t("16.title"),
+        step: t("16.step"),
+        instruction: t("16.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-004.png",
+      },
+      {
+        id: 17,
+        type: "IOS",
+        preType: "Activation",
+        title: t("17.title"),
+        step: t("17.step"),
+        instruction: t("17.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-005.png",
+      },
+      {
+        id: 18,
+        type: "IOS",
+        preType: "Activation",
+        title: t("18.title"),
+        step: t("18.step"),
+        instruction: t("18.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-006.png",
+      },
+      {
+        id: 19,
+        type: "IOS",
+        preType: "Activation",
+        title: t("19.title"),
+        step: t("19.step"),
+        instruction: t("19.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-007.png",
+      },
+      {
+        id: 20,
+        type: "IOS",
+        preType: "Activation",
+        title: t("20.title"),
+        step: t("20.step"),
+        instruction: t("20.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-008.png",
+      },
+      {
+        id: 21,
+        type: "IOS",
+        preType: "Activation",
+        title: t("21.title"),
+        step: t("21.step"),
+        instruction: t("21.instruction"),
+        image: "/images/IOS_activation/eSIM-EN-Orbister-iOS-activation-009.png",
+      },
+      // Android Installation
+      ...Array.from({ length: 11 }, (_, i) => ({
+        id: 25 + i,
+        type: "Android",
+        preType: "Installation",
+        title: t(`${25 + i}.title`),
+        step: t(`${25 + i}.step`),
+        instruction: t(`${25 + i}.instruction`),
+        image: `/images/Android_installation/eSIM-EN-Orbister-Android-installation-00${i + 1}.png`,
+      })),
+      // Android Activation
+      ...Array.from({ length: 9 }, (_, i) => ({
+        id: 37 + i,
+        type: "Android",
+        preType: "Activation",
+        title: t(`${37 + i}.title`),
+        step: t(`${37 + i}.step`),
+        instruction: t(`${37 + i}.instruction`),
+        image: `/images/Android_activation/eSIM-EN-Orbister-Android-activation-00${i + 1}.png`,
+      })),
+    ];
+
     const [index, setIndex] = useState(0);
     const [platform, setPlatform] = useState<"IOS" | "Android">("IOS");
     const [guideType, setGuideType] = useState<"Installation" | "Activation">("Installation");
@@ -405,9 +248,9 @@ const slides = [
     }
   
     return (
-      <div className="flex flex-col items-center text-white bg-[#0A0D1E] min-h-screen mb-14">
+      <div className="flex flex-col items-center text-white bg-[#05081A] min-h-screen mb-17">
         <h2 className="text-[32px] max-w-[328px] font-bold text-left w-full">Guides</h2>
-        <div className="bg-bglight w-full max-w-[328px] h-14 rounded-lg flex items-center justify-center mt-2">
+        <div className=" w-full max-w-[328px] h-14 rounded-lg flex items-center justify-center mt-2">
           {(["IOS", "Android"] as const).map((item) => (
             <motion.div
               key={item}
@@ -441,11 +284,15 @@ const slides = [
             </motion.div>
           ))}
         </div>
+        <div className="flex items-center justify-between max-w-[328px] w-full">
+            <h3 className="mt-4 text-xl font-semibold">{filteredSlides[index].title}</h3>
+            <p className="text-sm text-gray-400">{filteredSlides[index].step}</p>
+          </div>
         
-        <div className="relative w-full max-w-md mt-6 flex flex-col items-center">
+        <div className="relative w-full max-w-[327px] mt-6 flex flex-col items-center bg-gradient-to-r from-[#1D2240] to-[#000625] rounded-[16px]">
           <button 
             onClick={prevSlide} 
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
           >
             <motion.div
               whileHover={{ scale: 1.1 }}
@@ -455,10 +302,7 @@ const slides = [
               <Image src="/images/mainpage/arrowL.svg" alt="Previous" width={44} height={44} />
             </motion.div>
           </button>
-          <div className="flex items-center justify-between max-w-[328px] w-full">
-            <h3 className="mt-4 text-xl font-semibold">{filteredSlides[index].title}</h3>
-            <p className="text-sm text-gray-400">{filteredSlides[index].step}</p>
-          </div>
+          
           
           <AnimatePresence mode="wait">
             <motion.div
@@ -467,7 +311,7 @@ const slides = [
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.5 }}
-              className="flex flex-col items-center"
+              className="flex flex-col mt-[20px] items-center"
             >
               <Image
                 src={filteredSlides[index].image}
@@ -476,13 +320,12 @@ const slides = [
                 height={600}
                 className="rounded-md"
               />
-              <p className="mt-2 text-[16px] text-left w-full">{filteredSlides[index].instruction}</p>
             </motion.div>
           </AnimatePresence>
           
           <button 
             onClick={nextSlide} 
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
           >
             <motion.div
               whileHover={{ scale: 1.1 }}
@@ -493,6 +336,10 @@ const slides = [
             </motion.div>
           </button>   
         </div>
+        <div className="max-w-[326px] w-full flex items-center">
+          <p className="mt-2 text-[16px] text-left w-full ">{filteredSlides[index].instruction}</p>
+        </div>
+        
       </div>
     );
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -10,7 +11,7 @@ const PricingCard = ({
   price,
   data,
   duration,
-  coverage,
+  coverage = 0,
   supportTopUpType,
   locations,
 }: {
@@ -19,13 +20,14 @@ const PricingCard = ({
   price:  number;
   data: string;
   duration: string;
-  coverage?: string;
+  coverage?: number;
   supportTopUpType: number;
   locations?: string[];
   packageName?: string;
+  type?: string
 }) => {
-  const [expanded] = useState(false);
-
+  const [expanded, setExpanded] = useState(false);
+  const t = useTranslations("buyeSim");
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -47,44 +49,56 @@ const PricingCard = ({
             href="/buyEsim" 
             className="w-full max-w-[328px] block bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] py-[10px] text-[24px] font-bold text-white"
           >
-            Buy now
+           {t("Buy now")}
           </Link>
         </motion.div>
       <div className="mt-4 space-y-2">
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
-          <span className='flex gap-[8px] items-center'>
-            <Image src="/images/buyEsimPage/PricingCard/DataVolume.svg" width={24} height={24} alt="Data volume"/> Data volume
+          <span className='flex gap-[8px] items-center bg-[]'>
+            <Image src="/images/buyEsimPage/PricingCard/DataVolume.svg" width={24} height={24} alt="Data volume"/> {t("Data volume")}
           </span>
-          <span className="text-[14px] text-[#6170C3] font-[400]">{data}</span>
+          <span className="text-[14px] text-[#27A6E1] font-[400]">{data}</span>
         </div>
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
           <span className='flex gap-[8px] items-center'>
-            <Image src="/images/buyEsimPage/PricingCard/Duration.svg" width={24} height={24} alt="Duration"/> Duration
+            <Image src="/images/buyEsimPage/PricingCard/Duration.svg" width={24} height={24} alt="Duration"/> {t("Duration")}
           </span>
-          <span className="text-[14px] text-[#6170C3] font-[400]">{duration}</span>
+          <span className="text-[14px] text-[#27A6E1] font-[400]">{duration}</span>
         </div>
-        {coverage && (
+        {coverage > 1 && (
           <div className="flex justify-between text-sm bg-mainbg p-2 rounded-lg">
             <span className='flex gap-[8px] items-center'>
-              <Image src="/images/buyEsimPage/PricingCard/Coverage.svg" width={24} height={24} alt="Coverage"/> Coverage
+              <Image src="/images/buyEsimPage/PricingCard/Coverage.svg" width={24} height={24} alt="Coverage"/> {t("Coverage")}
             </span>
-            <span className="text-[14px] text-[#6170C3] font-[400]">{coverage}</span>
+            <span className="text-[14px] text-[#27A6E1] font-[400]">{coverage}</span>
           </div>
         )}
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
           <span className='flex gap-[8px] items-center'>
-            <Image src="/images/buyEsimPage/PricingCard/TopUpSupport.svg" width={24} height={24} alt="Top-Up Support"/> Top-Up Support
+            <Image src="/images/buyEsimPage/PricingCard/TopUpSupport.svg" width={24} height={24} alt="Top-Up Support"/> {t("Top-Up Support")}
           </span>
-          <span className="text-[14px] text-[#6170C3] font-[400]">{supportTopUpType === 2 ? "Yes" : "No"}</span>
+          <span className="text-[14px] text-[#27A6E1] font-[400]">{supportTopUpType === 2 ? "Yes" : "No"}</span>
         </div>
         {locations && (
-          <div className="flex justify-between text-sm bg-mainbg p-2 rounded-lg">
-            <span className='flex gap-[8px] items-center'>
-              <Image src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> Locations
-            </span>
-            <span className="font-semibold">{expanded ? locations.join(', ') : locations.slice(0, 3).join(', ')}</span>
-          </div>
-        )}
+      <div className="relative group flex flex-col text-sm bg-mainbg p-2 rounded-lg">
+        <div className={`flex justify-between ${expanded ? "flex-col" : ""}`}>
+          <span className='flex gap-[8px] items-center w-[200px] w-full'>
+            <Image src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> {t("Locations")}
+          </span>
+          <span className="font-semibold w-[200px] w-full">
+            {expanded ? locations.join(', ') : locations.slice(0, 3).join(', ')}
+          </span>
+        </div>
+
+        {/* Show More Button */}
+        <button 
+          onClick={() => setExpanded(!expanded)} 
+          className="mt-2 w-full bg-[#0a0a2c] text-white py-2 rounded-full text-center text-sm transition hover:opacity-80"
+        >
+          {expanded ? t("Show less") : t("Show more")}
+        </button>
+      </div>
+    )}
       </div>
     </motion.div>
   );
