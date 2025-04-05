@@ -82,10 +82,10 @@ const PricingCard = ({
         {locations && (
       <div className="relative group flex flex-col text-sm bg-mainbg p-2 rounded-lg">
         <div className={`flex justify-between ${expanded ? "flex-col" : ""}`}>
-          <span className='flex gap-[8px] items-center'>
+          <span className='flex gap-[8px] items-center w-[200px] w-full'>
             <Image src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> {t("Locations")}
           </span>
-          <span className="font-semibold">
+          <span className="font-semibold w-[200px] w-full">
             {expanded ? locations.join(', ') : locations.slice(0, 3).join(', ')}
           </span>
         </div>
