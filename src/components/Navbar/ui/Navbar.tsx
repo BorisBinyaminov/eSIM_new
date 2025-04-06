@@ -15,7 +15,7 @@ const Navbar = () => {
 
             {[
                 { href: "/", icon: "/images/navbar/Home.svg", label: t("home") },
-                { href: "/buyEsim", icon: "/images/navbar/buyeSim.svg", label: t("buyeSim") },
+                { href: "/buyEsim", icon: "/images/navbar/buyeSIm.svg", label: t("buyeSim") },
                 { href: "/myEsim", icon: "/images/navbar/mySim.svg", label: t("myeSim") }
             ].map(({ href, icon, label }) => (
                 <motion.div
@@ -29,7 +29,7 @@ const Navbar = () => {
                     <Link href={href}>
                         <div className='flex flex-col text-white text-center items-center'>
                             <Image src={icon} width={24} height={24} alt={`${label} Icon`} />
-                            <p className='font-roboto text-white'>{label}</p>
+                            <p className='font-roboto text-sm text-white'>{label}</p>
                         </div>
                     </Link>
                 </motion.div>

@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { AuthProvider } from "@/components/AuthProvider/AuthProvider";
+import Script from "next/script";
 
 
 export const metadata: Metadata = {
@@ -23,6 +24,10 @@ async function RootLayout({
       <body
         className={`font-roboto antialiased bg-mainbg`}
       >
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive" // или 'afterInteractive', если не критично
+        />
         <AuthProvider>
           <NextIntlClientProvider messages={messages}>
             <Header/>
