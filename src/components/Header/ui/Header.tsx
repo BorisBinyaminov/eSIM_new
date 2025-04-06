@@ -45,6 +45,8 @@ const Header = () => {
   const flagSrc = languages.find(lang => lang.code === locale)?.flag;
   const { user } = useContext(AuthContext);
 
+  // console.log(user)
+
   return (
     <header className="flex justify-between items-center bg-mainbg py-4 px-6 relative">
       <Link href="/" className="flex items-center gap-5">
@@ -108,8 +110,8 @@ const Header = () => {
           >
             <div className='flex justify-between w-full'>
               <div className='flex items-center px-[8px] py-[6px] gap-[4px] rounded-[20px] border-1 border-[#27A6E1]'>
-                <Image src="/images/header/profilePhoto.svg" width={24} height={24} alt="user profile photo"/>
-                <p className='text-white'>{user ? user?.first_name : ""}</p>
+                <Image src={user?.photo_url} className='rounded-full' width={24} height={24} alt="user profile photo"/>
+                <p className='text-white'>{user?.first_name}</p>
               </div>
               <button onClick={() => setIsMenuOpen(false)} className="self-end text-white text-lg">
                 <Image src="/images/header/burgerMenu.svg" width={32} height={32} alt="Menu" />
