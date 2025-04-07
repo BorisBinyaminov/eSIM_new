@@ -105,7 +105,7 @@ function Home() {
         <div className="mt-[24px] flex flex-col items-center gap-[16px]">
           {advantages.map(advantage=> 
               <div key={advantage.id} className="max-w-[328px] w-full bg-gradient-to-r from-[#1D2240] to-[#000625] rounded-[16px] flex flex-col items-center text-center py-[18px] gap-[16px] px-[18px]">
-                <Image src={advantage.image.path} width={advantage.image.width} height={advantage.image.height} alt={advantage.image.alt} className=""/>
+                <Image src={advantage.image.path} width={advantage.image.width && "20"} height={advantage.image.height && "20"} alt={advantage.image.alt && "Image"} className=""/>
                 <p className="text-[16px] font-[600] font-roboto text-white">{advantage.text}</p>
                 <p className="text-[16px] font-[300] text-white">{advantage.description}</p>
               </div>

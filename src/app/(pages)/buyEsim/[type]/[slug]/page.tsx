@@ -183,11 +183,12 @@ export default function CountryPage() {
                         <PricingCard
                           name={pkg.name}
                           description={pkg.description}
-                          price={pkg.price}
+                          price={pkg.retailPrice}
                           data={pkg.volumeGB || `${pkg.volume}`}
                           duration={`${pkg.duration} ${pkg.durationUnit}`}
                           supportTopUpType={pkg.supportTopUpType}
                           locations={pkg.locationNetworkList.map((network) => network.locationName)}
+                          coverage={packagesData[0].locationNetworkList.map((network) => network.locationName).length}
                         />
                       </SwiperSlide>
                     ))}
