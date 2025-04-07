@@ -1,5 +1,6 @@
 name: Deploy to VPS
 
+# 🔄 Этот workflow запускается при каждом пуше в ветку dev
 on:
   push:
     branches:
@@ -8,23 +9,27 @@ on:
 jobs:
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # GitHub запускает на Ubuntu runner
 
     steps:
+      # 📦 Шаг 1: Клонирует репозиторий на runner
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 🔐 Шаг 2: Устанавливает SSH-ключ для подключения к VPS
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Ключ из Secrets
 
+      # 🚀 Шаг 3: Подключается к VPS, делает git pull и перезапускает Docker
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_IP }} << EOF
-            cd ~/eSIM
-            git reset --hard
-            git pull origin dev
-            docker-compose down
-            docker-compose up -d --build
+            cd ~/eSIM  # Переход в директорию проекта
+            git reset --hard  # Отменить все локальные изменения (если были)
+            git pull origin dev  # Обновить проект из ветки dev
+            docker-compose down  # Остановить текущие контейнеры
+            docker-compose up -d --build  # Собрать и запустить заново
+            # docker-compose up -d --build --force-recreate  # (альтернатива: пересобрать даже если нет изменений)
           EOF
