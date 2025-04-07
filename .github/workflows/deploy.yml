@@ -1,28 +1,30 @@
-name: 🚀 Deploy to VPS
+name: Deploy to VPS
 
 on:
   push:
     branches:
-      - main  # замени на dev, если ты используешь dev-ветку
+      - dev
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: 🔐 Set up SSH
-        uses: webfactory/ssh-agent@v0.8.1
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: 🚀 Deploy via SSH
+      - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no root@31.172.72.180 << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_IP }} << 'EOF'
             cd ~/eSIM
-            git pull origin main  # или dev
+            git reset --hard
+            git pull origin dev
             docker-compose down
             docker-compose up -d --build
           EOF
