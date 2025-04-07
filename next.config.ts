@@ -5,7 +5,11 @@ const withNextIntl = createNextIntlPlugin();
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    allowedDevOrigins: ['https://fd6a-212-45-81-45.ngrok-free.app'],    
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  allowedDevOrigins: ['https://mini.torounlimitedvpn.com'],
 };
 
 export default withNextIntl(nextConfig);
+

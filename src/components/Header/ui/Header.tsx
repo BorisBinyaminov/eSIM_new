@@ -110,7 +110,7 @@ const Header = () => {
           >
             <div className='flex justify-between w-full'>
               <div className='flex items-center px-[8px] py-[6px] gap-[4px] rounded-[20px] border-1 border-[#27A6E1]'>
-                <Image src={user?.photo_url} className='rounded-full' width={24} height={24} alt="user profile photo"/>
+                <Image src={user?.photo_url ?? "/images/default-user.png"} className='rounded-full' width={24} height={24} alt="user profile photo"/>
                 <p className='text-white'>{user?.first_name}</p>
               </div>
               <button onClick={() => setIsMenuOpen(false)} className="self-end text-white text-lg">
