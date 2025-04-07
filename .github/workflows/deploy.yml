@@ -21,11 +21,10 @@ jobs:
 
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_IP }} << EOF
             cd ~/eSIM
             git reset --hard
             git pull origin dev
             docker-compose down
             docker-compose up -d --build
           EOF
-          
