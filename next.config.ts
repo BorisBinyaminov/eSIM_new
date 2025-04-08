@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  allowedDevOrigins: ['https://mini.torounlimitedvpn.com'],
-  output: 'export' // ✅ This enables static export mode
+  allowedDevOrigins: ['https://mini.torounlimitedvpn.com']
+  // ❌ removed: output: 'export'
 };
 
 export default withNextIntl(nextConfig);
