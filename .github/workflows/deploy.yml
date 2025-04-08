@@ -1,6 +1,5 @@
 name: Deploy to VPS
 
-# 🔄 Этот workflow запускается при каждом пуше в ветку dev
 on:
   push:
     branches:
@@ -9,27 +8,52 @@ on:
 jobs:
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest  # GitHub запускает на Ubuntu runner
+    runs-on: ubuntu-latest
 
     steps:
-      # 📦 Шаг 1: Клонирует репозиторий на runner
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 🔐 Шаг 2: Устанавливает SSH-ключ для подключения к VPS
-      - name: Setup SSH
+      - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Ключ из Secrets
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 🚀 Шаг 3: Подключается к VPS, делает git pull и перезапускает Docker
+      - name: Add VPS to known_hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
+
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_IP }} << EOF
-            cd ~/eSIM_new  # Переход в директорию проекта
-            git reset --hard  # Отменить все локальные изменения (если были)
-            git pull origin dev  # Обновить проект из ветки dev
-            docker-compose down  # Остановить текущие контейнеры
-            # docker-compose up -d --build  # Собрать и запустить заново
-            docker-compose up -d --build --force-recreate  # (альтернатива: пересобрать даже если нет изменений)
+          ssh root@${{ secrets.VPS_IP }} << 'EOF'
+            set -e
+            cd ~/eSIM_new
+
+            echo "[INFO] Tagging current state before deployment..."
+            git tag -f backup-before-deploy || true
+
+            echo "[INFO] Pulling latest changes..."
+            git reset --hard
+            git pull origin dev
+
+            echo "[INFO] Rebuilding containers..."
+            docker-compose down
+            docker-compose up -d --build --force-recreate
+          EOF
+
+      - name: Check deployment health
+        id: health
+        run: |
+          curl -I --fail https://mini.torounlimitedvpn.com
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "[ERROR] Deployment failed. Rolling back..."
+          ssh root@${{ secrets.VPS_IP }} << 'EOF'
+            set -e
+            cd ~/eSIM_new
+            git reset --hard backup-before-deploy
+            docker-compose down
+            docker-compose up -d --build
           EOF
