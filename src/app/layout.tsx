@@ -19,14 +19,22 @@ async function RootLayout({
 }>) {
   const messages = await getMessages();
   const locale = await getLocale();
+
   return (
-    <html lang={locale}>
+    <html lang={locale} 
+          style={
+              {
+                "--tg-viewport-height": "100vh",
+                "--tg-viewport-stable-height": "100vh",
+              } as React.CSSProperties
+          } 
+          suppressHydrationWarning>
       <body
         className={`font-roboto antialiased bg-mainbg`}
       >
         <Script
           src="https://telegram.org/js/telegram-web-app.js"
-          strategy="beforeInteractive" // или 'afterInteractive', если не критично
+          strategy="beforeInteractive"
         />
         <AuthProvider>
           <NextIntlClientProvider messages={messages}>

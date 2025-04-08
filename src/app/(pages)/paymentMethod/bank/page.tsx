@@ -79,7 +79,7 @@ const BankPayment = () => {
           className="text-blue-400 hover:underline"
           whileHover={{ scale: 1.1 }}
         >
-          <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" />
+          <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" className="w-[12px] h-[24px]"/>
         </motion.button>
         <motion.h1 
           className="text-lg font-bold"

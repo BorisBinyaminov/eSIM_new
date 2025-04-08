@@ -42,7 +42,7 @@ const CryptoPayment = () => {
           className="text-blue-400 hover:underline"
           whileHover={{ scale: 1.1 }}
         >
-          <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="Back" />
+          <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="Back" className="w-[12px] h-[24px]" />
         </motion.button>
         <motion.h1 
           className="text-lg font-bold"
@@ -89,7 +89,7 @@ const CryptoPayment = () => {
       >
         <p className="text-center text-sm text-gray-300">{t("QR - for payment")}</p>
         <div className="mt-2 flex justify-center">
-          <Image src="/images/qr-code.svg" width={200} height={200} alt="QR Code" />
+          <Image src="/images/qr-code.svg" width={200} height={200} alt="QR Code" className="w-[200px] h-[200px]"/>
         </div>
       </motion.div>
 

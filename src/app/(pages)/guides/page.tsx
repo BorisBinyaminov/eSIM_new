@@ -299,7 +299,7 @@ import { useTranslations } from "next-intl";
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
             >
-              <Image src="/images/mainpage/arrowL.svg" alt="Previous" width={44} height={44} />
+              <Image src="/images/mainpage/arrowL.svg" alt="Previous" width={44} height={44} className="w-[44px] h-[44px]"/>
             </motion.div>
           </button>
           
@@ -318,7 +318,7 @@ import { useTranslations } from "next-intl";
                 alt={filteredSlides[index].title}
                 width={300}
                 height={600}
-                className="rounded-md"
+                className="rounded-md w-[300px] h-[600px]"
               />
             </motion.div>
           </AnimatePresence>
@@ -332,7 +332,7 @@ import { useTranslations } from "next-intl";
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
             >
-              <Image src="/images/mainpage/arrowR.svg" alt="Next" width={44} height={44} />
+              <Image src="/images/mainpage/arrowR.svg" alt="Next" width={44} height={44} className="w-[44px] h-[44px]"/>
             </motion.div>
           </button>   
         </div>

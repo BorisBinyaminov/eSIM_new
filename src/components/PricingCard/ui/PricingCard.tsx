@@ -55,27 +55,27 @@ const PricingCard = ({
       <div className="mt-4 space-y-2">
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
           <span className='flex gap-[8px] items-center bg-[]'>
-            <Image src="/images/buyEsimPage/PricingCard/DataVolume.svg" width={24} height={24} alt="Data volume"/> {t("Data volume")}
+            <Image className='w-[24px] h-[24px]' src="/images/buyEsimPage/PricingCard/DataVolume.svg" width={24} height={24} alt="Data volume"/> {t("Data volume")}
           </span>
           <span className="text-[14px] text-[#27A6E1] font-[400]">{data}</span>
         </div>
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
           <span className='flex gap-[8px] items-center'>
-            <Image src="/images/buyEsimPage/PricingCard/Duration.svg" width={24} height={24} alt="Duration"/> {t("Duration")}
+            <Image className='w-[24px] h-[24px]' src="/images/buyEsimPage/PricingCard/Duration.svg" width={24} height={24} alt="Duration"/> {t("Duration")}
           </span>
           <span className="text-[14px] text-[#27A6E1] font-[400]">{duration}</span>
         </div>
         {coverage > 1 && (
           <div className="flex justify-between text-sm bg-mainbg p-2 rounded-lg">
             <span className='flex gap-[8px] items-center'>
-              <Image src="/images/buyEsimPage/PricingCard/Coverage.svg" width={24} height={24} alt="Coverage"/> {t("Coverage")}
+              <Image className='w-[24px] h-[24px]' src="/images/buyEsimPage/PricingCard/Coverage.svg" width={24} height={24} alt="Coverage"/> {t("Coverage")}
             </span>
             <span className="text-[14px] text-[#27A6E1] font-[400]">{coverage}</span>
           </div>
         )}
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">
           <span className='flex gap-[8px] items-center'>
-            <Image src="/images/buyEsimPage/PricingCard/TopUpSupport.svg" width={24} height={24} alt="Top-Up Support"/> {t("Top-Up Support")}
+            <Image className='w-[24px] h-[24px]' src="/images/buyEsimPage/PricingCard/TopUpSupport.svg" width={24} height={24} alt="Top-Up Support"/> {t("Top-Up Support")}
           </span>
           <span className="text-[14px] text-[#27A6E1] font-[400]">{supportTopUpType === 2 ? "Yes" : "No"}</span>
         </div>
@@ -83,7 +83,7 @@ const PricingCard = ({
       <div className="relative group flex flex-col text-sm bg-mainbg p-2 rounded-lg">
         <div className={`flex justify-between ${expanded ? "flex-col" : ""}`}>
           <span className='flex gap-[8px] items-center w-[200px] w-full'>
-            <Image src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> {t("Locations")}
+            <Image className='w-[24px] h-[24px]' src="/images/buyEsimPage/PricingCard/Location.svg" width={24} height={24} alt="Locations"/> {t("Locations")}
           </span>
           <span className="font-semibold w-[200px] w-full">
             {expanded ? locations.join(', ') : locations.slice(0, 3).join(', ')}
