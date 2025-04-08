@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   allowedDevOrigins: ['https://mini.torounlimitedvpn.com'],
+  output: 'export' // ✅ This enables static export mode
 };
 
 export default withNextIntl(nextConfig);
-
