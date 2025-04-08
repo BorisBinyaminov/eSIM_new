@@ -38,5 +38,22 @@ jobs:
 
             echo "[INFO] Rebuilding containers..."
             docker-compose down
-            docker-compose up -d --build --force-recreate
+            docker-compose up -d --build
+          EOF
+
+      - name: Check deployment health
+        id: health
+        run: |
+          curl -I --fail https://mini.torounlimitedvpn.com
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "[ERROR] Deployment failed. Rolling back..."
+          ssh root@${{ secrets.VPS_IP }} << 'EOF'
+            set -e
+            cd ~/eSIM_new
+            git reset --hard backup-before-deploy
+            docker-compose down
+            docker-compose up -d --build
           EOF
