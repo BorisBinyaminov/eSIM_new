@@ -26,7 +26,7 @@ jobs:
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_IP }} << EOF
-            cd ~/eSIM  # Переход в директорию проекта
+            cd ~/eSIM_new  # Переход в директорию проекта
             git reset --hard  # Отменить все локальные изменения (если были)
             git pull origin dev  # Обновить проект из ветки dev
             docker-compose down  # Остановить текущие контейнеры
