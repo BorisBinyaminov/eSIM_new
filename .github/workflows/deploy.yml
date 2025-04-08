@@ -41,10 +41,19 @@ jobs:
             docker-compose up -d --build
           EOF
 
-      - name: Check deployment health
-        id: health
+      - name: Check deployment health with retries
         run: |
-          curl -I --fail https://mini.torounlimitedvpn.com
+          for i in {1..10}; do
+            echo "Attempt $i: Checking https://mini.torounlimitedvpn.com"
+            if curl -sSf -o /dev/null https://mini.torounlimitedvpn.com; then
+              echo "✅ Site is up"
+              exit 0
+            fi
+            echo "Waiting 5s before retry..."
+            sleep 5
+          done
+          echo "❌ Site did not become healthy in time"
+          exit 1
 
       - name: Rollback on failure
         if: failure()
