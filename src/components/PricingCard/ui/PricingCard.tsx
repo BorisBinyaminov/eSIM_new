@@ -70,7 +70,7 @@ const PricingCard = ({
             <span className='flex gap-[8px] items-center'>
               <Image className='w-[24px] h-[24px]' src="/images/buyEsimPage/PricingCard/Coverage.svg" width={24} height={24} alt="Coverage"/> {t("Coverage")}
             </span>
-            <span className="text-[14px] text-[#27A6E1] font-[400]">{coverage}</span>
+            <span className="text-[14px] text-[#27A6E1] font-[400]">{coverage} {t("countries")}</span>
           </div>
         )}
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">

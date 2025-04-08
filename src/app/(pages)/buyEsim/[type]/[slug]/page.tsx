@@ -188,7 +188,7 @@ export default function CountryPage() {
                           duration={`${pkg.duration} ${pkg.durationUnit}`}
                           supportTopUpType={pkg.supportTopUpType}
                           locations={pkg.locationNetworkList.map((network) => network.locationName)}
-                          coverage={packagesData[0].locationNetworkList.map((network) => network.locationName).length}
+                          coverage={pkg.locationNetworkList.map((network) => network.locationName).length}
                         />
                       </SwiperSlide>
                     ))}
