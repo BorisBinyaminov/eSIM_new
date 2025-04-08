@@ -30,6 +30,6 @@ jobs:
             git reset --hard  # Отменить все локальные изменения (если были)
             git pull origin dev  # Обновить проект из ветки dev
             docker-compose down  # Остановить текущие контейнеры
-            docker-compose up -d --build  # Собрать и запустить заново
-            # docker-compose up -d --build --force-recreate  # (альтернатива: пересобрать даже если нет изменений)
+            # docker-compose up -d --build  # Собрать и запустить заново
+            docker-compose up -d --build --force-recreate  # (альтернатива: пересобрать даже если нет изменений)
           EOF
