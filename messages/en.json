@@ -121,6 +121,7 @@
         }
     },
     "faq": {
+        "FAQ": "FAQ",
         "1": {
         "question": "Which devices and software versions support eSIM?",
         "answer": "- **iOS:** You must have iOS 12.1 or later and an unlocked iPhone. iPhones older than XR or XS support eSIM.\n(Note: If you purchased your phone under a contract, check with your carrier to unlock eSIM compatibility.)\n- **Android:** Samsung, Pixel, and many Android devices support eSIM."
