@@ -21,7 +21,7 @@ const Page = () => {
           whileHover={{ scale: 1.1 }}
           onClick={() => router.back()}
         >
-          <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow"/>
+          <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" className='w-[12px] h-[24px]'/>
         </motion.button>
         <motion.h1 
           className="text-[16px] font-bold"
@@ -41,7 +41,7 @@ const Page = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Image src="/images/PaymentMethod/bank.svg" width={32} height={32} alt="Bank" />
+          <Image src="/images/PaymentMethod/bank.svg" width={32} height={32} alt="Bank" className='w-[32px] h-[32px]'/>
           <p className="text-[16px] font-bold text-white">{t("bank")}</p>
         </motion.a>
         <motion.a 
@@ -52,7 +52,7 @@ const Page = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
-          <Image src="/images/PaymentMethod/crypto.svg" width={32} height={32} alt="Cryptocurrency"/>
+          <Image src="/images/PaymentMethod/crypto.svg" width={32} height={32} alt="Cryptocurrency" className='w-[32px] h-[32px]'/>
           <p className='text-[16px] font-bold text-white'>{t("crypto")}</p>
         </motion.a>
       </div>

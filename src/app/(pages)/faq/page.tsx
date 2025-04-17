@@ -28,7 +28,7 @@ const FAQItem = ({ question, answer,index}: { question: string; answer: string ;
             <span className="text-[16px] font-semibold max-w-[216px] w-full">{question}</span>
         </div>
         <motion.span className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] py-[8px] px-[5px] rounded-full" animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
-          <Image src="/images/faq/arrow.svg" alt="Arrow" width={14} height={28} className="object-cover"/>
+          <Image src="/images/faq/arrow.svg" alt="Arrow" width={14} height={28} className="object-cover w-[14px] h-[28px]"/>
         </motion.span>
       </button>
       <motion.div

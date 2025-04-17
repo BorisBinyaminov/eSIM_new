@@ -13,17 +13,23 @@ export default function ReplenishmentEsimPage() {
   const t = useTranslations("sms");
 
   useEffect(() => {
-    let interval = null;
-    if (isTimerActive && timer > 0) {
-      interval = setInterval(() => {
+  const interval = isTimerActive && timer > 0
+    ? setInterval(() => {
         setTimer(prev => prev - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setIsTimerActive(false);
+      }, 1000)
+    : undefined;
+
+  if (timer === 0) {
+    setIsTimerActive(false);
+  }
+
+  return () => {
+    if (interval !== undefined) {
       clearInterval(interval);
     }
-    return () => clearInterval(interval);
-  }, [timer, isTimerActive]);
+  };
+}, [timer, isTimerActive]);
+
 
   const handleResend = () => {
     setTimer(30);
@@ -43,7 +49,7 @@ export default function ReplenishmentEsimPage() {
                   className="text-blue-400 hover:underline"
                   whileHover={{ scale: 1.1 }}
                 >
-                  <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" />
+                  <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" className='w-[12px] h-[24px]'/>
                 </motion.button>
                 <motion.h1 
                   className="text-lg font-bold"

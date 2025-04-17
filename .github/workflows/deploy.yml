@@ -1,28 +1,68 @@
-name: 🚀 Deploy to VPS
+name: Deploy to VPS
 
 on:
   push:
     branches:
-      - main  # замени на dev, если ты используешь dev-ветку
+      - dev
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: 🔐 Set up SSH
-        uses: webfactory/ssh-agent@v0.8.1
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.VPS_DEPLOY_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: 🚀 Deploy via SSH
+      - name: Add VPS to known_hosts
         run: |
-          ssh -o StrictHostKeyChecking=no root@31.172.72.180 << 'EOF'
-            cd ~/eSIM
-            git pull origin main  # или dev
+          ssh-keyscan -H ${{ secrets.VPS_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        run: |
+          ssh root@${{ secrets.VPS_IP }} << 'EOF'
+            set -e
+            cd ~/eSIM_new
+
+            echo "[INFO] Tagging current state before deployment..."
+            git tag -f backup-before-deploy || true
+
+            echo "[INFO] Pulling latest changes..."
+            git reset --hard
+            git pull origin dev
+
+            echo "[INFO] Rebuilding containers..."
+            docker-compose down
+            docker-compose up -d --build
+          EOF
+
+      - name: Check deployment health with retries
+        run: |
+          for i in {1..10}; do
+            echo "Attempt $i: Checking https://mini.torounlimitedvpn.com"
+            if curl -sSf -o /dev/null https://mini.torounlimitedvpn.com; then
+              echo "✅ Site is up"
+              exit 0
+            fi
+            echo "Waiting 5s before retry..."
+            sleep 5
+          done
+          echo "❌ Site did not become healthy in time"
+          exit 1
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "[ERROR] Deployment failed. Rolling back..."
+          ssh root@${{ secrets.VPS_IP }} << 'EOF'
+            set -e
+            cd ~/eSIM_new
+            git reset --hard backup-before-deploy
             docker-compose down
             docker-compose up -d --build
           EOF

@@ -61,7 +61,7 @@ const SupportedDevicesPage = () => {
             >
               <span className="flex justify-between">
                 {brand.brand}
-                <Image src="/images/supportedDevice/arrow.svg" width={7} height={14} alt="arrow"/>
+                <Image src="/images/supportedDevice/arrow.svg" width={7} height={14} alt="arrow" className="w-[7px] h-[14px]"/>
               </span>
             </button>
           ))}
@@ -78,7 +78,7 @@ const SupportedDevicesPage = () => {
                     setSelectedCategory(null);
                     }}
                 >
-                    <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow"/>
+                    <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" className="w-[12px] h-[24px]"/>
                 </button>
                 <h1 className="text-2xl font-bold mb-4">{headerTitle}</h1>
                 
@@ -91,7 +91,7 @@ const SupportedDevicesPage = () => {
             >
                 <span className="flex justify-between">
                     {category.name}
-                    <Image src="/images/supportedDevice/arrow.svg" width={7} height={14} alt="arrow"/>
+                    <Image src="/images/supportedDevice/arrow.svg" width={7} height={14} alt="arrow" className="w-[7px] h-[14px]"/>
                 </span>
             </button>
           ))}
@@ -108,7 +108,7 @@ const SupportedDevicesPage = () => {
                     setSelectedCategory(null);
                     }}
                 >
-                    <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow"/>
+                    <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" className="w-[12px] h-[24px]"/>
                 </button>
                 <h1 className="text-2xl font-bold mb-4">{headerTitle}</h1>
                 

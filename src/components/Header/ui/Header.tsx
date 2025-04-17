@@ -50,7 +50,7 @@ const Header = () => {
   return (
     <header className="flex justify-between items-center bg-mainbg py-4 px-6 relative">
       <Link href="/" className="flex items-center gap-5">
-        <Image src="/images/logos/logo.svg" width={34} height={54} alt="logo" />
+        <Image src="/images/logos/logo.svg" width={34} height={54} alt="logo" className='w-[34px] h-[54px]'/>
         <h3 className='text-white text-[20px]'>{t("title")}</h3>
       </Link>
       
@@ -63,6 +63,7 @@ const Header = () => {
               width={24} 
               height={24} 
               alt={locale} 
+              className='w-[24px] h-[24px]'
             />
           ): ""}
           </button>
@@ -80,7 +81,7 @@ const Header = () => {
                   onClick={() => { changeLocale(code); setIsDropdownOpen(false); }}
                   className="flex items-center gap-3 w-full px-[14px] py-2 rounded-xl border border-blue-400 hover:bg-[#10172A] transition-all"
                 >
-                  <Image src={flag} width={24} height={24} alt={name} />
+                  <Image src={flag} width={24} height={24} alt={name} className='w-[24px] h-[24px]'/>
                   <span className="text-white">{name}</span>
                 </button>
               ))}
@@ -89,7 +90,7 @@ const Header = () => {
         </div>
 
         <button onClick={() => setIsMenuOpen(true)} className="p-2">
-          <Image src="/images/header/burgerMenu.svg" width={32} height={32} alt="Menu" />
+          <Image src="/images/header/burgerMenu.svg" width={32} height={32} alt="Menu" className='w-[32px] h-[32px]'/>
         </button>
       </div>
 
@@ -110,11 +111,11 @@ const Header = () => {
           >
             <div className='flex justify-between w-full'>
               <div className='flex items-center px-[8px] py-[6px] gap-[4px] rounded-[20px] border-1 border-[#27A6E1]'>
-                <Image src={user?.photo_url} className='rounded-full' width={24} height={24} alt="user profile photo"/>
+                <Image src={user?.photo_url ?? "/images/default-user.png"} className='rounded-full w-[24px] h-[24px]' width={24} height={24} alt="user profile photo"/>
                 <p className='text-white'>{user?.first_name}</p>
               </div>
               <button onClick={() => setIsMenuOpen(false)} className="self-end text-white text-lg">
-                <Image src="/images/header/burgerMenu.svg" width={32} height={32} alt="Menu" />
+                <Image src="/images/header/burgerMenu.svg" width={32} height={32} alt="Menu" className='w-[32px] h-[32px]' />
               </button>
             </div>
             <nav className="flex flex-col gap-4 text-white">
@@ -125,11 +126,11 @@ const Header = () => {
             </nav>
             <div className='flex gap-[4px] mt-[24px]'>
               <a target='_blank' href='https://t.me/eSIM_Unlimited' className='p-[16px] flex rounded-[20px] gap-[10px] items-center bg-mainbg border-1 border-[#27A6E1]'>
-                <Image src="/images/header/tg.svg" width={16} height={16} alt='telegramm icon'/>
+                <Image src="/images/header/tg.svg" width={16} height={16} alt='telegramm icon' className='w-[16px] h-[16px]'/>
                 <p className='text-[14px] text-white'>{t("community")}</p>
               </a>
               <a target='_blank' href="https://t.me/esim_unlimited_support_bot" className='p-[16px] flex rounded-[20px] gap-[10px] items-center bg-mainbg border-1 border-[#27A6E1]'>
-                <Image src="/images/header/tg.svg" width={16} height={16} alt='telegramm icon'/>
+                <Image src="/images/header/tg.svg" width={16} height={16} alt='telegramm icon' className='w-[16px] h-[16px]'/>
                 <p className='text-[14px] text-white'>{t("support")}</p>
               </a>
             </div>

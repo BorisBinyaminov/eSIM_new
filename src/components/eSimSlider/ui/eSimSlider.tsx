@@ -56,7 +56,7 @@ export default function EsimSlider() {
                 whileTap={{ scale: 0.9 }} // Эффект нажатия
                 transition={{ type: "spring", stiffness: 300, damping: 15 }} // Плавность
             >
-                <Image src="/images/mainpage/arrowL.svg" alt="Previous" width={44} height={44} />
+                <Image src="/images/mainpage/arrowL.svg" alt="Previous" width={44} height={44} className="w-[44px] h-[44px]"/>
             </motion.div>
         </button>
 
@@ -69,7 +69,7 @@ export default function EsimSlider() {
             transition={{ duration: 0.5, ease: "easeInOut" }}
             className="absolute flex flex-col items-center "
           >
-            <Image src={slides[index].image} alt={slides[index].title} width={115} height={149} />
+            <Image src={slides[index].image} alt={slides[index].title} width={115} height={149} className="w-[115px] h-[149px]"/>
           </motion.div>
         </AnimatePresence>
 
@@ -82,7 +82,7 @@ export default function EsimSlider() {
                 whileTap={{ scale: 0.9 }} // Создаёт эффект нажатия
                 transition={{ type: "spring", stiffness: 300, damping: 15 }} // Плавный эффект
             >
-                <Image src="/images/mainpage/arrowR.svg" alt="Next" width={44} height={44} />
+                <Image src="/images/mainpage/arrowR.svg" alt="Next" width={44} height={44} className="w-[44px] w-[44px]"/>
             </motion.div>
         </button>
       </div>

@@ -87,6 +87,7 @@
         "Coverage": "Покрытие",
         "Top-Up Support": "Поддержка пополнения счета",
         "Locations": "Локации",
+        "countries": "страны",
         "types":{
             "Local": "Локальный",
             "Regional": "Региональный",

@@ -28,7 +28,7 @@ const Navbar = () => {
                 >
                     <Link href={href}>
                         <div className='flex flex-col text-white text-center items-center'>
-                            <Image src={icon} width={24} height={24} alt={`${label} Icon`} />
+                            <Image src={icon} width={24} height={24} alt={`${label} Icon`} className='w-[24px] h-[24px]'/>
                             <p className='font-roboto text-sm text-white'>{label}</p>
                         </div>
                     </Link>

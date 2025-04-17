@@ -129,7 +129,7 @@ export default function CountryPage() {
             width={14}
             height={24}
             alt="arrow left"
-            className="object-contain"
+            className="object-contain h-[24px] w-[14px]"
           />
         </Link>
         {displayType === 'Global' ? 
@@ -183,11 +183,12 @@ export default function CountryPage() {
                         <PricingCard
                           name={pkg.name}
                           description={pkg.description}
-                          price={pkg.price}
+                          price={pkg.retailPrice}
                           data={pkg.volumeGB || `${pkg.volume}`}
                           duration={`${pkg.duration} ${pkg.durationUnit}`}
                           supportTopUpType={pkg.supportTopUpType}
                           locations={pkg.locationNetworkList.map((network) => network.locationName)}
+                          coverage={pkg.locationNetworkList.map((network) => network.locationName).length}
                         />
                       </SwiperSlide>
                     ))}

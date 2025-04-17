@@ -149,6 +149,13 @@ export default function BuyESIM() {
     }
   }, [globalPackages, globalItems]);
 
+  useEffect(() => {
+    const storedType = localStorage.getItem("selectedType") as "Local" | "Regional" | "Global" | null;
+    if (storedType) {
+      setType(storedType);
+    }
+  }, []);
+
   const categories: {
     Local: CountryItem[];
     Regional: RegionalItem[];
@@ -182,6 +189,7 @@ export default function BuyESIM() {
           onClick={() => {
             setType(item); // сохраняем английский ключ
             setShowAll(false);
+            localStorage.setItem("selectedType", item);
           }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -234,7 +242,7 @@ export default function BuyESIM() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Image src={item.image.path} width={32} height={32} alt={item.image.alt} />
+                  <Image src={item.image.path} width={32} height={32} alt={item.image.alt} className="w-[32px] h-[32px]"/>
                   <h4 className="text-white text-lg">{item.name}</h4>
                 </motion.div>
               </Link>
