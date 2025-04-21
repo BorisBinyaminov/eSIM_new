@@ -1,7 +1,5 @@
 // pages/api/auth.ts
 
-export const dynamic = 'force-dynamic'
-
 import crypto from 'crypto';
 
 const BOT_TOKEN = process.env.BOT_TOKEN || 'ТВОЙ_ТОКЕН_БОТА';
