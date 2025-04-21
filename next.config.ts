@@ -1,12 +1,16 @@
 import { NextConfig } from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+// Initialize the Next-Intl plugin (will auto-load next-intl.config.ts)
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   eslint: {
-    // Disable ESLint during production builds to avoid build errors
     ignoreDuringBuilds: true,
   },
+  // any other Next.js settings you need
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
