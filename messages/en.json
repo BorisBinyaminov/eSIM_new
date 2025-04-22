@@ -110,7 +110,8 @@
             "northAmerica": "North America",
             "africa": "Africa",
             "asia": "Asia",
-            "caribbean": "Caribbean"
+            "caribbean": "Caribbean",
+            "middleEast": "Middle East"
         },
         "global": {
             "1gb": "Global Package 1GB",
