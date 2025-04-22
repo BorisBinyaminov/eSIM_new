@@ -86,7 +86,7 @@ export default function BuyESIM() {
           code,
           name: name as string,
           image: {
-            path: `/images/flags/${code}.png`,
+            path: `/images/flags/${code.toLowerCase()}.png`,
             alt: name as string,
           },
         }));

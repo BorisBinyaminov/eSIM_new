@@ -1,4 +1,5 @@
 // pages/api/auth.ts
+
 import crypto from 'crypto';
 
 const BOT_TOKEN = process.env.BOT_TOKEN || 'ТВОЙ_ТОКЕН_БОТА';
