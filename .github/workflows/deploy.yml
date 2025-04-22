@@ -3,7 +3,7 @@ name: Deploy to VPS
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   deploy:
@@ -32,9 +32,10 @@ jobs:
             echo "[INFO] Tagging current state before deployment..."
             git tag -f backup-before-deploy || true
 
-            echo "[INFO] Pulling latest changes..."
-            git reset --hard
-            git pull origin dev
+            echo "[INFO] Fetching latest changes from main..."
+            git fetch origin main
+            echo "[INFO] Resetting local branch to origin/main..."
+            git reset --hard origin/main
 
             echo "[INFO] Rebuilding containers..."
             docker-compose down
