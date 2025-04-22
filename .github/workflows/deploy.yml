@@ -32,9 +32,10 @@ jobs:
             echo "[INFO] Tagging current state before deployment..."
             git tag -f backup-before-deploy || true
 
-            echo "[INFO] Pulling latest changes..."
-            git reset --hard
-            git pull origin main
+            echo "[INFO] Fetching latest changes from main..."
+            git fetch origin main
+            echo "[INFO] Resetting local branch to origin/main..."
+            git reset --hard origin/main
 
             echo "[INFO] Rebuilding containers..."
             docker-compose down
@@ -45,7 +46,7 @@ jobs:
         run: |
           for i in {1..10}; do
             echo "Attempt $i: Checking https://mini.torounlimitedvpn.com"
-            if curl -sSf -o /main/null https://mini.torounlimitedvpn.com; then
+            if curl -sSf -o /dev/null https://mini.torounlimitedvpn.com; then
               echo "✅ Site is up"
               exit 0
             fi
