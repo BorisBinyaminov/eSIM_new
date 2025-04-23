@@ -161,14 +161,14 @@ export default function CountryPage() {
                   coverage={packagesData[0].locationNetworkList.map((network) => network.locationName).length}
                 />
                 <h2 className="text-lg text-white font-semibold">{t("All tariffs")}</h2>
-                <div className="w-full max-w-5xl">
+                <div className="w-full max-w-5xl overflow-hidden px-4">
                   <Swiper 
                     spaceBetween={10} 
                     slidesPerView={1}
                     grabCursor={true} 
                     breakpoints={{
                       640: {
-                        slidesPerView: 1.1,
+                        slidesPerView: 1,
                       },
                       768: {
                         slidesPerView: 2.2,
@@ -179,7 +179,7 @@ export default function CountryPage() {
                     }}
                   >
                     {packagesData.map((pkg, index) => (
-                      <SwiperSlide key={index} className='w-full max-w-[320px]'>
+                      <SwiperSlide key={index} className='w-full'>
                         <PricingCard
                           name={pkg.name}
                           description={pkg.description}
