@@ -27,9 +27,20 @@ const FAQItem = ({ question, answer,index}: { question: string; answer: string ;
             <span className="bg-gradient-to-b from-[#27A6E1] to-[#4381EB] bg-clip-text text-transparent font-bold text-[16px]">{index >= 9 ? "": "0"}{index + 1}</span>
             <span className="text-[16px] font-semibold max-w-[216px] w-full">{question}</span>
         </div>
-        <motion.span className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] py-[8px] px-[5px] rounded-full" animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
-          <Image src="/images/faq/arrow.svg" alt="Arrow" width={14} height={28} className="object-cover w-[14px] h-[28px]"/>
+        <motion.span
+          className="w-10 h-10 rounded-full bg-gradient-to-r from-[#27A6E1] to-[#4381EB] flex items-center justify-center"
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Image
+            src="/images/faq/arrow.svg"
+            alt="Arrow"
+            width={14}
+            height={28}
+            className="w-[14px] h-[28px]"
+          />
         </motion.span>
+
       </button>
       <motion.div
         initial={{ height: 0, opacity: 0 }}
@@ -81,7 +92,7 @@ const FAQPage = () => {
   ];
   return (
     <div className="px-[16px] mb-[70px] bg-[#05081A]">        
-        <h1 className="text-left text-[32px]">FAQ</h1>
+        <h1 className="text-left text-[32px] text-white max-w-lg mx-auto">{t("FAQ")}</h1>
         <div className="flex flex-col gap-[16px] max-w-lg mx-auto mt-10 text-white rounded-lg shadow-lg overflow-hidden items-center">
             {faqs.map((faq, index) => (
             <FAQItem key={index} {...faq} index={index}/>

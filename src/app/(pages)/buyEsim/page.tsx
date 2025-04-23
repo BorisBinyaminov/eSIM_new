@@ -60,12 +60,13 @@ export default function BuyESIM() {
 
   // Оборачиваем массивы в useMemo, чтобы их ссылка оставалась стабильной
   const regionalItems = useMemo<RegionalItem[]>(() => [
-    { id: 1, name: t("regions.europe"), filter: "eu", image: { path: "/images/buyEsimPage/region/1.svg", alt: t("regions.europe") } },
+    { id: 1, name: t("regions.europe"), filter: "eu-30", image: { path: "/images/buyEsimPage/region/1.svg", alt: t("regions.europe") } },
     { id: 2, name: t("regions.southAmerica"), filter: "sa", image: { path: "/images/buyEsimPage/region/2.svg", alt: t("regions.southAmerica") } },
     { id: 3, name: t("regions.northAmerica"), filter: "na", image: { path: "/images/buyEsimPage/region/3.svg", alt: t("regions.northAmerica") } },
     { id: 4, name: t("regions.africa"), filter: "af", image: { path: "/images/buyEsimPage/region/4.svg", alt: t("regions.africa") } },
     { id: 5, name: t("regions.asia"), filter: "as", image: { path: "/images/buyEsimPage/region/5.svg", alt: t("regions.asia") } },
-    { id: 6, name: t("regions.caribbean"), filter: "ca", image: { path: "/images/buyEsimPage/region/6.svg", alt: t("regions.caribbean") } },
+    { id: 6, name: t("regions.caribbean"), filter: "cb", image: { path: "/images/buyEsimPage/region/6.svg", alt: t("regions.caribbean") } },
+    { id: 7, name: t("regions.middleEast"), filter: "me", image: { path: "/images/buyEsimPage/region/7.svg", alt: t("regions.middleEast") } },
   ], [t]);
 
   const globalItems = useMemo<GlobalItem[]>(() => [
@@ -86,7 +87,7 @@ export default function BuyESIM() {
           code,
           name: name as string,
           image: {
-            path: `/images/flags/${code}.png`,
+            path: `/images/flags/${code.toLowerCase()}.png`,
             alt: name as string,
           },
         }));
