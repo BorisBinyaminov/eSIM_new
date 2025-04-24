@@ -37,7 +37,7 @@ const FAQItem = ({ question, answer,index}: { question: string; answer: string ;
             alt="Arrow"
             width={14}
             height={28}
-            className="w-auto h-auto"
+            className="w-[14px] h-[28px]"
           />
         </motion.span>
 
