@@ -33,7 +33,7 @@ const PricingCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-bglight border-[2px] border-[#27A6E1] text-white px-[10px] py-[18px] rounded-[12px] shadow-lg w-80 mb-[70px]"
+      className="bg-bglight border-[2px] border-[#27A6E1] text-white px-[10px] py-[18px] rounded-[12px] shadow-lg w-full max-w-[320px] mb-[70px]"
     >
       {/* <h3 className="text-[16px] text-white">{description}</h3> */}
       <div className="flex justify-between items-center">
