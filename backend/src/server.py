@@ -16,9 +16,35 @@ import buy_esim
 from support_bot import create_bot_app
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from pathlib import Path
 
 # Load environment variables
 load_dotenv()
+
+
+
+# путь к папке src: .../eSIM_new/backend/src
+SRC_DIR     = Path(__file__).resolve().parent
+
+# из src поднимаемся в backend, затем в eSIM_new
+BACKEND_DIR = SRC_DIR.parent             # .../eSIM_new/backend
+ROOT_DIR    = BACKEND_DIR.parent         # .../eSIM_new
+
+PUBLIC_DIR  = ROOT_DIR / 'public'        # .../eSIM_new/public
+
+COUNTRIES_F     = PUBLIC_DIR / 'countries.json'
+LOCAL_PKGS_F    = PUBLIC_DIR / 'countryPackages.json'
+REGIONAL_PKGS_F = PUBLIC_DIR / 'regionalPackages.json'
+GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
+ALL_PKGS_F      = PUBLIC_DIR / 'allPackages.json'
+
+BACKEND_DIR = SRC_DIR.parent                         # …/eSIM_new/backend
+ROOT_DIR    = BACKEND_DIR.parent                     # …/eSIM_new
+PUBLIC_DIR  = ROOT_DIR / 'public'                    # …/eSIM_new/public
+IMAGES_DIR  = PUBLIC_DIR / 'images'                  # …/eSIM_new/public/images
+
+# **Change this** to point inside your backend folder:
+NEXT_STATIC_DIR = ROOT_DIR / '.next' / 'static'       # …/eSIM_new/.next/static      # …/eSIM_new/backend/build/static
 
 # Force UTF-8 encoding (Windows Fix)
 sys.stdout.reconfigure(encoding="utf-8")
@@ -38,8 +64,16 @@ Base.metadata.create_all(bind=engine)
 print("[DEBUG] All tables created (if not already present).")
 
 # ✅ Serve images & JSON files from the `public/` directory
-app.mount("/images", StaticFiles(directory="public/images"), name="images")
-app.mount("/static", StaticFiles(directory="build/static"), name="static")
+app.mount(
+    "/images",
+    StaticFiles(directory=str(IMAGES_DIR)),
+    name="images"
+)
+app.mount(
+    "/static",
+    StaticFiles(directory=str(NEXT_STATIC_DIR)),
+    name="static"
+)
 
 # ✅ Serve JSON files from `public/` with cache control
 @app.get("/{filename}.json")
@@ -52,7 +86,7 @@ async def serve_json(filename: str):
     return JSONResponse(content={"error": "File not found"}, status_code=404)
 
 # ✅ Ensure `countries.json` exists
-COUNTRIES_JSON_PATH = "public/countries.json"
+COUNTRIES_JSON_PATH = COUNTRIES_F
 if not os.path.exists(COUNTRIES_JSON_PATH):
     with open(COUNTRIES_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump({}, f)
@@ -119,7 +153,7 @@ def fetch_packages():
             if response_data.get("success"):
                 packages = response_data["obj"]["packageList"]
                 adjusted_packages = adjust_prices(packages)
-                with open(f"public/{filename}", "w", encoding="utf-8") as f:
+                with open(f"{PUBLIC_DIR}/{filename}", "w", encoding="utf-8") as f:
                     json.dump(adjusted_packages, f, indent=4)
                 print(f"✅ Saved {filename} successfully in `public/` with updated prices!", flush=True)
             else:
@@ -129,7 +163,7 @@ def fetch_packages():
             print(traceback.format_exc())
 
     try:
-        with open("public/allPackages.json", "r", encoding="utf-8") as f:
+        with open(ALL_PKGS_F, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         country_packages = [
@@ -137,7 +171,7 @@ def fetch_packages():
             if package.get("location") and len(package["location"]) == 2
         ]
 
-        with open("public/countryPackages.json", "w", encoding="utf-8") as f:
+        with open(LOCAL_PKGS_F, "w", encoding="utf-8") as f:
             json.dump(country_packages, f, indent=4)
 
         print(f"✅ Filtered JSON saved successfully. Total country-specific packages: {len(country_packages)} out of {len(data)}", flush=True)
@@ -145,13 +179,13 @@ def fetch_packages():
         print(f"⚠️ Error filtering country-specific packages: {e}", flush=True)
 
     last_update_time = time.strftime("%Y-%m-%d %H:%M:%S")
-    with open("public/lastUpdate.txt", "w", encoding="utf-8") as f:
+    with open(f"{PUBLIC_DIR}/lastUpdate.txt", "w", encoding="utf-8") as f:
         f.write(last_update_time)
 
     print(f"\n✅ Packages updated at: {last_update_time}", flush=True)
 
 # ✅ Fetch packages immediately on startup
-#fetch_packages()
+fetch_packages()
 
 # ✅ Periodic update of JSON files every 6 hours
 def schedule_package_updates():
