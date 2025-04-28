@@ -21,8 +21,6 @@ from pathlib import Path
 # Load environment variables
 load_dotenv()
 
-
-
 # путь к папке src: .../eSIM_new/backend/src
 SRC_DIR     = Path(__file__).resolve().parent
 
@@ -37,7 +35,6 @@ LOCAL_PKGS_F    = PUBLIC_DIR / 'countryPackages.json'
 REGIONAL_PKGS_F = PUBLIC_DIR / 'regionalPackages.json'
 GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
 ALL_PKGS_F      = PUBLIC_DIR / 'allPackages.json'
-
 BACKEND_DIR = SRC_DIR.parent                         # …/eSIM_new/backend
 ROOT_DIR    = BACKEND_DIR.parent                     # …/eSIM_new
 PUBLIC_DIR  = ROOT_DIR / 'public'                    # …/eSIM_new/public
@@ -64,16 +61,30 @@ Base.metadata.create_all(bind=engine)
 print("[DEBUG] All tables created (if not already present).")
 
 # ✅ Serve images & JSON files from the `public/` directory
+# Serve images from public/images
 app.mount(
     "/images",
     StaticFiles(directory=str(IMAGES_DIR)),
     name="images"
 )
-app.mount(
-    "/static",
-    StaticFiles(directory=str(NEXT_STATIC_DIR)),
-    name="static"
-)
+
+# Conditionally serve Next.js static assets
+candidate_dirs = [
+    ROOT_DIR / ".next" / "static",
+    Path.home()   / ".next" / "static"
+]
+for static_dir in candidate_dirs:
+    if static_dir.is_dir():
+        print(f"[INFO] Mounting /static from {static_dir}")
+        app.mount(
+            "/static",
+            StaticFiles(directory=str(static_dir)),
+            name="static"
+        )
+        break
+else:
+    print(f"[WARNING] No Next.js static dir found; looked in:\n  " +
+          "\n  ".join(str(d) for d in candidate_dirs))
 
 # ✅ Serve JSON files from `public/` with cache control
 @app.get("/{filename}.json")
