@@ -205,12 +205,14 @@ def schedule_package_updates():
         fetch_packages()
 
 def run_support_bot():
-    print("🤖 Starting integrated Support Bot...")
+    """Start the Telegram support bot in its own thread with its own asyncio loop."""
     try:
+        print("🤖 Starting integrated Support Bot…")
+        # Create and set a new event loop for this thread
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         bot_app = create_bot_app()
-        bot_status["running"] = True
+        # Run the polling coroutine until complete
         loop.run_until_complete(bot_app.run_polling())
     except Exception as e:
         bot_status["running"] = False
@@ -227,7 +229,9 @@ async def get_balance():
 
 
 # Run the update task and bot in background threads
+# Periodic update of JSON files every 6 hours
 threading.Thread(target=schedule_package_updates, daemon=True).start()
+# Launch support bot in a daemon thread
 threading.Thread(target=run_support_bot, daemon=True).start()
 
 if __name__ == "__main__":
