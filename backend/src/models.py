@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, BigInteger, Text
 from sqlalchemy.sql import func
 from database import Base
 from sqlalchemy import UniqueConstraint
+import datetime
 
 class User(Base):
     __tablename__ = "users"
@@ -9,6 +10,7 @@ class User(Base):
     telegram_id = Column(String, unique=True, index=True, nullable=False)
     username = Column(String, index=True)
     photo_url = Column(String)
+    last_login = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
