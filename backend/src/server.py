@@ -204,19 +204,26 @@ def schedule_package_updates():
         time.sleep(3600*6)
         fetch_packages()
 
+import threading
+import asyncio
+from support_bot import create_bot_app
+# …
+
 def run_support_bot():
-    """Start the Telegram support bot in its own thread with its own asyncio loop."""
+    # 1) make a brand-new loop just for this thread
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    bot_app = create_bot_app()
+    bot_status["running"] = True
     try:
-        print("🤖 Starting integrated Support Bot…")
-        # Create and set a new event loop for this thread
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        bot_app = create_bot_app()
-        # Run the polling coroutine until complete
+        # 2) run the polling coroutine until the bot is stopped
         loop.run_until_complete(bot_app.run_polling())
     except Exception as e:
         bot_status["running"] = False
         print(f"❌ Failed to start support bot: {e}")
+    finally:
+        loop.close()
 
 @app.get("/api/v1/buy_esim/balance")
 async def get_balance():
