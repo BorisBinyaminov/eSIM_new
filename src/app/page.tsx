@@ -126,7 +126,7 @@ function Home() {
         </div>
       </div>
       <div className="flex flex-col mt-[50px] items-center mb-[120px] text-white">
-        <h3 className="text-[32px] font-[400] text-white">{t("eSIM Setup Guide")}</h3>
+        <h3 className="text-[32px] font-[400] text-white  text-center">{t("eSIM Setup Guide")}</h3>
         <p className="mt-[24px] text-[16px] font-[300] px-[16px] text-center text-white">{t("Take these")}</p>
         <ESIMSlider/>
       </div >

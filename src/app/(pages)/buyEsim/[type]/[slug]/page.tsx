@@ -163,18 +163,18 @@ export default function CountryPage() {
                 <h2 className="text-lg text-white font-semibold">{t("All tariffs")}</h2>
                 <div className="w-full max-w-5xl overflow-hidden px-4">
                   <Swiper 
-                    spaceBetween={0} 
-                    slidesPerView={1}
+                    spaceBetween={10} 
+                    slidesPerView={1.2}
                     grabCursor={true} 
                     breakpoints={{
                       640: {
-                        slidesPerView: 1,
+                        slidesPerView: 1.5,
                       },
                       768: {
                         slidesPerView: 2.2,
                       },
                       1024: {
-                        slidesPerView: 2.2,
+                        slidesPerView: 3.2,
                       },
                     }}
                   >
