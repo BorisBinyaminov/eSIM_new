@@ -12043,111 +12043,6 @@
         ]
     },
     {
-        "packageCode": "CKH285",
-        "slug": "YE_1_7",
-        "name": "Yemen 1GB 7Days",
-        "price": 112000,
-        "currencyCode": "USD",
-        "volume": 1073741824,
-        "smsStatus": 0,
-        "dataType": 1,
-        "unusedValidTime": 180,
-        "duration": 7,
-        "durationUnit": "DAY",
-        "location": "YE",
-        "description": "Yemen 1GB 7Days",
-        "activeType": 2,
-        "favorite": false,
-        "retailPrice": 224000,
-        "speed": "3G/4G",
-        "ipExport": "HK",
-        "supportTopUpType": 2,
-        "fupPolicy": "",
-        "locationNetworkList": [
-            {
-                "locationName": "Yemen",
-                "locationLogo": "/img/flags/ye.png",
-                "locationCode": "YE",
-                "operatorList": [
-                    {
-                        "operatorName": "MTN",
-                        "networkType": "4G"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "packageCode": "CKH286",
-        "slug": "YE_3_15",
-        "name": "Yemen 3GB 15Days",
-        "price": 270000,
-        "currencyCode": "USD",
-        "volume": 3221225472,
-        "smsStatus": 0,
-        "dataType": 1,
-        "unusedValidTime": 180,
-        "duration": 15,
-        "durationUnit": "DAY",
-        "location": "YE",
-        "description": "Yemen 3GB 15Days",
-        "activeType": 2,
-        "favorite": false,
-        "retailPrice": 540000,
-        "speed": "3G/4G",
-        "ipExport": "HK",
-        "supportTopUpType": 2,
-        "fupPolicy": "",
-        "locationNetworkList": [
-            {
-                "locationName": "Yemen",
-                "locationLogo": "/img/flags/ye.png",
-                "locationCode": "YE",
-                "operatorList": [
-                    {
-                        "operatorName": "MTN",
-                        "networkType": "4G"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "packageCode": "CKH287",
-        "slug": "YE_5_30",
-        "name": "Yemen 5GB 30Days",
-        "price": 410000,
-        "currencyCode": "USD",
-        "volume": 5368709120,
-        "smsStatus": 0,
-        "dataType": 1,
-        "unusedValidTime": 180,
-        "duration": 30,
-        "durationUnit": "DAY",
-        "location": "YE",
-        "description": "Yemen 5GB 30Days",
-        "activeType": 2,
-        "favorite": false,
-        "retailPrice": 820000,
-        "speed": "3G/4G",
-        "ipExport": "HK",
-        "supportTopUpType": 2,
-        "fupPolicy": "",
-        "locationNetworkList": [
-            {
-                "locationName": "Yemen",
-                "locationLogo": "/img/flags/ye.png",
-                "locationCode": "YE",
-                "operatorList": [
-                    {
-                        "operatorName": "MTN",
-                        "networkType": "4G"
-                    }
-                ]
-            }
-        ]
-    },
-    {
         "packageCode": "CKH289",
         "slug": "BH_1_7",
         "name": "Bahrain 1GB 7Days",
@@ -13013,7 +12908,7 @@
         "packageCode": "CKH319",
         "slug": "CO_3_15",
         "name": "Colombia 3GB 15Days",
-        "price": 144000,
+        "price": 141000,
         "currencyCode": "USD",
         "volume": 3221225472,
         "smsStatus": 0,
@@ -13025,7 +12920,7 @@
         "description": "Colombia 3GB 15Days",
         "activeType": 2,
         "favorite": false,
-        "retailPrice": 288000,
+        "retailPrice": 282000,
         "speed": "3G/4G/5G",
         "ipExport": "BE",
         "supportTopUpType": 2,
@@ -26281,7 +26176,7 @@
         "packageCode": "CKH756",
         "slug": "KG_3_15",
         "name": "Kyrgyzstan 3GB 15Days",
-        "price": 59000,
+        "price": 57000,
         "currencyCode": "USD",
         "volume": 3221225472,
         "smsStatus": 0,
@@ -26293,7 +26188,7 @@
         "description": "Kyrgyzstan 3GB 15Days",
         "activeType": 2,
         "favorite": false,
-        "retailPrice": 118000,
+        "retailPrice": 114000,
         "speed": "3G/4G",
         "ipExport": "",
         "supportTopUpType": 2,
@@ -26316,7 +26211,7 @@
         "packageCode": "CKH759",
         "slug": "KG_20_30",
         "name": "Kyrgyzstan 20GB 30Days",
-        "price": 390000,
+        "price": 250000,
         "currencyCode": "USD",
         "volume": 21474836480,
         "smsStatus": 0,
@@ -26328,7 +26223,7 @@
         "description": "Kyrgyzstan 20GB 30Days",
         "activeType": 2,
         "favorite": false,
-        "retailPrice": 780000,
+        "retailPrice": 500000,
         "speed": "3G/4G",
         "ipExport": "",
         "supportTopUpType": 2,
@@ -26421,7 +26316,7 @@
         "packageCode": "CKH776",
         "slug": "AM_20_30",
         "name": "Armenia 20GB 30Days",
-        "price": 1230000,
+        "price": 630000,
         "currencyCode": "USD",
         "volume": 21474836480,
         "smsStatus": 0,
@@ -26433,7 +26328,7 @@
         "description": "Armenia 20GB 30Days",
         "activeType": 2,
         "favorite": false,
-        "retailPrice": 2460000,
+        "retailPrice": 1260000,
         "speed": "3G/4G",
         "ipExport": "",
         "supportTopUpType": 2,
@@ -72919,7 +72814,7 @@
         "packageCode": "PRWWKX908",
         "slug": "BN_0.5_Daily",
         "name": "Brunei Darussalam 500MB/Day",
-        "price": 93000,
+        "price": 30000,
         "currencyCode": "USD",
         "volume": 524288000,
         "smsStatus": 0,
@@ -72931,7 +72826,7 @@
         "description": "Brunei Darussalam 500MB/Day",
         "activeType": 2,
         "favorite": false,
-        "retailPrice": 186000,
+        "retailPrice": 60000,
         "speed": "3G/4G",
         "ipExport": "HK",
         "supportTopUpType": 1,
@@ -72954,7 +72849,7 @@
         "packageCode": "PU2ENL69H",
         "slug": "BN_1_Daily",
         "name": "Brunei Darussalam 1GB/Day",
-        "price": 145000,
+        "price": 45000,
         "currencyCode": "USD",
         "volume": 1073741824,
         "smsStatus": 0,
@@ -72966,7 +72861,7 @@
         "description": "Brunei Darussalam 1GB/Day",
         "activeType": 2,
         "favorite": false,
-        "retailPrice": 290000,
+        "retailPrice": 90000,
         "speed": "3G/4G",
         "ipExport": "HK",
         "supportTopUpType": 1,
