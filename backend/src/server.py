@@ -210,20 +210,15 @@ from support_bot import create_bot_app
 # …
 
 def run_support_bot():
-    # 1) make a brand-new loop just for this thread
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
+    print("🤖 Starting integrated Support Bot.")
     bot_app = create_bot_app()
     bot_status["running"] = True
     try:
-        # 2) run the polling coroutine until the bot is stopped
-        loop.run_until_complete(bot_app.run_polling())
+        # Create and run a fresh event loop for polling
+        asyncio.run(bot_app.run_polling())
     except Exception as e:
         bot_status["running"] = False
-        print(f"❌ Failed to start support bot: {e}")
-    finally:
-        loop.close()
+        print(f"❌ Support Bot crashed: {e}")
 
 @app.get("/api/v1/buy_esim/balance")
 async def get_balance():
@@ -239,7 +234,7 @@ async def get_balance():
 # Periodic update of JSON files every 6 hours
 threading.Thread(target=schedule_package_updates, daemon=True).start()
 # Launch support bot in a daemon thread
-threading.Thread(target=run_support_bot, daemon=True).start()
+#threading.Thread(target=run_support_bot, daemon=True).start()
 
 if __name__ == "__main__":
     import uvicorn
