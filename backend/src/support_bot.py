@@ -322,3 +322,9 @@ def create_bot_app():
     app.add_handler(MessageHandler(filters.REPLY, forward_reply_to_user))
     app.add_handler(CallbackQueryHandler(button_handler))
     return app
+
+if __name__ == "__main__":
+    # Build the bot application
+    app = create_bot_app()
+    # This will block and run the Telegram polling loop
+    app.run_polling()

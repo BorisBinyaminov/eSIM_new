@@ -14,6 +14,7 @@ import os
 import json
 from typing import Optional
 from pathlib import Path
+from telegram.error import NetworkError
 
 # путь к папке src: .../eSIM_new/backend/src
 SRC_DIR     = Path(__file__).resolve().parent
@@ -1015,14 +1016,18 @@ async def handle_message_wrapper(update: Update, context: CallbackContext) -> No
 # -------------------------------
 # App Entry Point
 # -------------------------------
+import asyncio
+from telegram.error import NetworkError
+
+# -------------------------------
+# App Entry Point
+# -------------------------------
 if __name__ == "__main__":
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     application = Application.builder().token(TELEGRAM_TOKEN).build()
-
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message_wrapper))
     application.add_handler(CallbackQueryHandler(button_handler))
     application.add_error_handler(error_handler)
-
     application.run_polling()

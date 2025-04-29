@@ -104,3 +104,6 @@ TEST_MODE=false
 Add admin notifications on purchase
 update the DB (all users) every hour
 Export all orders to CSV/JSON
+
+# DB
+psql -h 127.0.0.1 -U esim_user -d esim_db
