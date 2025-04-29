@@ -174,7 +174,7 @@ fetch_packages()
 # ✅ Periodic update of JSON files every 6 hours
 def schedule_package_updates():
     while True:
-        time.sleep(3600*6)
+        time.sleep(3600)
         fetch_packages()
 
 import threading
