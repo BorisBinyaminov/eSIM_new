@@ -1026,22 +1026,8 @@ if __name__ == "__main__":
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     application = Application.builder().token(TELEGRAM_TOKEN).build()
-
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message_wrapper))
     application.add_handler(CallbackQueryHandler(button_handler))
     application.add_error_handler(error_handler)
-
-    async def run_bot():
-        while True:
-            try:
-                await application.run_polling()
-            except NetworkError as e:
-                print(f"⚡ Network error occurred: {e}. Retrying in 5 seconds...")
-                await asyncio.sleep(5)
-            except Exception as e:
-                print(f"❗ Unexpected error: {e}. Retrying in 5 seconds...")
-                await asyncio.sleep(5)
-
-    asyncio.run(run_bot())
-
+    application.run_polling()

@@ -68,24 +68,6 @@ app.mount(
     name="images"
 )
 
-# Conditionally serve Next.js static assets
-candidate_dirs = [
-    ROOT_DIR / ".next" / "static",
-    Path.home()   / ".next" / "static"
-]
-for static_dir in candidate_dirs:
-    if static_dir.is_dir():
-        print(f"[INFO] Mounting /static from {static_dir}")
-        app.mount(
-            "/static",
-            StaticFiles(directory=str(static_dir)),
-            name="static"
-        )
-        break
-else:
-    print(f"[WARNING] No Next.js static dir found; looked in:\n  " +
-          "\n  ".join(str(d) for d in candidate_dirs))
-
 # ✅ Serve JSON files from `public/` with cache control
 @app.get("/{filename}.json")
 async def serve_json(filename: str):
@@ -102,19 +84,10 @@ if not os.path.exists(COUNTRIES_JSON_PATH):
     with open(COUNTRIES_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump({}, f)
 
-# ✅ Serve `index.html` for `/`
-@app.get("/")
-async def serve_index():
-    return FileResponse("build/index.html")
 
 @app.get("/bot/status")
 async def get_bot_status():
     return {"bot_running": bot_status["running"]}
-
-# ✅ Redirect all other routes to `index.html` (SPA support)
-@app.get("/{full_path:path}")
-async def serve_react_app(full_path: str):
-    return FileResponse("build/index.html")
 
 # ✅ Fetch eSIM Packages and Save to `public/`
 ESIM_API_URL = "https://api.esimaccess.com/api/v1/open/package/list"
@@ -201,7 +174,7 @@ fetch_packages()
 # ✅ Periodic update of JSON files every 6 hours
 def schedule_package_updates():
     while True:
-        time.sleep(3600*6)
+        time.sleep(3600)
         fetch_packages()
 
 import threading

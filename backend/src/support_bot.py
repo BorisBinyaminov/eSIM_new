@@ -10,6 +10,10 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from telegram.ext import CallbackQueryHandler
 from faq_entries import FAQ_ENTRIES
+from datetime import datetime, timezone
+
+# Suppress httpx info logs
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 load_dotenv()
 
@@ -28,13 +32,13 @@ FAQ_TEXT = "\n\n".join(
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 global_human_sessions = {}
-START_TIME = datetime.datetime.utcnow()
+START_TIME = datetime.now(timezone.utc)
 
 # ✅ /ping
 async def ping(update: Update, context: CallbackContext):
     if update.effective_chat.id != SUPPORT_GROUP_ID:
         return
-    uptime = datetime.datetime.utcnow() - START_TIME
+    uptime = datetime.now(timezone.utc) - START_TIME
     await update.message.reply_text(f"✅ Pong! Uptime: {uptime}")
 
 # ✅ /status
@@ -71,7 +75,7 @@ async def button_handler(update, context):
         await query.edit_message_text(f"🟢 Active sessions: {', '.join(active)}" if active else "✅ No active sessions.")
 
     elif query.data == "ping":
-        uptime = datetime.datetime.utcnow() - START_TIME
+        uptime = datetime.now(timezone.utc) - START_TIME
         await query.edit_message_text(f"✅ Pong! Uptime: {uptime}")
 
     elif query.data == "clear":
