@@ -12,9 +12,30 @@ import logging
 import asyncio
 import os
 import json
-from typing import Optional
+
 from pathlib import Path
-from telegram.error import NetworkError
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    WebAppInfo,
+    ReplyKeyboardMarkup,
+)
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    CallbackContext,
+    MessageHandler,
+    filters,
+    CallbackQueryHandler,
+)
+from dotenv import load_dotenv
+
+from database import upsert_user_from_telegram as upsert_user, SessionLocal
+from models import User, Order
+import buy_esim
+from auth import upsert_user_from_telegram
+from typing import Optional
 
 # путь к папке src: .../eSIM_new/backend/src
 SRC_DIR     = Path(__file__).resolve().parent
@@ -62,6 +83,11 @@ NEWS_CHANNEL = os.getenv("NEWS_CHANNEL")
 WEBAPP_FAQ_URL = os.getenv("WEBAPP_FAQ_URL")
 WEBAPP_GUIDES_URL = os.getenv("WEBAPP_GUIDES_URL")
 
+logger = logging.getLogger("bot")
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s"))
+logger.addHandler(handler)
+logger.setLevel(logging.ERROR)
 # ====== Load JSON Data Files ======
 try:
     with open(COUNTRIES_F, encoding="utf-8") as f:
@@ -123,7 +149,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-logger = logging.getLogger(__name__)
+
 USER_SESSIONS = {}
 
 # -------------------------------
@@ -256,17 +282,21 @@ def format_esim_info(data: dict, db_entry: Optional[Order] = None) -> str:
 # -------------------------------
 # /start Command
 # -------------------------------
-async def start(update: Update, context: CallbackContext) -> None:
-    user_id = update.message.chat_id
-    logger.info(f"User {user_id} started the bot.")
-    await store_user_in_db(update.message.from_user)
-    USER_SESSIONS[user_id] = "regular"
-    await update.message.reply_text(
-        "Welcome to eSIM Unlimited! Choose an option:",
-        reply_markup=main_menu_keyboard()
-    )
+logger = logging.getLogger(__name__)
 
-# -------------------------------
+async def start(update: Update, context: CallbackContext) -> None:
+    user = update.effective_user
+    logger.info(f"🔥 /start from {user.id} (@{user.username})")
+
+    # offload to thread
+    await asyncio.to_thread(lambda: upsert_user({
+        "id":        user.id,
+        "username":  user.username,
+        "photo_url": None
+    }))
+
+    await update.message.reply_text(
+        "Welcome to eSIM Unlimited! Choose an option:")
 # Standard Message Handling
 # -------------------------------
 async def handle_message(update: Update, context: CallbackContext) -> None:

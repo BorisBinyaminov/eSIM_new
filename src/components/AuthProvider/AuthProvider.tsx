@@ -1,124 +1,133 @@
-'use client';
-import { createContext, useState, useEffect, ReactNode } from 'react';
+"use client";
 
-// Типы
-export interface TelegramUser {
-  id: number;
-  first_name: string;
-  last_name?: string;
-  username?: string;
-  language_code?: string;
-  auth_date?: string;
-  hash?: string;
-  photo_url?: string;
-}
-
-interface AuthContextType {
-  user: TelegramUser | null;
-  login: () => void;
-  logout: () => void;
-  loading: boolean;
-}
-
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-  login: () => {},
-  logout: () => {},
-  loading: true,
-});
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
 declare global {
   interface Window {
     Telegram: {
       WebApp: {
-        ready: () => void;
+        initData: string;           // signed payload
         initDataUnsafe: {
-          user?: TelegramUser;
-          [key: string]: any;
+          user?: {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+            photo_url?: string;
+          };
         };
+        ready: () => void;
       };
     };
   }
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+interface TelegramUser {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+}
+
+interface AuthContextType {
+  user: TelegramUser | null;
+  loading: boolean;
+  login: () => void;
+  logout: () => void;
+}
+
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  loading: true,
+  login: () => {},
+  logout: () => {},
+});
+
+export const useAuth = () => useContext(AuthContext);
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<TelegramUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
-  const logout = () => {
-    setUser(null);
-    if (typeof window !== 'undefined') {
-      window.location.reload();
-    }
-  };
-
-  const login = () => {
-    console.log('Пользователь должен быть авторизован автоматически через Telegram WebApp');
-  };
+  // toggle to false only for local dev (skips server check)
+  const secureCheckEnabled = true;
 
   useEffect(() => {
-    const authenticateUser = async () => {
-      if (typeof window !== 'undefined') {
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.ready();
-          const initData = window.Telegram.WebApp.initDataUnsafe;
-          console.log('initDataUnsafe:', initData);
+    const initAuth = async () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        const initData     = window.Telegram.WebApp.initData;
+        const unsafeUser   = window.Telegram.WebApp.initDataUnsafe.user;
 
-          if (initData && initData.user) {
-            const secureCheckEnabled = false; // <- 👉 true = проверка через сервер, false = отключена
+        console.debug("Telegram WebApp initData:", initData);
+        console.debug("Telegram WebApp initDataUnsafe.user:", unsafeUser);
 
-            if (secureCheckEnabled) {
-              // ✅ ПРОВЕРКА ЧЕРЕЗ API (защищённый режим)
-              try {
-                const response = await fetch('/api/auth', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(initData),
+        if (unsafeUser) {
+          if (secureCheckEnabled) {
+            try {
+              const resp = await fetch("/auth/telegram", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ initData }),
+              });
+              console.debug("/auth/telegram response status:", resp.status);
+
+              if (!resp.ok) {
+                console.error("Auth failed:", await resp.text());
+              } else {
+                const data = await resp.json();
+                console.debug("/auth/telegram response JSON:", data);
+                setUser({
+                  id: data.user.telegram_id,
+                  first_name: data.user.username,
+                  photo_url: data.user.photo_url,
+                  // NOTE: you can pull last_login if you need
                 });
-
-                const data = await response.json();
-                if (response.ok && data.status === 'success') {
-                  setUser(initData.user);
-                } else {
-                  console.error('Ошибка авторизации на сервере:', data.message);
-                }
-              } catch (error) {
-                console.error('Ошибка при выполнении запроса авторизации:', error);
-              } finally {
-                setLoading(false);
               }
-            } else {
-              // ✅ УПРОЩЁННЫЙ РЕЖИМ (для тестов/разработки)
-              setUser(initData.user);
-              setLoading(false);
+            } catch (err) {
+              console.error("Network error during auth:", err);
             }
           } else {
-            console.log('Пользователь не найден в Telegram WebApp, устанавливаю тестовые данные');
-            setUser({
-              id: 123456,
-              first_name: 'Тестовый',
-              last_name: 'Пользователь',
-              username: 'test_user',
-            });
-            setLoading(false);
+            console.warn("Secure check disabled — using unsafeUser directly");
+            setUser(unsafeUser);
           }
         } else {
-          console.log('Telegram WebApp не найден');
-          setLoading(false);
+          console.warn("No Telegram user found — setting test user");
+          setUser({
+            id: 123456,
+            first_name: "Тестовый",
+            username: "test_user",
+            photo_url: undefined,
+          });
         }
+      } else {
+        console.warn("Not in Telegram WebApp context — skipping auth");
       }
+
+      setLoading(false);
     };
 
-    authenticateUser();
+    initAuth();
   }, []);
 
+  const login = () => {
+    console.log("Manual login not supported in Telegram Mini App");
+  };
+  const logout = () => {
+    setUser(null);
+    window.location.reload();
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
