@@ -257,10 +257,18 @@ def format_esim_info(data: dict, db_entry: Optional[Order] = None) -> str:
 # /start Command
 # -------------------------------
 async def start(update: Update, context: CallbackContext) -> None:
+    from database import upsert_user_from_telegram
     user_id = update.message.chat_id
     logger.info(f"User {user_id} started the bot.")
-    await store_user_in_db(update.message.from_user)
-    USER_SESSIONS[user_id] = "regular"
+    session = SessionLocal()
+    telegram_user = update.effective_user
+
+    user_data = {
+        "telegram_id": str(telegram_user.id),
+        "username": telegram_user.username,
+        "photo_url": None  # or leave this out entirely
+    }
+    upsert_user_from_telegram(user_data, session)
     await update.message.reply_text(
         "Welcome to eSIM Unlimited! Choose an option:",
         reply_markup=main_menu_keyboard()
