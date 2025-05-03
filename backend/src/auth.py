@@ -4,14 +4,13 @@ import hashlib
 import json
 import urllib.parse
 import logging
-
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-
 from database import SessionLocal, upsert_user_from_telegram
-
+from datetime import datetime
+from models import User                   # unchanged
 load_dotenv()
 
 router = APIRouter()
@@ -68,28 +67,43 @@ def verify_telegram_auth(init_data: str) -> dict:
 @router.post("/auth/telegram")
 async def telegram_auth(request: Request, db: Session = Depends(get_db)):
     body = await request.json()
-    init_data = body.get("initData","")
+    init_data = body.get("initData", "")
     if not init_data:
-        raise HTTPException(status_code=400, detail="No initData provided")
+        return JSONResponse({"success": False, "error": "No initData provided"}, status_code=400)
 
     user_info = verify_telegram_auth(init_data)
     if not user_info:
-        raise HTTPException(status_code=403, detail="Invalid auth data")
+        return JSONResponse({"success": False, "error": "Invalid auth data"}, status_code=403)
 
-    # upsert into DB
-    upsert_data = {
-        "id":         user_info["id"],
-        "username":   user_info.get("username") or user_info.get("first_name"),
-        "photo_url":  user_info.get("photo_url"),
-    }
-    user = upsert_user_from_telegram(upsert_data, db)
+    telegram_id = str(user_info["id"])
+    username   = user_info.get("username") or user_info.get("first_name", "Telegram User")
+    photo_url  = user_info.get("photo_url") or "/images/default_avatar.png"
+
+    # upsert and ALWAYS update last_login
+    user = db.query(User).filter(User.telegram_id == telegram_id).first()
+    if user:
+        user.username    = username
+        user.photo_url   = photo_url
+        user.last_login  = datetime.utcnow()
+    else:
+        user = User(
+            telegram_id=telegram_id,
+            username=username,
+            photo_url=photo_url,
+            last_login=datetime.utcnow()
+        )
+        db.add(user)
+
+    db.commit()
+    db.refresh(user)
 
     return {
         "success": True,
         "user": {
-            "id":          user.id,
+            "id": user.id,
             "telegram_id": user.telegram_id,
-            "username":    user.username,
-            "photo_url":   user.photo_url
+            "username": user.username,
+            "photo_url": user.photo_url,
+            "last_login": user.last_login.isoformat()  # for debug
         }
     }

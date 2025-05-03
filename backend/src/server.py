@@ -17,6 +17,7 @@ from support_bot import create_bot_app
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
 
 # Load environment variables
 load_dotenv()
@@ -52,6 +53,15 @@ app = FastAPI()
 
 # Bot status flag
 bot_status = {"running": False}
+
+# allow your Mini-App origin (or * for testing)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "https://mini.torounlimitedvpn.com/"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include auth router for mini app authentication
 app.include_router(auth_router)
