@@ -10,10 +10,6 @@ from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from database import SessionLocal  # Ensure your database.py defines SessionLocal and engine
 from models import User         # Your User model defined in models.py
-import jwt
-import datetime
-from database import get_db, upsert_user_from_telegram
-
 
 load_dotenv()
 
@@ -29,11 +25,6 @@ else:
     print("[PRODUCTION MODE] Test bypass disabled. Full HMAC verification active.")
 
 print("BOT_TOKEN:", BOT_TOKEN)
-
-# … right after TEST_MODE …
-JWT_SECRET          = os.getenv("JWT_SECRET", BOT_TOKEN)
-JWT_ALGORITHM       = "HS256"
-JWT_EXP_DELTA_HOURS = int(os.getenv("JWT_EXP_DELTA_HOURS", 168))  # default = 7 days
 
 # Dependency to get a database session
 def get_db():
@@ -101,24 +92,55 @@ def verify_telegram_auth(init_data: str) -> dict:
         return {}
 
 @router.post("/auth/telegram")
-async def auth_telegram(data: TelegramAuthSchema, db: Session = Depends(get_db)):
-    verify_telegram_auth(data)  # ✅ Validate Telegram Mini App data
+async def telegram_auth(request: Request, db: Session = Depends(get_db)):
+    """
+    Endpoint for mini app auth.
+    Expects a JSON body: { "initData": "<telegram init data string>" }.
+    Verifies the auth data and then either updates the user record or cross-references stored user info using the Telegram user ID.
+    """
+    body = await request.json()
+    print("[DEBUG] /auth/telegram endpoint called with body:", body)
+    init_data = body.get("initData", "")
+    if not init_data:
+        print("[DEBUG] No initData provided in request body.")
+        return JSONResponse({"success": False, "error": "No initData provided"}, status_code=400)
 
-    user = db.query(User).filter_by(telegram_id=data.id).first()
+    user_info = verify_telegram_auth(init_data)
+    if not user_info:
+        print("[DEBUG] Telegram auth verification failed.")
+        return JSONResponse({"success": False, "error": "Invalid auth data"}, status_code=403)
 
+    # Use Telegram user ID as the unique identifier (convert to string)
+    telegram_id = str(user_info.get("id"))
+    if not telegram_id:
+        print("[DEBUG] User ID missing in auth data.")
+        return JSONResponse({"success": False, "error": "User ID missing"}, status_code=400)
+
+    # Cross-reference or update the stored user record
+    user = db.query(User).filter(User.telegram_id == telegram_id).first()
+    username = user_info.get("username") or user_info.get("first_name", "Telegram User")
+    photo_url = user_info.get("photo_url") or "/images/default_avatar.png"
     if user:
-        user.last_login = datetime.utcnow()
-        # Update photo if it was previously missing
-        if not user.photo_url and data.photo_url:
-            user.photo_url = data.photo_url
+        user.username = username  # Optionally update if changed
+        user.photo_url = photo_url
+        print(f"[DEBUG] Existing user updated in DB: {telegram_id} - {username}")
     else:
         user = User(
-            telegram_id=data.id,
-            username=data.username,
-            photo_url=data.photo_url,
-            last_login=datetime.utcnow()
+            telegram_id=telegram_id,
+            username=username,
+            photo_url=photo_url
         )
         db.add(user)
-
+        print(f"[DEBUG] New user created in DB: {telegram_id} - {username}")
     db.commit()
-    return {"status": "ok", "user_id": user.id}
+    db.refresh(user)
+    print("[DEBUG] Auth successful. User stored in DB:", user.telegram_id, user.username)
+    return {"success": True, "user": {"id": user.id, "telegram_id": user.telegram_id, "username": user.username, "photo_url": user.photo_url}}
+
+@router.post("/auth/logout")
+async def logout():
+    """
+    Simple logout endpoint. In production, invalidate sessions/tokens as needed.
+    """
+    print("[DEBUG] /auth/logout called.")
+    return {"success": True}
