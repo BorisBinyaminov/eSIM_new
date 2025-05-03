@@ -75,16 +75,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           if (secureCheckEnabled) {
             console.debug("[Auth] secureCheckEnabled, posting to backend");
             try {
-              const resp = await fetch("/auth/telegram", {
+              const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+              const response = await fetch(`${apiUrl}/auth/telegram`, {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ initData: rawInitData }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ initData: window.Telegram.WebApp.initData }),
               });
-              const data = await resp.json();
+              const data = await response.json();
               console.debug("[Auth] backend response:", data);
-              if (resp.ok && data.success) {
+              if (response.ok && data.success) {
                 console.debug("[Auth] Setting real Telegram user from backend");
                 setUser(data.user);
               } else {
