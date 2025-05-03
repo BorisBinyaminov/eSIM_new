@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
+from sqlalchemy.orm import Session
+from models import User
 
 load_dotenv()
 
@@ -16,49 +18,28 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-# import here to avoid circular at module‐load time
-from models import User  # noqa: E402
+def upsert_user(db: Session, user_data: dict) -> User:
+    user_id = user_data.get("id")
+    if not user_id:
+        raise ValueError("User ID is missing")
 
-def upsert_user_from_telegram(data: dict, db=None):
-    """
-    Insert or update a Telegram user record.
-    If you pass an existing Session, it will reuse it; otherwise it opens/closes its own.
-    """
-    own_session = False
-    if db is None:
-        db = SessionLocal()
-        own_session = True
-
-    try:
-        telegram_id = str(data["id"])
-        username    = data.get("username") or data.get("first_name")
-        photo_url   = data.get("photo_url")
-        now         = datetime.utcnow()
-
-        # Try fetch
-        user = db.query(User).filter(User.telegram_id == telegram_id).first()
-        if user:
-            # Update
-            user.last_login = now
-            if username:
-                user.username = username
-            if photo_url:
-                user.photo_url = photo_url
-            print(f"[DB] Updated User {telegram_id}")
-        else:
-            # Insert
-            user = User(
-                telegram_id=telegram_id,
-                username=username,
-                photo_url=photo_url,
-                last_login=now
-            )
-            db.add(user)
-            print(f"[DB] Created User {telegram_id}")
-
-        db.commit()
-        return user
-
-    finally:
-        if own_session:
-            db.close()
+    user = db.query(User).filter(User.id == user_id).first()
+    if user:
+        user.username = user_data.get("username")
+        user.first_name = user_data.get("first_name")
+        user.last_name = user_data.get("last_name")
+        user.photo_url = user_data.get("photo_url")
+        user.last_login = datetime.utcnow()
+    else:
+        user = User(
+            id=user_id,
+            username=user_data.get("username"),
+            first_name=user_data.get("first_name"),
+            last_name=user_data.get("last_name"),
+            photo_url=user_data.get("photo_url"),
+            last_login=datetime.utcnow(),
+        )
+        db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user

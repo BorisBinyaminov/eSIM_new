@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, BigInteger, Text, UniqueConstraint
 from sqlalchemy.sql import func
-from database import Base
 from datetime import datetime
+from sqlalchemy.orm import declarative_base
+Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"

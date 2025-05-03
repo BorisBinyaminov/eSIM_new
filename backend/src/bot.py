@@ -31,10 +31,9 @@ from telegram.ext import (
 )
 from dotenv import load_dotenv
 
-from database import upsert_user_from_telegram as upsert_user, SessionLocal
+from database import upsert_user, SessionLocal
 from models import User, Order
 import buy_esim
-from auth import upsert_user_from_telegram
 from typing import Optional
 
 # путь к папке src: .../eSIM_new/backend/src

@@ -4,13 +4,14 @@ import hashlib
 import json
 import urllib.parse
 import logging
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from database import SessionLocal, upsert_user_from_telegram
-from datetime import datetime
-from models import User                   # unchanged
+from database import SessionLocal, upsert_user
+from fastapi import APIRouter, HTTPException
+from database import SessionLocal, upsert_user
+
 load_dotenv()
 
 router = APIRouter()
@@ -64,46 +65,30 @@ def verify_telegram_auth(init_data: str) -> dict:
         logging.exception("Error in verify_telegram_auth")
         return {}
 
+import logging
+
 @router.post("/auth/telegram")
-async def telegram_auth(request: Request, db: Session = Depends(get_db)):
-    body = await request.json()
-    init_data = body.get("initData", "")
+async def auth_telegram(payload: dict):
+    init_data = payload.get("initData")
     if not init_data:
-        return JSONResponse({"success": False, "error": "No initData provided"}, status_code=400)
+        raise HTTPException(status_code=400, detail="Missing initData")
 
-    user_info = verify_telegram_auth(init_data)
-    if not user_info:
-        return JSONResponse({"success": False, "error": "Invalid auth data"}, status_code=403)
+    try:
+        verified_user = verify_telegram_auth(init_data)
+        if not verified_user:
+            raise HTTPException(status_code=401, detail="Invalid Telegram initData")
 
-    telegram_id = str(user_info["id"])
-    username   = user_info.get("username") or user_info.get("first_name", "Telegram User")
-    photo_url  = user_info.get("photo_url") or "/images/default_avatar.png"
+        # Upsert user in DB
+        db = SessionLocal()
+        user_record = upsert_user(db, verified_user)
 
-    # upsert and ALWAYS update last_login
-    user = db.query(User).filter(User.telegram_id == telegram_id).first()
-    if user:
-        user.username    = username
-        user.photo_url   = photo_url
-        user.last_login  = datetime.utcnow()
-    else:
-        user = User(
-            telegram_id=telegram_id,
-            username=username,
-            photo_url=photo_url,
-            last_login=datetime.utcnow()
-        )
-        db.add(user)
-
-    db.commit()
-    db.refresh(user)
-
-    return {
-        "success": True,
-        "user": {
-            "id": user.id,
-            "telegram_id": user.telegram_id,
-            "username": user.username,
-            "photo_url": user.photo_url,
-            "last_login": user.last_login.isoformat()  # for debug
-        }
-    }
+        return {"success": True, "user": {
+            "id": user_record.id,
+            "username": user_record.username,
+            "first_name": user_record.first_name,
+            "last_name": user_record.last_name,
+            "photo_url": user_record.photo_url
+        }}
+    except Exception as e:
+        print("[ERROR]", e)
+        raise HTTPException(status_code=500, detail=str(e))
