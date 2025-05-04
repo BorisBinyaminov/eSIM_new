@@ -1,17 +1,13 @@
-"""
-Refactored bot.py with 'Delete' button for eSIMs that are neither New, Onboard, nor In Use,
-and 'Refresh' button shown only for eSIMs that are In Use.
-
-This module implements a Telegram bot that enables users to interact with the eSIM purchasing system.
-It supports buying eSIMs, checking eSIM status, performing top-ups, and now deleting eSIM entries from
-our local database if they are Depleted, Deleted, or in an undefined fallback state.
-"""
-
 import sys
 import logging
 import asyncio
 import os
 import json
+from dotenv import load_dotenv
+from models import User, Order
+import buy_esim
+from typing import Optional
+from database import SessionLocal, engine, Base, upsert_user
 
 from pathlib import Path
 from telegram import (
@@ -29,12 +25,6 @@ from telegram.ext import (
     filters,
     CallbackQueryHandler,
 )
-from dotenv import load_dotenv
-
-from database import upsert_user, SessionLocal
-from models import User, Order
-import buy_esim
-from typing import Optional
 
 # путь к папке src: .../eSIM_new/backend/src
 SRC_DIR     = Path(__file__).resolve().parent
@@ -50,27 +40,6 @@ COUNTRIES_F     = PUBLIC_DIR / 'countries.json'
 LOCAL_PKGS_F    = PUBLIC_DIR / 'countryPackages.json'
 REGIONAL_PKGS_F = PUBLIC_DIR / 'regionalPackages.json'
 GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
-
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    WebAppInfo,
-    ReplyKeyboardMarkup
-)
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    CallbackContext,
-    MessageHandler,
-    filters,
-    CallbackQueryHandler
-)
-from dotenv import load_dotenv
-
-from database import SessionLocal, engine, Base
-from models import User, Order
-import buy_esim
 
 # Load environment variables
 load_dotenv()
@@ -287,15 +256,25 @@ async def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     logger.info(f"🔥 /start from {user.id} (@{user.username})")
 
-    # offload to thread
-    await asyncio.to_thread(lambda: upsert_user({
-        "id":        user.id,
-        "username":  user.username,
-        "photo_url": None
-    }))
+    def sync_db_task():
+        db = SessionLocal()
+        try:
+            upsert_user(db, {
+                "id": str(user.id),
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "photo_url": None,
+            })
+        finally:
+            db.close()
+
+    await asyncio.to_thread(sync_db_task)
 
     await update.message.reply_text(
-        "Welcome to eSIM Unlimited! Choose an option:")
+        "Welcome to eSIM Unlimited! Choose an option:"
+    )
+
 # Standard Message Handling
 # -------------------------------
 async def handle_message(update: Update, context: CallbackContext) -> None:
@@ -1041,12 +1020,6 @@ async def handle_message_wrapper(update: Update, context: CallbackContext) -> No
         await handle_message(update, context)
     except Exception as e:
         logger.exception("Error in handle_message:")
-
-# -------------------------------
-# App Entry Point
-# -------------------------------
-import asyncio
-from telegram.error import NetworkError
 
 # -------------------------------
 # App Entry Point

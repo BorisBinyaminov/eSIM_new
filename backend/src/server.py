@@ -187,11 +187,6 @@ def schedule_package_updates():
         time.sleep(3600)
         fetch_packages()
 
-import threading
-import asyncio
-from support_bot import create_bot_app
-# …
-
 def run_support_bot():
     print("🤖 Starting integrated Support Bot.")
     bot_app = create_bot_app()

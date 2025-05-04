@@ -4,10 +4,8 @@ import hashlib
 import json
 import urllib.parse
 import logging
-from fastapi import APIRouter, Request, Depends, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Body
 from dotenv import load_dotenv
-from sqlalchemy.orm import Session
 from database import SessionLocal, upsert_user
 from fastapi import APIRouter, HTTPException
 from database import SessionLocal, upsert_user
@@ -65,30 +63,19 @@ def verify_telegram_auth(init_data: str) -> dict:
         logging.exception("Error in verify_telegram_auth")
         return {}
 
-import logging
-
 @router.post("/auth/telegram")
-async def auth_telegram(payload: dict):
+async def auth_telegram(payload: dict = Body(...)):
     init_data = payload.get("initData")
     if not init_data:
         raise HTTPException(status_code=400, detail="Missing initData")
 
-    try:
-        verified_user = verify_telegram_auth(init_data)
-        if not verified_user:
-            raise HTTPException(status_code=401, detail="Invalid Telegram initData")
+    verified_user = verify_telegram_auth(init_data)
+    if not verified_user:
+        raise HTTPException(status_code=403, detail="Invalid Telegram authentication")
 
-        # Upsert user in DB
-        db = SessionLocal()
-        user_record = upsert_user(db, verified_user)
+    # Save or update user in DB
+    with SessionLocal() as db:
+        upsert_user(db, verified_user)
 
-        return {"success": True, "user": {
-            "id": user_record.id,
-            "username": user_record.username,
-            "first_name": user_record.first_name,
-            "last_name": user_record.last_name,
-            "photo_url": user_record.photo_url
-        }}
-    except Exception as e:
-        print("[ERROR]", e)
-        raise HTTPException(status_code=500, detail=str(e))
+    return {"status": "ok"}
+
