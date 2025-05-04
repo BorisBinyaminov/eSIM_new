@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const sendToBackend = async () => {
       if (!initData) return;
       try {
-        const res = await fetch("http://localhost:5000/auth/telegram", {
+        const res = await fetch("https://mini.torounlimitedvpn.com/auth/telegram", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ initData }),
