@@ -1,87 +1,84 @@
 import os
-import logging
+import json
 import hmac
 import hashlib
+import logging
 from urllib.parse import parse_qsl
+
 from fastapi import APIRouter, HTTPException, Body
-from dotenv import load_dotenv
-from database import SessionLocal, upsert_user
+from starlette.status import HTTP_403_FORBIDDEN
 
-# Load environment variables
-load_dotenv()
+from database import upsert_user, SessionLocal
 
-# Set up router
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["auth"])
 
-# Load token and mode
-BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
-TEST_MODE = os.getenv("REACT_APP_TEST_MODE", "false").lower() == "true"
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TEST_MODE = os.getenv("TEST_MODE", "False").lower() == "true"
 
-# Basic validation
-if not BOT_TOKEN:
-    raise ValueError("❌ TELEGRAM_TOKEN is not set in environment variables")
-
-# Logging
-logging.basicConfig(level=logging.DEBUG)
-logging.debug(f"[AUTH] TEST_MODE={TEST_MODE}, TELEGRAM_TOKEN is set={bool(BOT_TOKEN)}")
-logging.debug(f"[AUTH] Token repr: {repr(BOT_TOKEN)}")
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+logger = logging.getLogger(__name__)
 
 
 def verify_telegram_auth(init_data_str: str) -> dict:
-    logging.debug(f"🔥 Received auth payload: {init_data_str}")
-    parsed_data = dict(parse_qsl(init_data_str, keep_blank_values=True))
-    hash_to_verify = parsed_data.pop("hash", None)
+    logger.debug("🔥 Received auth payload: %s", init_data_str)
 
-    logging.debug(f"[AUTH] parsed initData, hash={hash_to_verify}")
-    if not hash_to_verify:
-        return {}
+    try:
+        data = dict(parse_qsl(init_data_str, keep_blank_values=True))
+        received_hash = data.pop("hash", None)
+    except Exception as e:
+        logger.error("❌ Failed to parse initData: %s", e)
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid initData")
 
-    # Sort and format data for hashing
-    data_check_string = "\n".join(
-        f"{k}={v}" for k, v in sorted(parsed_data.items())
+    logger.debug("[AUTH] parsed initData, hash=%s", received_hash)
+
+    if not received_hash:
+        logger.warning("❌ No hash provided in initData")
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Missing hash")
+
+    auth_data_check_string = "\n".join(
+        f"{k}={v}" for k, v in sorted(data.items())
     )
 
-    # Secret key using bot token
-    secret = hashlib.sha256(BOT_TOKEN.encode()).digest()
+    if not BOT_TOKEN:
+        logger.error("❌ TELEGRAM_BOT_TOKEN is not set in the environment")
+        raise HTTPException(status_code=500, detail="Bot token not configured")
 
-    # HMAC-SHA256 signature
-    hmac_hash = hmac.new(secret, data_check_string.encode(), hashlib.sha256).hexdigest()
+    secret_key = hashlib.sha256(BOT_TOKEN.encode()).digest()
+    computed_hash = hmac.new(secret_key, auth_data_check_string.encode(), hashlib.sha256).hexdigest()
 
-    if hmac_hash != hash_to_verify:
-        logging.warning("❌ Hash mismatch: Auth failed")
-        return {}
+    if not hmac.compare_digest(computed_hash, received_hash):
+        logger.warning("❌ Hash mismatch: Auth failed")
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Telegram authentication failed")
 
-    logging.debug(f"✅ Verified user: {parsed_data}")
-    return parsed_data
+    # Decode user JSON
+    user_json = data.get("user")
+    try:
+        user_data = json.loads(user_json)
+    except Exception as e:
+        logger.error("❌ Failed to parse user JSON: %s", e)
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid user format")
+
+    logger.debug("✅ Verified user: %s", user_data)
+    return user_data
 
 
-@router.post("/auth/telegram")
+@router.post("/telegram")
 async def auth_telegram(payload: dict = Body(...)):
-    init_data = payload.get("initData")
-    verified_user = verify_telegram_auth(init_data)
+    init_data_str = payload.get("initData")
+    if not init_data_str:
+        logger.warning("❌ initData missing from request")
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Missing initData")
 
-    if not verified_user or "id" not in verified_user:
-        raise HTTPException(status_code=403, detail="Telegram authentication failed")
+    user_data = verify_telegram_auth(init_data_str)
 
-    logging.debug(f"[AUTH] Saving verified user to DB: {verified_user}")
     db = SessionLocal()
     try:
-        upsert_user(db, {
-            "id": int(verified_user["id"]),
-            "username": verified_user.get("username"),
-            "first_name": verified_user.get("first_name"),
-            "last_name": verified_user.get("last_name"),
-            "photo_url": verified_user.get("photo_url"),
+        user = upsert_user(db, {
+            "id": user_data.get("id"),
+            "username": user_data.get("username"),
+            "first_name": user_data.get("first_name"),
+            "last_name": user_data.get("last_name"),
+            "photo_url": user_data.get("photo_url"),
         })
+        return {"ok": True, "user_id": user.id}
     finally:
         db.close()
-
-    return {"ok": True, "user_id": verified_user["id"]}
