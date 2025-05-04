@@ -82,6 +82,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         console.log("✅ Auth response:", data);
       } catch (err) {
         console.error("❌ Auth error", err);
+      } finally {
+        setLoading(false);
       }
     };
   
