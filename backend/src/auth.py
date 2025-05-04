@@ -12,7 +12,7 @@ from database import upsert_user, SessionLocal
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TEST_MODE = os.getenv("TEST_MODE", "False").lower() == "true"
 
 logger = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ def verify_telegram_auth(init_data_str: str) -> dict:
     return user_data
 
 
-@router.post("/telegram")
+@router.post("/auth//telegram")
 async def auth_telegram(payload: dict = Body(...)):
     init_data_str = payload.get("initData")
     if not init_data_str:
