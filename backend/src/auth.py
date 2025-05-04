@@ -13,11 +13,11 @@ from database import SessionLocal, upsert_user
 load_dotenv()
 
 router = APIRouter()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TEST_MODE = os.getenv("REACT_APP_TEST_MODE", "false").lower() == "true"
 
 logging.basicConfig(level=logging.ERROR)
-logging.debug(f"[AUTH] TEST_MODE={TEST_MODE}, BOT_TOKEN set={bool(BOT_TOKEN)}")
+logging.debug(f"[AUTH] TEST_MODE={TEST_MODE}, TELEGRAM_TOKEN set={bool(BOT_TOKEN)}")
 
 def get_db():
     db = SessionLocal()
