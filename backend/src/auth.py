@@ -14,9 +14,11 @@ load_dotenv()
 
 router = APIRouter()
 BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
+if not BOT_TOKEN:
+    raise ValueError("❌ TELEGRAM_TOKEN is not set in environment variables")
 TEST_MODE = os.getenv("REACT_APP_TEST_MODE", "false").lower() == "true"
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.DEBUG)
 logging.debug(f"[AUTH] TEST_MODE={TEST_MODE}, TELEGRAM_TOKEN set={bool(BOT_TOKEN)}")
 
 def get_db():

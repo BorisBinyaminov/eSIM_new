@@ -55,8 +55,13 @@ logger = logging.getLogger("bot")
 handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s"))
 logger.addHandler(handler)
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.DEBUG)
 # ====== Load JSON Data Files ======
+
+if not TELEGRAM_TOKEN:
+    raise ValueError("❌ BOT_TOKEN is not set in environment variables")
+logging.debug(f"[BOT.py]  TELEGRAM_TOKEN set={bool(TELEGRAM_TOKEN)}")
+
 try:
     with open(COUNTRIES_F, encoding="utf-8") as f:
         countries_data = json.load(f)
