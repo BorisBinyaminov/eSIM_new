@@ -65,17 +65,21 @@ def verify_telegram_auth(init_data: str) -> dict:
 
 @router.post("/auth/telegram")
 async def auth_telegram(payload: dict = Body(...)):
-    init_data = payload.get("initData")
-    if not init_data:
-        raise HTTPException(status_code=400, detail="Missing initData")
-
-    verified_user = verify_telegram_auth(init_data)
+    verified_user = verify_telegram_auth(payload.get("initData"))
     if not verified_user:
-        raise HTTPException(status_code=403, detail="Invalid Telegram authentication")
+        raise HTTPException(status_code=403, detail="Telegram authentication failed")
 
-    # Save or update user in DB
-    with SessionLocal() as db:
-        upsert_user(db, verified_user)
+    db = SessionLocal()
+    try:
+        upsert_user(db, {
+            "id": verified_user["id"],
+            "username": verified_user.get("username"),
+            "first_name": verified_user.get("first_name"),
+            "last_name": verified_user.get("last_name"),
+            "photo_url": verified_user.get("photo_url"),
+        })
+    finally:
+        db.close()
 
-    return {"status": "ok"}
+    return {"success": True, "user": verified_user}
 
