@@ -61,7 +61,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const initData = window.Telegram?.WebApp?.initData;
-    console.log("📦 initData from Mini App:", initData); // ✅ LOG TO DEBUG
+    const rawUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  
+    console.log("📦 initData from Mini App:", initData);
+    console.log("👤 rawUser from initDataUnsafe:", rawUser);
+  
+    if (rawUser) {
+      setUser(rawUser); // ✅ This is what was missing
+    }
   
     const sendToBackend = async () => {
       if (!initData) return;

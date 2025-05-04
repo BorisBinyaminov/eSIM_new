@@ -20,6 +20,7 @@ TEST_MODE = os.getenv("REACT_APP_TEST_MODE", "false").lower() == "true"
 
 logging.basicConfig(level=logging.DEBUG)
 logging.debug(f"[AUTH] TEST_MODE={TEST_MODE}, TELEGRAM_TOKEN is={BOT_TOKEN}")
+logging.debug(f"[AUTH] Token repr: {repr(BOT_TOKEN)}")
 
 def get_db():
     db = SessionLocal()
@@ -29,35 +30,35 @@ def get_db():
         db.close()
 
 def verify_telegram_auth(init_data_str: str) -> dict:
+    from urllib.parse import parse_qsl
+    import hmac, hashlib, logging
+
     logging.debug(f"🔥 Received auth payload: {init_data_str}")
 
-    try:
-        parsed_data = dict(parse_qsl(init_data_str, keep_blank_values=True))
-        hash_to_verify = parsed_data.pop("hash", None)
-        logging.debug(f"[AUTH] parsed initData, hash={hash_to_verify}")
+    parsed_data = dict(parse_qsl(init_data_str, keep_blank_values=True))
+    hash_to_verify = parsed_data.pop("hash", None)
 
-        if not hash_to_verify:
-            return {}
-
-        data_check_arr = [f"{k}={v}" for k, v in sorted(parsed_data.items())]
-        data_check_str = "\n".join(data_check_arr)
-
-        secret_key = hashlib.sha256(BOT_TOKEN.encode()).digest()
-        hmac_obj = hmac.new(secret_key, msg=data_check_str.encode(), digestmod=hashlib.sha256)
-        computed_hash = hmac_obj.hexdigest()
-
-        if hmac.compare_digest(computed_hash, hash_to_verify):
-            user_json = parsed_data.get("user")
-            user_dict = json.loads(user_json)
-            logging.debug(f"✅ Verified user: {user_dict}")
-            return user_dict
-        else:
-            logging.warning("❌ Hash mismatch: Auth failed")
-            return {}
-
-    except Exception as e:
-        logging.error(f"Error in verify_telegram_auth: {e}")
+    logging.debug(f"[AUTH] parsed initData, hash={hash_to_verify}")
+    if not hash_to_verify:
         return {}
+
+    # Step 1: Sort and format data
+    data_check_string = "\n".join(
+        f"{k}={v}" for k, v in sorted(parsed_data.items())
+    )
+
+    # Step 2: Create secret key
+    secret = hashlib.sha256(BOT_TOKEN.encode()).digest()
+
+    # Step 3: Generate HMAC SHA256
+    hmac_hash = hmac.new(secret, data_check_string.encode(), hashlib.sha256).hexdigest()
+
+    if hmac_hash != hash_to_verify:
+        logging.warning(f"❌ Hash mismatch: Auth failed")
+        return {}
+
+    logging.debug(f"✅ Verified user: {parsed_data}")
+    return parsed_data
 
 
 @router.post("/auth/telegram")
