@@ -33,6 +33,7 @@ def verify_telegram_auth(init_data: str) -> dict:
     Returns parsed user object on success, or {} on failure.
     In TEST_MODE, accepts hash=="fakehash" as bypass.
     """
+    print(f"[AUTH DEBUG] BOT_TOKEN in verify_telegram_auth: {BOT_TOKEN!r}")
     try:
         # parse k=v pairs
         parsed = dict(pair.split("=",1) for pair in init_data.split("&") if "=" in pair)
