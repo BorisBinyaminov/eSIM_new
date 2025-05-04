@@ -69,12 +69,17 @@ def verify_telegram_auth(init_data: str) -> dict:
 
 @router.post("/auth/telegram")
 async def auth_telegram(payload: dict = Body(...)):
+    init_data_str = payload.get("initData")
     logging.debug(f"🔥 Received auth payload: {payload}")
+    if not init_data_str:
+        logging.error("Missing initData in payload")
+        raise HTTPException(status_code=400, detail="Missing initData")
+
     try:
-        verified_user = verify_telegram_auth(payload.get("initData"))
-        logging.debug(f"✅ Verified user: {verified_user}")
+        verified_user = verify_telegram_auth(init_data_str)
+    
     except Exception as e:
-        logging.error("❌ Telegram authentication failed", exc_info=True)
+        logging.exception("Error during Telegram authentication")
         raise HTTPException(status_code=403, detail="Telegram authentication failed")
 
     db = SessionLocal()
