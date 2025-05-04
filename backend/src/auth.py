@@ -19,7 +19,7 @@ if not BOT_TOKEN:
 TEST_MODE = os.getenv("REACT_APP_TEST_MODE", "false").lower() == "true"
 
 logging.basicConfig(level=logging.DEBUG)
-logging.debug(f"[AUTH] TEST_MODE={TEST_MODE}, TELEGRAM_TOKEN set={bool(BOT_TOKEN)}")
+logging.debug(f"[AUTH] TEST_MODE={TEST_MODE}, TELEGRAM_TOKEN is={BOT_TOKEN}")
 
 def get_db():
     db = SessionLocal()
@@ -34,6 +34,7 @@ def verify_telegram_auth(init_data: str) -> dict:
     In TEST_MODE, accepts hash=="fakehash" as bypass.
     """
     print(f"[AUTH DEBUG] BOT_TOKEN in verify_telegram_auth: {BOT_TOKEN!r}")
+
     try:
         # parse k=v pairs
         parsed = dict(pair.split("=",1) for pair in init_data.split("&") if "=" in pair)
@@ -68,8 +69,12 @@ def verify_telegram_auth(init_data: str) -> dict:
 
 @router.post("/auth/telegram")
 async def auth_telegram(payload: dict = Body(...)):
-    verified_user = verify_telegram_auth(payload.get("initData"))
-    if not verified_user:
+    logging.debug(f"🔥 Received auth payload: {payload}")
+    try:
+        verified_user = verify_telegram_auth(payload.get("initData"))
+        logging.debug(f"✅ Verified user: {verified_user}")
+    except Exception as e:
+        logging.error("❌ Telegram authentication failed", exc_info=True)
         raise HTTPException(status_code=403, detail="Telegram authentication failed")
 
     db = SessionLocal()
@@ -81,6 +86,7 @@ async def auth_telegram(payload: dict = Body(...)):
             "last_name": verified_user.get("last_name"),
             "photo_url": verified_user.get("photo_url"),
         })
+        logging.debug("✅ upsert_user() executed successfully")
     finally:
         db.close()
 
