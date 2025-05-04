@@ -60,72 +60,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const secureCheckEnabled = true;
 
   useEffect(() => {
-    const initAuth = async () => {
-      console.debug("[Auth] Starting initAuth");
-      if (window.Telegram && window.Telegram.WebApp) {
-        console.debug("[Auth] Telegram WebApp detected");
-        window.Telegram.WebApp.ready();
-
-        const rawInitData = window.Telegram.WebApp.initData;
-        const unsafeUser = window.Telegram.WebApp.initDataUnsafe?.user;
-        console.debug("[Auth] initDataUnsafe.user =", unsafeUser);
-        console.debug("[Auth] raw initData =", rawInitData);
-
-        if (unsafeUser) {
-          if (secureCheckEnabled) {
-            console.debug("[Auth] secureCheckEnabled, posting to backend");
-            
-            try {
-              const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-              const response = await fetch("http://localhost:5000/auth/telegram", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ initData: window.Telegram.WebApp.initData }),
-              });
-
-              const data = await response.json();
-              console.debug("[Auth] backend response:", data);
-              if (response.ok && data.success) {
-                console.debug("[Auth] Setting real Telegram user from backend");
-                setUser(data.user);
-              } else {
-                console.error(
-                  "[Auth] Authentication failed on backend:",
-                  data
-                );
-                // fallback to unsafe
-                setUser(unsafeUser);
-              }
-            } catch (err) {
-              console.error("[Auth] Network error:", err);
-              // fallback to unsafe
-              setUser(unsafeUser);
-            }
-          } else {
-            console.warn(
-              "[Auth] secureCheckEnabled=false, using unsafe user for dev"
-            );
-            setUser(unsafeUser);
-          }
-        } else {
-          console.warn("[Auth] initDataUnsafe.user missing, cannot auth");
-          setUser(null);
-        }
-      } else {
-        console.warn("[Auth] Telegram WebApp not found, using test stub");
-        setUser({
-          id: 123456,
-          first_name: "Тестовый",
-          last_name: "Пользователь",
-          username: "test_user",
+    const initData = window.Telegram?.WebApp?.initData;
+    console.log("📦 initData from Mini App:", initData); // ✅ LOG TO DEBUG
+  
+    const sendToBackend = async () => {
+      if (!initData) return;
+      try {
+        const res = await fetch("http://localhost:5000/auth/telegram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ initData }),
         });
+        const data = await res.json();
+        console.log("✅ Auth response:", data);
+      } catch (err) {
+        console.error("❌ Auth error", err);
       }
-      setLoading(false);
-      console.debug("[Auth] initAuth done");
     };
-
-    initAuth();
+  
+    sendToBackend();
   }, []);
+  
 
   const login = () => {
     // no-op for WebApp

@@ -19,18 +19,18 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def upsert_user(db: Session, user_data: dict) -> User:
-    telegram_id = user_data.get("telegram_id")
+    telegram_id = str(user_data.get("telegram_id"))
     if not telegram_id:
         raise ValueError("telegram_id is required")
 
-    user = db.query(User).filter(User.telegram_id == str(telegram_id)).first()
+    user = db.query(User).filter(User.telegram_id == telegram_id).first()
     if user:
         user.username = user_data.get("username")
         user.photo_url = user_data.get("photo_url")
         user.last_login = datetime.utcnow()
     else:
         user = User(
-            telegram_id=str(telegram_id),
+            telegram_id=telegram_id,
             username=user_data.get("username"),
             photo_url=user_data.get("photo_url"),
             last_login=datetime.utcnow(),
@@ -40,4 +40,5 @@ def upsert_user(db: Session, user_data: dict) -> User:
     db.commit()
     db.refresh(user)
     return user
+
 
