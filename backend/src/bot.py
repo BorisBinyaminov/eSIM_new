@@ -260,11 +260,10 @@ async def start(update: Update, context: CallbackContext) -> None:
         db = SessionLocal()
         try:
             upsert_user(db, {
-                "id": str(user.id),
+                "id": user.id,
+                "telegram_id": str(user.id),  # Make sure to match DB type (string)
                 "username": user.username,
-                "first_name": user.first_name,
-                "last_name": user.last_name,
-                "photo_url": None,
+                "photo_url": None,  # Replace with real photo_url if available
             })
         finally:
             db.close()
