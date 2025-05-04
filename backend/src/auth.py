@@ -61,7 +61,7 @@ def verify_telegram_auth(init_data_str: str) -> dict:
     return user_data
 
 
-@router.post("/auth/telegram")
+@router.post("/telegram")
 async def auth_telegram(payload: dict = Body(...)):
     init_data_str = payload.get("initData")
     if not init_data_str:
