@@ -43,7 +43,7 @@ GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
 
 # Load environment variables
 load_dotenv()
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = "8073824494:AAEfSGYAnUe4Pv8MV24dWIPcbHhDW2JMjJc"
 WEBAPP_URL = os.getenv("WEBAPP_URL")
 DATABASE_URL = os.getenv("DATABASE_URL")
 SUPPORT_BOT = os.getenv("SUPPORT_BOT")

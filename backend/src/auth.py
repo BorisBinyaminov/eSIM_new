@@ -12,7 +12,7 @@ from database import upsert_user, SessionLocal
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
+BOT_TOKEN = "8073824494:AAEfSGYAnUe4Pv8MV24dWIPcbHhDW2JMjJc"
 TEST_MODE = os.getenv("TEST_MODE", "False").lower() == "true"
 
 logger = logging.getLogger(__name__)
@@ -93,7 +93,8 @@ async def auth_telegram(payload: dict = Body(...)):
     if not init_data_str:
         logger.warning("❌ initData missing from request")
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Missing initData")
-
+    #logger("\n📦 Received initData:\n", init_data_str) 
+    print("\n📦 Received initData:\n", init_data_str) 
     user_data = verify_telegram_auth(init_data_str)
 
     db = SessionLocal()
