@@ -1,20 +1,24 @@
-# Stage 1 — Build
-FROM node:18-alpine AS builder
+# Dockerfile.frontend
 
-WORKDIR /app
-COPY . .
-RUN npm install
-RUN npm run build
-
-# Stage 2 — Start with Next.js runtime
 FROM node:18-alpine
 
-WORKDIR /app
-COPY --from=builder /app .
+WORKDIR /usr/src/app
 
-RUN npm install --omit=dev
+# Copy dependency manifest
+COPY package*.json ./
 
-ENV PORT=3000
+# Install dependencies
+RUN npm install --production
+
+# Copy app source
+COPY . .
+
+# Build the React app
+RUN npm run build
+
+# Serve using a static file server
+RUN npm install -g serve
+
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["serve", "-s", "build", "-l", "3000"]
