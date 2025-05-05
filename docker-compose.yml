@@ -3,6 +3,7 @@ services:
     container_name: api
     image: hello-world
     restart: "no"
+    network_mode: "host" 
     
   frontend:
     build:
