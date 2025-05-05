@@ -1,10 +1,4 @@
 services:
-  api:
-    container_name: api
-    image: hello-world
-    restart: "no"
-    network_mode: "host" 
-    
   frontend:
     build:
       context: .
@@ -29,7 +23,7 @@ services:
       - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - frontend
-      - api
+    network_mode: "host"
 
   certbot-renew:
     image: certbot/certbot
