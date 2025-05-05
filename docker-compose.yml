@@ -1,4 +1,9 @@
 services:
+  api:
+    container_name: api
+    image: hello-world
+    restart: "no"
+    
   frontend:
     build:
       context: .
