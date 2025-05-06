@@ -38,7 +38,7 @@ def verify_telegram_auth(init_data_str, token):
         key=secret_key.digest(), msg=data_check_string.encode(), digestmod=hashlib.sha256
     ).hexdigest()
     if calculated_hash == hash_:
-        return json.loads(parsed_data['user'])
+        return False
     else:
         return False
 
