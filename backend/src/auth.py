@@ -48,18 +48,22 @@ async def auth_telegram(payload: dict = Body(...)):
     if not init_data_str:
         logger.warning("❌ initData missing from request")
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Missing initData")
+
     print("\n📦 Received initData:\n", init_data_str) 
     user_data = verify_telegram_auth(init_data_str, BOT_TOKEN)
-    if user_data != False:
-        db = SessionLocal()
-        try:
-            user = upsert_user(db, {
-                "id": user_data.get("id"),
-                "username": user_data.get("username"),
-                "first_name": user_data.get("first_name"),
-                "last_name": user_data.get("last_name"),
-                "photo_url": user_data.get("photo_url"),
-            })
-            return {"ok": True, "user_id": user.id}
-        finally:
-            db.close()
+
+    if not user_data:
+        raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid Telegram auth")
+
+    db = SessionLocal()
+    try:
+        user = upsert_user(db, {
+            "id": user_data.get("id"),
+            "username": user_data.get("username"),
+            "first_name": user_data.get("first_name"),
+            "last_name": user_data.get("last_name"),
+            "photo_url": user_data.get("photo_url"),
+        })
+        return {"ok": True, "user_id": user.id}
+    finally:
+        db.close()
