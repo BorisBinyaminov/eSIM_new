@@ -19,7 +19,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def upsert_user(db: Session, user_data: dict) -> User:
-    telegram_id = str(user_data.get("telegram_id"))
+    telegram_id = str(user_data.get("id"))
     if not telegram_id:
         raise ValueError("telegram_id is required")
 
