@@ -52,7 +52,7 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export default function AuthProvider() {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -77,17 +77,15 @@ export default function AuthProvider() {
 
         if (!res.ok) {
           console.error("❌ Auth failed with status:", res.status);
-          window.Telegram?.WebApp?.close(); // Close the app on auth error
+          window.Telegram?.WebApp?.close();
           return;
         }
 
         const data = await res.json();
         console.log("✅ Auth success:", data);
-        // Continue to render app or save user context here
-
       } catch (err) {
         console.error("❌ Auth request error:", err);
-        window.Telegram?.WebApp?.close(); // Close the app on network failure
+        window.Telegram?.WebApp?.close();
       } finally {
         setLoading(false);
       }
@@ -98,11 +96,7 @@ export default function AuthProvider() {
 
   if (loading) return <div>Loading...</div>;
 
-  return (
-    <div>
-      {/* Render your authenticated app here */}
-    </div>
-  );
+  return <>{children}</>;
 }
 
 export const useAuth = (): AuthContextType => useContext(AuthContext);
