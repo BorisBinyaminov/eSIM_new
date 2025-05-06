@@ -1,20 +1,30 @@
-"""
-Refactored bot.py with 'Delete' button for eSIMs that are neither New, Onboard, nor In Use,
-and 'Refresh' button shown only for eSIMs that are In Use.
-
-This module implements a Telegram bot that enables users to interact with the eSIM purchasing system.
-It supports buying eSIMs, checking eSIM status, performing top-ups, and now deleting eSIM entries from
-our local database if they are Depleted, Deleted, or in an undefined fallback state.
-"""
-
 import sys
 import logging
 import asyncio
 import os
 import json
+from dotenv import load_dotenv
+from models import User, Order
+import buy_esim
 from typing import Optional
+from database import SessionLocal, engine, Base, upsert_user
+
 from pathlib import Path
-from telegram.error import NetworkError
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    WebAppInfo,
+    ReplyKeyboardMarkup,
+)
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    CallbackContext,
+    MessageHandler,
+    filters,
+    CallbackQueryHandler,
+)
 
 # путь к папке src: .../eSIM_new/backend/src
 SRC_DIR     = Path(__file__).resolve().parent
@@ -31,30 +41,9 @@ LOCAL_PKGS_F    = PUBLIC_DIR / 'countryPackages.json'
 REGIONAL_PKGS_F = PUBLIC_DIR / 'regionalPackages.json'
 GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
 
-from telegram import (
-    Update,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    WebAppInfo,
-    ReplyKeyboardMarkup
-)
-from telegram.ext import (
-    Application,
-    CommandHandler,
-    CallbackContext,
-    MessageHandler,
-    filters,
-    CallbackQueryHandler
-)
-from dotenv import load_dotenv
-
-from database import SessionLocal, engine, Base
-from models import User, Order
-import buy_esim
-
 # Load environment variables
 load_dotenv()
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKEN = "8073824494:AAEfSGYAnUe4Pv8MV24dWIPcbHhDW2JMjJc"
 WEBAPP_URL = os.getenv("WEBAPP_URL")
 DATABASE_URL = os.getenv("DATABASE_URL")
 SUPPORT_BOT = os.getenv("SUPPORT_BOT")
@@ -62,7 +51,17 @@ NEWS_CHANNEL = os.getenv("NEWS_CHANNEL")
 WEBAPP_FAQ_URL = os.getenv("WEBAPP_FAQ_URL")
 WEBAPP_GUIDES_URL = os.getenv("WEBAPP_GUIDES_URL")
 
+logger = logging.getLogger("bot")
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s"))
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 # ====== Load JSON Data Files ======
+
+if not TELEGRAM_TOKEN:
+    raise ValueError("❌ BOT_TOKEN is not set in environment variables")
+logging.debug(f"[BOT.py]  TELEGRAM_TOKEN set={bool(TELEGRAM_TOKEN)}")
+
 try:
     with open(COUNTRIES_F, encoding="utf-8") as f:
         countries_data = json.load(f)
@@ -123,7 +122,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-logger = logging.getLogger(__name__)
+
 USER_SESSIONS = {}
 
 # -------------------------------
@@ -256,17 +255,30 @@ def format_esim_info(data: dict, db_entry: Optional[Order] = None) -> str:
 # -------------------------------
 # /start Command
 # -------------------------------
+logger = logging.getLogger(__name__)
+
 async def start(update: Update, context: CallbackContext) -> None:
-    user_id = update.message.chat_id
-    logger.info(f"User {user_id} started the bot.")
-    await store_user_in_db(update.message.from_user)
-    USER_SESSIONS[user_id] = "regular"
+    user = update.effective_user
+    logger.info(f"🔥 /start from {user.id} (@{user.username})")
+
+    def sync_db_task():
+        db = SessionLocal()
+        try:
+            upsert_user(db, {
+                "id": user.id,
+                "telegram_id": str(user.id),  # Make sure to match DB type (string)
+                "username": user.username,
+                "photo_url": None,  # Replace with real photo_url if available
+            })
+        finally:
+            db.close()
+
+    await asyncio.to_thread(sync_db_task)
+
     await update.message.reply_text(
-        "Welcome to eSIM Unlimited! Choose an option:",
-        reply_markup=main_menu_keyboard()
+        "Welcome to eSIM Unlimited! Choose an option:"
     )
 
-# -------------------------------
 # Standard Message Handling
 # -------------------------------
 async def handle_message(update: Update, context: CallbackContext) -> None:
@@ -1012,12 +1024,6 @@ async def handle_message_wrapper(update: Update, context: CallbackContext) -> No
         await handle_message(update, context)
     except Exception as e:
         logger.exception("Error in handle_message:")
-
-# -------------------------------
-# App Entry Point
-# -------------------------------
-import asyncio
-from telegram.error import NetworkError
 
 # -------------------------------
 # App Entry Point

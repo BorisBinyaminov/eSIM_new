@@ -1,15 +1,38 @@
-'use client';
-import { createContext, useState, useEffect, ReactNode } from 'react';
+"use client";
 
-// Типы
-export interface TelegramUser {
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+
+declare global {
+  interface Window {
+    Telegram: {
+      WebApp: {
+        initData: string;
+        initDataUnsafe: {
+          user?: {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+            photo_url?: string;
+          };
+        };
+        ready: () => void;
+      };
+    };
+  }
+}
+
+interface TelegramUser {
   id: number;
   first_name: string;
   last_name?: string;
   username?: string;
-  language_code?: string;
-  auth_date?: string;
-  hash?: string;
   photo_url?: string;
 }
 
@@ -27,98 +50,60 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-declare global {
-  interface Window {
-    Telegram: {
-      WebApp: {
-        ready: () => void;
-        initDataUnsafe: {
-          user?: TelegramUser;
-          [key: string]: any;
-        };
-      };
-    };
-  }
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<TelegramUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
 
-  const logout = () => {
-    setUser(null);
-    if (typeof window !== 'undefined') {
-      window.location.reload();
-    }
-  };
-
-  const login = () => {
-    console.log('Пользователь должен быть авторизован автоматически через Telegram WebApp');
-  };
+  // Toggle to true in production
+  const secureCheckEnabled = true;
 
   useEffect(() => {
-    const authenticateUser = async () => {
-      if (typeof window !== 'undefined') {
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.ready();
-          const initData = window.Telegram.WebApp.initDataUnsafe;
-          console.log('initDataUnsafe:', initData);
-
-          if (initData && initData.user) {
-            const secureCheckEnabled = false; // <- 👉 true = проверка через сервер, false = отключена
-
-            if (secureCheckEnabled) {
-              // ✅ ПРОВЕРКА ЧЕРЕЗ API (защищённый режим)
-              try {
-                const response = await fetch('/api/auth', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(initData),
-                });
-
-                const data = await response.json();
-                if (response.ok && data.status === 'success') {
-                  setUser(initData.user);
-                } else {
-                  console.error('Ошибка авторизации на сервере:', data.message);
-                }
-              } catch (error) {
-                console.error('Ошибка при выполнении запроса авторизации:', error);
-              } finally {
-                setLoading(false);
-              }
-            } else {
-              // ✅ УПРОЩЁННЫЙ РЕЖИМ (для тестов/разработки)
-              setUser(initData.user);
-              setLoading(false);
-            }
-          } else {
-            console.log('Пользователь не найден в Telegram WebApp, устанавливаю тестовые данные');
-            setUser({
-              id: 123456,
-              first_name: 'Тестовый',
-              last_name: 'Пользователь',
-              username: 'test_user',
-            });
-            setLoading(false);
-          }
-        } else {
-          console.log('Telegram WebApp не найден');
-          setLoading(false);
-        }
+    const initData = window.Telegram?.WebApp?.initData;
+    const rawUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  
+    console.log("📦 initData from Mini App:", initData);
+    console.log("👤 rawUser from initDataUnsafe:", rawUser);
+  
+    if (rawUser) {
+      setUser(rawUser); // ✅ This is what was missing
+    }
+  
+    const sendToBackend = async () => {
+      if (!initData) return;
+      try {
+        const res = await fetch("https://mini.torounlimitedvpn.com/auth/telegram", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ initData }),
+        });
+        const data = await res.json();
+        console.log("✅ Auth response:", data);
+      } catch (err) {
+        console.error("❌ Auth error", err);
+      } finally {
+        setLoading(false);
       }
     };
-
-    authenticateUser();
+  
+    sendToBackend();
   }, []);
+  
+
+  const login = () => {
+    // no-op for WebApp
+  };
+  const logout = () => {
+    console.debug("[Auth] logout");
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
+
+export const useAuth = (): AuthContextType => useContext(AuthContext);
