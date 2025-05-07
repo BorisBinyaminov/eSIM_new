@@ -21,9 +21,9 @@ const MySims = () => {
   useEffect(() => {
     const fetchEsims = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/my-esims`, {
+        const res = await fetch("https://mini.torounlimitedvpn.com/my-esims", {
           headers: {
-            'X-User-ID': window.localStorage.getItem("user_id") || "",  // Adjust based on your AuthProvider logic
+            'X-User-ID': window.localStorage.getItem("id") || "",  // Adjust based on your AuthProvider logic
           }
         });
         const json = await res.json();
