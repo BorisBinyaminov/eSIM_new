@@ -8,7 +8,6 @@ import React, {
   ReactNode,
 } from "react";
 
-
 declare global {
   interface Window {
     Telegram: {
@@ -52,7 +51,8 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<TelegramUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -81,8 +81,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        const data = await res.json();
-        console.log("✅ Auth success:", data);
+        // ✅ Save Telegram user in context for UI display
+        setUser({
+          id: rawUser.id,
+          first_name: rawUser.first_name,
+          last_name: rawUser.last_name,
+          username: rawUser.username,
+          photo_url: rawUser.photo_url,
+        });
+
+        console.log("✅ Auth success");
       } catch (err) {
         console.error("❌ Auth request error:", err);
         window.Telegram?.WebApp?.close();
@@ -94,9 +102,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sendToBackend();
   }, []);
 
+  const login = () => {}; // unused
+  const logout = () => setUser(null);
+
   if (loading) return <div>Loading...</div>;
 
-  return <>{children}</>;
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = (): AuthContextType => useContext(AuthContext);
