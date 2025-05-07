@@ -439,10 +439,13 @@
 
     },
     "myeSim":{
-        "title": "My eSims",
+        "title": "My eSIMs",
+        "packageName": "Package name",
+        "active": "Active",
+        "inactive": "Inactive",
         "usage": "Usage",
-        "order": "Order date:",
-        "expired": "Expired time:",
+        "order": "Order date",
+        "expired": "Expired time",
         "cancel": "Cancel",
         "top-up": "Top-up"
     },
