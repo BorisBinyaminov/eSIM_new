@@ -56,19 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUserStr = localStorage.getItem("telegram_user");
-    if (savedUserStr) {
-      try {
-        const savedUser = JSON.parse(savedUserStr);
-        setUser(savedUser);
-        setLoading(false);
-        return; // ✅ Skip auth if user is already saved
-      } catch {
-        console.warn("⚠️ Failed to parse telegram_user from localStorage");
-        localStorage.removeItem("telegram_user");
-      }
-    }
-
     const initData = window.Telegram?.WebApp?.initData;
     const rawUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
     console.log("📦 initData from Mini App:", initData);
@@ -104,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         localStorage.setItem("telegram_user", JSON.stringify(userToSave));
         setUser(userToSave);
-        console.log("✅ Auth success");
+        console.log("✅ Auth success and user saved:", userToSave);
       } catch (err) {
         console.error("❌ Auth request error:", err);
         window.Telegram?.WebApp?.close();
