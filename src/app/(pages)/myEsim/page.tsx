@@ -20,10 +20,17 @@ const MySims = () => {
 
   useEffect(() => {
     const fetchEsims = async () => {
+      const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+  
+      if (!userId) {
+        console.warn("❌ No user ID found in Telegram WebApp initData");
+        return;
+      }
+  
       try {
         const res = await fetch("https://mini.torounlimitedvpn.com/my-esims", {
           headers: {
-            'X-User-ID': window.localStorage.getItem("id") || "",  // Adjust based on your AuthProvider logic
+            'X-User-ID': String(userId),
           }
         });
         const json = await res.json();
@@ -36,9 +43,10 @@ const MySims = () => {
         console.error("Error fetching eSIMs", err);
       }
     };
-
+  
     fetchEsims();
   }, []);
+  
 
   return (
     <div className="min-h-screen bg-[#05081A] text-white p-6">
