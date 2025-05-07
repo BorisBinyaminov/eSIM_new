@@ -8,7 +8,6 @@ router = APIRouter()
 async def get_my_esims(request: Request):
     print("✅ esim_routes 1")
     user_id = request.headers.get("X-User-ID")
-    return {"hello": "from esims-check", "user_id": user_id}
     if not user_id:
         return JSONResponse(status_code=400, content={"success": False, "error": "Missing user ID"})
 
