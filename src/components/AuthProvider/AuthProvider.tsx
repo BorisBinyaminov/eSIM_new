@@ -8,6 +8,7 @@ import React, {
   ReactNode,
 } from "react";
 
+
 declare global {
   interface Window {
     Telegram: {
@@ -23,6 +24,7 @@ declare global {
           };
         };
         ready: () => void;
+        close: () => void;
       };
     };
   }
@@ -50,60 +52,51 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [user, setUser] = useState<TelegramUser | null>(null);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
-
-  // Toggle to true in production
-  const secureCheckEnabled = true;
 
   useEffect(() => {
     const initData = window.Telegram?.WebApp?.initData;
     const rawUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-  
     console.log("📦 initData from Mini App:", initData);
     console.log("👤 rawUser from initDataUnsafe:", rawUser);
-  
-    if (rawUser) {
-      setUser(rawUser); // ✅ This is what was missing
-    }
-  
+
     const sendToBackend = async () => {
-      if (!initData) return;
+      if (!initData || !rawUser) {
+        console.error("❌ Telegram init data missing");
+        window.Telegram?.WebApp?.close(); // Close if user info is not available
+        return;
+      }
+
       try {
         const res = await fetch("https://mini.torounlimitedvpn.com/auth/telegram", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ initData }),
         });
+
+        if (!res.ok) {
+          console.error("❌ Auth failed with status:", res.status);
+          window.Telegram?.WebApp?.close();
+          return;
+        }
+
         const data = await res.json();
-        console.log("✅ Auth response:", data);
+        console.log("✅ Auth success:", data);
       } catch (err) {
-        console.error("❌ Auth error", err);
+        console.error("❌ Auth request error:", err);
+        window.Telegram?.WebApp?.close();
       } finally {
         setLoading(false);
       }
     };
-  
+
     sendToBackend();
   }, []);
-  
 
-  const login = () => {
-    // no-op for WebApp
-  };
-  const logout = () => {
-    console.debug("[Auth] logout");
-    setUser(null);
-  };
+  if (loading) return <div>Loading...</div>;
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <>{children}</>;
+}
 
 export const useAuth = (): AuthContextType => useContext(AuthContext);
