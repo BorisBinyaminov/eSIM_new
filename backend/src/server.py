@@ -18,6 +18,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
+import esim_routes
 
 # Load environment variables
 load_dotenv()
@@ -65,6 +66,7 @@ app.add_middleware(
 
 # Include auth router for mini app authentication
 app.include_router(auth_router)
+app.include_router(esim_routes.router)
 
 # Create tables if they do not already exist
 Base.metadata.create_all(bind=engine)
