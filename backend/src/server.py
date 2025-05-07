@@ -10,7 +10,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from dotenv import load_dotenv
-from auth import router as auth_router
 from database import engine, Base  # Import engine and Base for DB initialization
 import buy_esim
 from support_bot import create_bot_app
@@ -18,7 +17,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
-import esim_routes
+from auth import router as auth_router
+from esim_routes import router as esim_router
 
 # Load environment variables
 load_dotenv()
@@ -66,7 +66,7 @@ app.add_middleware(
 
 # Include auth router for mini app authentication
 app.include_router(auth_router)
-app.include_router(esim_routes.router)
+app.include_router(esim_router)
 
 # Create tables if they do not already exist
 Base.metadata.create_all(bind=engine)
