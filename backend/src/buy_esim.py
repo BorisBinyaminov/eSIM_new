@@ -307,6 +307,7 @@ async def my_esim(user_id: str) -> list:
             logger.debug(f"[my_esim] Fetching API status for ICCID {iccid}")
             data = await fetch_esim_with_retry(iccid)
             results.append({"iccid": iccid, "data": data})
+            logger.info(f"[my_esim] final results: {results}")
     return results
 
 
