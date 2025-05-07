@@ -56,6 +56,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const savedUserStr = localStorage.getItem("telegram_user");
+    if (savedUserStr) {
+      try {
+        const savedUser = JSON.parse(savedUserStr);
+        setUser(savedUser);
+        setLoading(false);
+        return; // ✅ Skip auth if user is already saved
+      } catch {
+        console.warn("⚠️ Failed to parse telegram_user from localStorage");
+        localStorage.removeItem("telegram_user");
+      }
+    }
+
     const initData = window.Telegram?.WebApp?.initData;
     const rawUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
     console.log("📦 initData from Mini App:", initData);
@@ -64,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const sendToBackend = async () => {
       if (!initData || !rawUser) {
         console.error("❌ Telegram init data missing");
-        window.Telegram?.WebApp?.close(); // Close if user info is not available
+        window.Telegram?.WebApp?.close();
         return;
       }
 
@@ -81,15 +94,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // ✅ Save Telegram user in context for UI display
-        setUser({
+        const userToSave: TelegramUser = {
           id: rawUser.id,
           first_name: rawUser.first_name,
           last_name: rawUser.last_name,
           username: rawUser.username,
           photo_url: rawUser.photo_url,
-        });
+        };
 
+        localStorage.setItem("telegram_user", JSON.stringify(userToSave));
+        setUser(userToSave);
         console.log("✅ Auth success");
       } catch (err) {
         console.error("❌ Auth request error:", err);
@@ -102,8 +116,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sendToBackend();
   }, []);
 
-  const login = () => {}; // unused
-  const logout = () => setUser(null);
+  const login = () => {};
+  const logout = () => {
+    localStorage.removeItem("telegram_user");
+    setUser(null);
+  };
 
   if (loading) return <div>Loading...</div>;
 

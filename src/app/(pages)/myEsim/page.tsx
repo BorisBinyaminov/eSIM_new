@@ -19,34 +19,34 @@ const MySims = () => {
   const t = useTranslations("myeSim");
 
   useEffect(() => {
-    const fetchEsims = async () => {
-      const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-  
-      if (!userId) {
-        console.warn("❌ No user ID found in Telegram WebApp initData");
-        return;
-      }
-  
-      try {
-        const res = await fetch("https://mini.torounlimitedvpn.com/my-esims", {
-          headers: {
-            'X-User-ID': String(userId),
-          }
-        });
-        const json = await res.json();
-        if (json.success && Array.isArray(json.data)) {
-          setSims(json.data);
-        } else {
-          console.error("Failed to fetch eSIMs", json.error);
+  const fetchEsims = async () => {
+    const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
+
+    if (!userId) {
+      console.warn("❌ No user ID found in Telegram WebApp initData");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://mini.torounlimitedvpn.com/my-esims", {
+        headers: {
+          'X-User-ID': String(userId),
         }
-      } catch (err) {
-        console.error("Error fetching eSIMs", err);
+      });
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setSims(json.data);
+      } else {
+        console.error("Failed to fetch eSIMs", json.error);
       }
-    };
-  
-    fetchEsims();
-  }, []);
-  
+    } catch (err) {
+      console.error("Error fetching eSIMs", err);
+    }
+  };
+
+  fetchEsims();
+}, []);
+
 
   return (
     <div className="min-h-screen bg-[#05081A] text-white p-6">
