@@ -20,6 +20,9 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import Order
+from fastapi import APIRouter
+
+router = APIRouter()
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -294,7 +297,7 @@ async def fetch_esim_with_retry(iccid: str, retries: int = 3, delay: int = 1) ->
     logger.error(f"❌ All retries failed for ICCID {iccid}")
     return None
 
-
+@router.get("/my-esims")
 async def my_esim(user_id: str) -> list:
     """
     Retrieve the list of eSIMs associated with a user, updating their status from the API.

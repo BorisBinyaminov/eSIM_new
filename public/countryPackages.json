@@ -24251,6 +24251,41 @@
         ]
     },
     {
+        "packageCode": "PV7L2P3BV",
+        "slug": "PH_3_30",
+        "name": "Philippine 3GB 30Days",
+        "price": 47000,
+        "currencyCode": "USD",
+        "volume": 3221225472,
+        "smsStatus": 2,
+        "dataType": 1,
+        "unusedValidTime": 180,
+        "duration": 30,
+        "durationUnit": "DAY",
+        "location": "PH",
+        "description": "Philippine 3GB 30Days",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 94000,
+        "speed": "3G/4G/5G",
+        "ipExport": "HK",
+        "supportTopUpType": 2,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "Philippines",
+                "locationLogo": "/img/flags/ph.png",
+                "locationCode": "PH",
+                "operatorList": [
+                    {
+                        "operatorName": "Globe",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "packageCode": "PH83BFJ2F",
         "slug": "SG_0.5_Daily",
         "name": "Singapore 500MB/Day",

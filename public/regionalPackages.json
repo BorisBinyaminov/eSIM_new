@@ -4025,6 +4025,75 @@
         ]
     },
     {
+        "packageCode": "CKH492",
+        "slug": "NA-3_3_15",
+        "name": "North America 3GB 15Days",
+        "price": 58000,
+        "currencyCode": "USD",
+        "volume": 3221225472,
+        "smsStatus": 1,
+        "dataType": 1,
+        "unusedValidTime": 180,
+        "duration": 15,
+        "durationUnit": "DAY",
+        "location": "MX,US,CA",
+        "description": "North America 3GB 15Days",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 116000,
+        "speed": "3G/4G/5G",
+        "ipExport": "UK/NO",
+        "supportTopUpType": 2,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "United States",
+                "locationLogo": "/img/flags/us.png",
+                "locationCode": "US",
+                "operatorList": [
+                    {
+                        "operatorName": "Verizon",
+                        "networkType": "5G"
+                    },
+                    {
+                        "operatorName": "T-Mobile",
+                        "networkType": "5G"
+                    }
+                ]
+            },
+            {
+                "locationName": "Canada",
+                "locationLogo": "/img/flags/ca.png",
+                "locationCode": "CA",
+                "operatorList": [
+                    {
+                        "operatorName": "Rogers Wireless",
+                        "networkType": "5G"
+                    },
+                    {
+                        "operatorName": "Videotron",
+                        "networkType": "5G"
+                    }
+                ]
+            },
+            {
+                "locationName": "Mexico",
+                "locationLogo": "/img/flags/mx.png",
+                "locationCode": "MX",
+                "operatorList": [
+                    {
+                        "operatorName": "Movistar",
+                        "networkType": "5G"
+                    },
+                    {
+                        "operatorName": "Telcel",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "packageCode": "CKH493",
         "slug": "NA-3_5_30",
         "name": "North America 5GB 30Days",
@@ -5890,6 +5959,75 @@
                     },
                     {
                         "operatorName": "Vodafone",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "CKH535",
+        "slug": "NA-3_20_30",
+        "name": "North America 20GB 30Days",
+        "price": 290000,
+        "currencyCode": "USD",
+        "volume": 21474836480,
+        "smsStatus": 1,
+        "dataType": 1,
+        "unusedValidTime": 180,
+        "duration": 30,
+        "durationUnit": "DAY",
+        "location": "MX,US,CA",
+        "description": "North America 20GB 30Days",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 580000,
+        "speed": "3G/4G/5G",
+        "ipExport": "UK/NO",
+        "supportTopUpType": 2,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "United States",
+                "locationLogo": "/img/flags/us.png",
+                "locationCode": "US",
+                "operatorList": [
+                    {
+                        "operatorName": "Verizon",
+                        "networkType": "5G"
+                    },
+                    {
+                        "operatorName": "T-Mobile",
+                        "networkType": "5G"
+                    }
+                ]
+            },
+            {
+                "locationName": "Canada",
+                "locationLogo": "/img/flags/ca.png",
+                "locationCode": "CA",
+                "operatorList": [
+                    {
+                        "operatorName": "Rogers Wireless",
+                        "networkType": "5G"
+                    },
+                    {
+                        "operatorName": "Videotron",
+                        "networkType": "5G"
+                    }
+                ]
+            },
+            {
+                "locationName": "Mexico",
+                "locationLogo": "/img/flags/mx.png",
+                "locationCode": "MX",
+                "operatorList": [
+                    {
+                        "operatorName": "Movistar",
+                        "networkType": "5G"
+                    },
+                    {
+                        "operatorName": "Telcel",
                         "networkType": "5G"
                     }
                 ]
