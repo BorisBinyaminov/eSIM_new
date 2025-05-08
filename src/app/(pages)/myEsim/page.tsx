@@ -6,16 +6,22 @@ import { FaDatabase, FaClock, FaRegCalendarAlt } from 'react-icons/fa';
 
 interface EsimData {
   iccid: string;
-  data: {
-    esimStatus?: string;
-    orderUsage?: number;
-    expiredTime?: string;
-    packageList?: {
-      packageName?: string;
-      createTime?: string;
-    }[];
-  };
+  data: Record<string, any>;
 }
+
+const sortEsimsPriority = (esims: EsimData[]): EsimData[] => {
+  const getPriority = (entry: EsimData) => {
+    const status = entry.data?.esimStatus || "";
+    const smdp = entry.data?.smdpStatus || "";
+    if (smdp === "RELEASED" && status === "GOT_RESOURCE") return 0;
+    if (smdp === "ENABLED" && status === "IN_USE") return 1;
+    if (smdp === "ENABLED" && status === "GOT_RESOURCE") return 2;
+    if (status === "USED_UP") return 3;
+    if (status === "DELETED") return 4;
+    return 5;
+  };
+  return [...esims].sort((a, b) => getPriority(b) - getPriority(a));
+};
 
 const MySims = () => {
   const [sims, setSims] = useState<EsimData[]>([]);
@@ -38,7 +44,8 @@ const MySims = () => {
         });
         const json = await res.json();
         if (json.success && Array.isArray(json.data)) {
-          setSims(json.data);
+          const sorted = sortEsimsPriority(json.data);
+          setSims(sorted);
         } else {
           console.error("Failed to fetch eSIMs", json.error);
         }
@@ -50,12 +57,40 @@ const MySims = () => {
     fetchEsims();
   }, []);
 
+  const canCancel = (statusLabel: string) => ["New", "Onboard"].includes(statusLabel);
+
+  const canTopUp = (data: any) => {
+    const supportTopUp = data.packageList?.[0]?.supportTopUpType === 2;
+    const smdp = data.smdpStatus;
+    const status = data.esimStatus;
+    return (
+      supportTopUp &&
+      ["RELEASED", "ENABLED"].includes(smdp) &&
+      ["GOT_RESOURCE", "IN_USE"].includes(status)
+    );
+  };
+
+  const canRefresh = (statusLabel: string) => statusLabel === "In Use";
+
+  const canDelete = (statusLabel: string) => !["New", "Onboard", "In Use"].includes(statusLabel);
+
+  const getStatusLabel = (smdp: string, status: string) => {
+    if (smdp === "RELEASED" && status === "GOT_RESOURCE") return "New";
+    if (smdp === "ENABLED" && status === "IN_USE") return "In Use";
+    if (smdp === "ENABLED" && status === "GOT_RESOURCE") return "Onboard";
+    if (status === "USED_UP") return "Depleted";
+    if (status === "DELETED") return "Deleted";
+    return "Unknown";
+  };
+
   return (
     <div className="min-h-screen bg-[#05081A] text-white p-6">
       <h1 className="text-3xl font-bold mb-6">{t("title")}</h1>
       <div className="space-y-6">
         {sims.map((sim, index) => {
           const status = sim.data.esimStatus;
+          const smdp = sim.data.smdpStatus;
+          const statusLabel = getStatusLabel(smdp, status);
           const packageName = sim.data.packageList?.[0]?.packageName || `eSIM #${index + 1}`;
           const orderDate = sim.data.packageList?.[0]?.createTime;
           const expiredTime = sim.data.expiredTime;
@@ -80,23 +115,47 @@ const MySims = () => {
               </div>
               <div className="text-xl font-bold text-white mb-4">{packageName}</div>
 
-              <div className="flex items-center gap-3 mb-4">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-[85px] px-4 py-2 border border-white rounded-[16px] text-white"
-                >
-                  {t("cancel")}
-                </motion.button>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full"
-                >
-                  <div className="w-full bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] py-2 text-center font-bold text-white">
-                    {t("top-up")}
-                  </div>
-                </motion.div>
+              <div className="flex flex-wrap gap-3 mb-4">
+                {canCancel(statusLabel) && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 border border-white rounded-[16px] text-white"
+                  >
+                    {t("cancel")}
+                  </motion.button>
+                )}
+
+                {canTopUp(sim.data) && (
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <div className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] px-4 py-2 text-center font-bold text-white">
+                      {t("top-up")}
+                    </div>
+                  </motion.div>
+                )}
+
+                {canRefresh(statusLabel) && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 border border-yellow-500 text-yellow-300 rounded-[16px]"
+                  >
+                    🔄 {t("refresh")}
+                  </motion.button>
+                )}
+
+                {canDelete(statusLabel) && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 border border-red-500 text-red-400 rounded-[16px]"
+                  >
+                    🗑 {t("delete")}
+                  </motion.button>
+                )}
               </div>
 
               <div className="bg-[#0B1434] p-4 rounded-xl space-y-3 text-sm text-white/80">
