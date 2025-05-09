@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Request, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from database import SessionLocal, Order
+from database import SessionLocal
+from models import Order
 from buy_esim import my_esim, cancel_esim, get_topup_packages, topup_esim
 
 router = APIRouter()
