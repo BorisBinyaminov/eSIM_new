@@ -33,7 +33,8 @@ jobs:
             git tag -f backup-before-deploy || true
 
             echo "[INFO] Fetching latest changes from dev..."
-            git pull origin dev
+            git fetch origin dev
+            git reset --hard origin/dev
 
             echo "[INFO] Rebuilding containers..."
             docker-compose down

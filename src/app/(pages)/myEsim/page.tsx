@@ -83,6 +83,41 @@ const MySims = () => {
     return "Unknown";
   };
 
+  const handleAction = async (action: string, sim: EsimData) => {
+    const userConfirmed = confirm(`Are you sure you want to ${action} this eSIM?`);
+    if (!userConfirmed) return;
+
+    const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
+    if (!userId) return;
+
+    try {
+      if (action === "cancel") {
+        const payload = { iccid: sim.iccid, tran_no: sim.data.esimTranNo };
+        await fetch("https://mini.torounlimitedvpn.com/esim/cancel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else if (action === "delete") {
+        // Not implemented in BE yet — placeholder
+        alert("Delete functionality not implemented in mini app.");
+      } else if (action === "refresh") {
+        const refreshed = await fetch("https://mini.torounlimitedvpn.com/esim/my-esims", {
+          headers: { 'X-User-ID': String(userId) },
+        });
+        const json = await refreshed.json();
+        if (json.success && Array.isArray(json.data)) {
+          const sorted = sortEsimsPriority(json.data);
+          setSims(sorted);
+        }
+      } else if (action === "topup") {
+        alert("Top-up logic will display available packages in next step.");
+      }
+    } catch (err) {
+      console.error(`${action} failed`, err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#05081A] text-white p-6">
       <h1 className="text-3xl font-bold mb-6">{t("title")}</h1>
@@ -121,20 +156,21 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-white rounded-[16px] text-white"
+                    onClick={() => handleAction("cancel", sim)}
                   >
                     {t("cancel")}
                   </motion.button>
                 )}
 
                 {canTopUp(sim.data) && (
-                  <motion.div
+                  <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] px-4 py-2 text-center font-bold text-white"
+                    onClick={() => handleAction("topup", sim)}
                   >
-                    <div className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] px-4 py-2 text-center font-bold text-white">
-                      {t("top-up")}
-                    </div>
-                  </motion.div>
+                    {t("top-up")}
+                  </motion.button>
                 )}
 
                 {canRefresh(statusLabel) && (
@@ -142,6 +178,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-yellow-500 text-yellow-300 rounded-[16px]"
+                    onClick={() => handleAction("refresh", sim)}
                   >
                     🔄 {t("refresh")}
                   </motion.button>
@@ -152,6 +189,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-red-500 text-red-400 rounded-[16px]"
+                    onClick={() => handleAction("delete", sim)}
                   >
                     🗑 {t("delete")}
                   </motion.button>
