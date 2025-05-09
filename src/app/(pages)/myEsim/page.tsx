@@ -37,7 +37,7 @@ const MySims = () => {
       }
 
       try {
-        const res = await fetch("https://mini.torounlimitedvpn.com/my-esims", {
+        const res = await fetch("https://mini.torounlimitedvpn.com/esim/my-esims", {
           headers: {
             'X-User-ID': String(userId),
           },
