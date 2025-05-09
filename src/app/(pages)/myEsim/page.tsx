@@ -27,33 +27,24 @@ const MySims = () => {
   const [sims, setSims] = useState<EsimData[]>([]);
   const t = useTranslations("myeSim");
 
+  const fetchEsims = async () => {
+    const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
+    if (!userId) return;
+    try {
+      const res = await fetch("https://mini.torounlimitedvpn.com/esim/my-esims", {
+        headers: { 'X-User-ID': String(userId) },
+      });
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        const sorted = sortEsimsPriority(json.data);
+        setSims(sorted);
+      }
+    } catch (err) {
+      console.error("Error fetching eSIMs", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchEsims = async () => {
-      const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
-
-      if (!userId) {
-        console.warn("❌ No user ID found in Telegram WebApp initData");
-        return;
-      }
-
-      try {
-        const res = await fetch("https://mini.torounlimitedvpn.com/esim/my-esims", {
-          headers: {
-            'X-User-ID': String(userId),
-          },
-        });
-        const json = await res.json();
-        if (json.success && Array.isArray(json.data)) {
-          const sorted = sortEsimsPriority(json.data);
-          setSims(sorted);
-        } else {
-          console.error("Failed to fetch eSIMs", json.error);
-        }
-      } catch (err) {
-        console.error("Error fetching eSIMs", err);
-      }
-    };
-
     fetchEsims();
   }, []);
 
@@ -84,7 +75,11 @@ const MySims = () => {
   };
 
   const handleAction = async (action: string, sim: EsimData) => {
-    const userConfirmed = confirm(`Are you sure you want to ${action} this eSIM?`);
+    let prompt = `Are you sure you want to ${action} this eSIM?`;
+    if (action === "delete") {
+      prompt = `⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?`;
+    }
+    const userConfirmed = confirm(prompt);
     if (!userConfirmed) return;
 
     const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
@@ -98,23 +93,25 @@ const MySims = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
+        alert("✅ eSIM cancellation requested.");
       } else if (action === "delete") {
-        // Not implemented in BE yet — placeholder
-        alert("Delete functionality not implemented in mini app.");
-      } else if (action === "refresh") {
-        const refreshed = await fetch("https://mini.torounlimitedvpn.com/esim/my-esims", {
-          headers: { 'X-User-ID': String(userId) },
+        const payload = { iccid: sim.iccid };
+        await fetch("https://mini.torounlimitedvpn.com/esim/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
-        const json = await refreshed.json();
-        if (json.success && Array.isArray(json.data)) {
-          const sorted = sortEsimsPriority(json.data);
-          setSims(sorted);
-        }
+        alert("🗑 eSIM deleted successfully.");
+      } else if (action === "refresh") {
+        alert("🔄 Refreshing usage...");
       } else if (action === "topup") {
-        alert("Top-up logic will display available packages in next step.");
+        alert("💳 Top-up logic will display available packages in next step.");
       }
+
+      await fetchEsims();
     } catch (err) {
       console.error(`${action} failed`, err);
+      alert(`❌ ${action} failed. Please try again.`);
     }
   };
 
