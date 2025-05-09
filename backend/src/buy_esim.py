@@ -294,7 +294,6 @@ async def fetch_esim_with_retry(iccid: str, retries: int = 3, delay: int = 1) ->
     logger.error(f"❌ All retries failed for ICCID {iccid}")
     return None
 
-
 async def my_esim(user_id: str) -> list:
     """
     Retrieve the list of eSIMs associated with a user, updating their status from the API.
@@ -308,6 +307,7 @@ async def my_esim(user_id: str) -> list:
             logger.debug(f"[my_esim] Fetching API status for ICCID {iccid}")
             data = await fetch_esim_with_retry(iccid)
             results.append({"iccid": iccid, "data": data})
+            logger.info(f"[my_esim] final results: {results}")
     return results
 
 

@@ -33,9 +33,7 @@ jobs:
             git tag -f backup-before-deploy || true
 
             echo "[INFO] Fetching latest changes from dev..."
-            git fetch origin dev
-            echo "[INFO] Resetting local branch to origin/dev..."
-            git reset --hard origin/dev
+            git pull origin dev
 
             echo "[INFO] Rebuilding containers..."
             docker-compose down
@@ -64,6 +62,6 @@ jobs:
             set -e
             cd ~/eSIM_new
             git reset --hard backup-before-deploy
-            docker-compose down
-            docker-compose up -d --build
+            docker-compose pull
+            docker-compose up -d
           EOF

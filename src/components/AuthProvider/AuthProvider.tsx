@@ -8,7 +8,6 @@ import React, {
   ReactNode,
 } from "react";
 
-
 declare global {
   interface Window {
     Telegram: {
@@ -52,7 +51,8 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<TelegramUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const sendToBackend = async () => {
       if (!initData || !rawUser) {
         console.error("❌ Telegram init data missing");
-        window.Telegram?.WebApp?.close(); // Close if user info is not available
+        window.Telegram?.WebApp?.close();
         return;
       }
 
@@ -81,8 +81,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        const data = await res.json();
-        console.log("✅ Auth success:", data);
+        const userToSave: TelegramUser = {
+          id: rawUser.id,
+          first_name: rawUser.first_name,
+          last_name: rawUser.last_name,
+          username: rawUser.username,
+          photo_url: rawUser.photo_url,
+        };
+
+        localStorage.setItem("telegram_user", JSON.stringify(userToSave));
+        setUser(userToSave);
+        console.log("✅ Auth success and user saved:", userToSave);
       } catch (err) {
         console.error("❌ Auth request error:", err);
         window.Telegram?.WebApp?.close();
@@ -94,9 +103,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sendToBackend();
   }, []);
 
+  const login = () => {};
+  const logout = () => {
+    localStorage.removeItem("telegram_user");
+    setUser(null);
+  };
+
   if (loading) return <div>Loading...</div>;
 
-  return <>{children}</>;
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = (): AuthContextType => useContext(AuthContext);
