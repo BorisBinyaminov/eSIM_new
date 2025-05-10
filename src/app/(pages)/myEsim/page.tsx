@@ -71,7 +71,7 @@ const MySims = () => {
     if (smdp === "ENABLED" && status === "GOT_RESOURCE") return "Onboard";
     if (status === "USED_UP") return "Depleted";
     if (status === "DELETED") return "Deleted";
-    return "Unknown";
+    return "Inactive";
   };
 
   const handleAction = async (action: string, sim: EsimData) => {
@@ -139,10 +139,10 @@ const MySims = () => {
                 <div className="text-sm text-white/60 mb-1">{t("packageName")}</div>
                 <span
                   className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                    status === 'ACTIVE' ? 'bg-green-600' : 'bg-red-600'
+                    statusLabel === 'In Use' ? 'bg-green-600' : 'bg-red-600'
                   }`}
                 >
-                  {status === 'ACTIVE' ? t("active") : t("inactive")}
+                  {t(statusLabel.toLowerCase().replace(/ /g, "-") as any)}
                 </span>
               </div>
               <div className="text-xl font-bold text-white mb-4">{packageName}</div>
