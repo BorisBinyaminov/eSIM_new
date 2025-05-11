@@ -54,13 +54,24 @@ const MySims = () => {
     const supportTopUp = data.packageList?.[0]?.supportTopUpType === 2;
     const smdp = data.smdpStatus;
     const status = data.esimStatus;
+  
+    console.log("🔍 Top-Up Check", {
+      iccid: data.iccid,
+      supportTopUpType: data.packageList?.[0]?.supportTopUpType,
+      smdp,
+      status,
+      canTopUp: supportTopUp &&
+        ["RELEASED", "ENABLED"].includes(smdp) &&
+        ["GOT_RESOURCE", "IN_USE"].includes(status)
+    });
+  
     return (
       supportTopUp &&
       ["RELEASED", "ENABLED"].includes(smdp) &&
       ["GOT_RESOURCE", "IN_USE"].includes(status)
     );
   };
-
+  
   const canRefresh = (statusLabel: string) => statusLabel === "In Use";
 
   const canDelete = (statusLabel: string) => !["New", "Onboard", "In Use"].includes(statusLabel);
