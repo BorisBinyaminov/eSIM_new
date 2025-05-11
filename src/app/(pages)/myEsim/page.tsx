@@ -51,13 +51,13 @@ const MySims = () => {
   const canCancel = (statusLabel: string) => ["New", "Onboard"].includes(statusLabel);
 
   const canTopUp = (data: any) => {
-    const supportTopUp = data.packageList?.[0]?.supportTopUpType === 2;
+    const supportTopUp = data.supportTopUpType === 2;
     const smdp = data.smdpStatus;
     const status = data.esimStatus;
   
     console.log("🔍 Top-Up Check", {
       iccid: data.iccid,
-      supportTopUpType: data.packageList?.[0]?.supportTopUpType,
+      supportTopUpType: data.supportTopUpType,
       smdp,
       status,
       canTopUp: supportTopUp &&
