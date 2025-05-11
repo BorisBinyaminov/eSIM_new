@@ -122,18 +122,19 @@ const MySims = () => {
         try {
           const res = await fetch(`https://mini.torounlimitedvpn.com/esim/topup-packages?iccid=${sim.iccid}`);
           const json = await res.json();
-          
+
           console.log("🔍 Top-Up Fetch Response", {
             status: res.status,
             raw: json
           });
 
-          if (!json.success || !Array.isArray(json.data) || json.data.length === 0) {
+          const packages = json.data || json.packages;
+          if (!json.success || !Array.isArray(packages) || packages.length === 0) {
             alert("❌ No top-up packages available.");
             return;
           }
       
-          setTopupPackages(json.data);
+          setTopupPackages(packages);
           setTopupModal({
             open: true,
             iccid: sim.iccid,
