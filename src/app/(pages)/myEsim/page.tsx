@@ -119,6 +119,18 @@ const MySims = () => {
         alert("🗑 eSIM deleted successfully.");
       } else if (action === "refresh") {
         alert("🔄 Refreshing usage...");
+        const payload = { iccid: sim.iccid };
+        const res = await fetch("https://mini.torounlimitedvpn.com/esim/refresh", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const json = await res.json();
+        if (json.success) {
+          alert("✅ Usage refreshed successfully.");
+        } else {
+          alert("❌ Refresh failed: " + (json.error || "Unknown error"));
+        }
       } else if (action === "topup") {
         try {
           const res = await fetch(`https://mini.torounlimitedvpn.com/esim/topup-packages?iccid=${sim.iccid}`);
