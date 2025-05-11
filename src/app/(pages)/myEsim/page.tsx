@@ -23,9 +23,12 @@ const sortEsimsPriority = (esims: EsimData[]): EsimData[] => {
   return [...esims].sort((a, b) => getPriority(b) - getPriority(a));
 };
 
+
 const MySims = () => {
   const [sims, setSims] = useState<EsimData[]>([]);
   const t = useTranslations("myeSim");
+  const [topupModal, setTopupModal] = useState({ open: false, iccid: "", tranNo: "" });
+  const [topupPackages, setTopupPackages] = useState<any[]>([]);
 
   const fetchEsims = async () => {
     const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
@@ -116,8 +119,25 @@ const MySims = () => {
       } else if (action === "refresh") {
         alert("🔄 Refreshing usage...");
       } else if (action === "topup") {
-        alert("💳 Top-up logic will display available packages in next step.");
-      }
+        try {
+          const res = await fetch(`https://mini.torounlimitedvpn.com/esim/topup-packages?iccid=${sim.iccid}`);
+          const json = await res.json();
+          if (!json.success || !Array.isArray(json.data) || json.data.length === 0) {
+            alert("❌ No top-up packages available.");
+            return;
+          }
+      
+          setTopupPackages(json.data);
+          setTopupModal({
+            open: true,
+            iccid: sim.iccid,
+            tranNo: sim.data.esimTranNo,
+          });
+        } catch (err) {
+          alert("❌ Failed to fetch top-up packages.");
+          console.error("Top-up fetch error:", err);
+        }
+      }  
 
       await fetchEsims();
     } catch (err) {
