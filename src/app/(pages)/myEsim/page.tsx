@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 import { FaDatabase, FaClock, FaRegCalendarAlt } from 'react-icons/fa';
+import PricingCard from "@/components/PricingCard/ui/PricingCard";
 
 interface EsimData {
   iccid: string;
@@ -258,6 +259,67 @@ const MySims = () => {
           );
         })}
       </div>
+      {topupModal.open && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center px-4 py-8">
+          <div className="bg-white text-black rounded-2xl shadow-lg max-w-2xl w-full p-4">
+            <h2 className="text-xl font-bold mb-4 text-center">💳 Select Top-Up Package</h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto">
+              {topupPackages.map((pkg) => (
+                <div
+                  key={pkg.packageCode}
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("https://mini.torounlimitedvpn.com/esim/topup", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          tran_no: topupModal.tranNo,
+                          package_code: pkg.packageCode,
+                          amount: pkg.price,
+                        }),
+                      });
+                      const json = await res.json();
+
+                      if (json.success) {
+                        alert("✅ Top-up successful!");
+                        setTopupModal({ open: false, iccid: "", tranNo: "" });
+                        fetchEsims(); // Refresh the eSIM list
+                      } else {
+                        alert("❌ Top-up failed: " + (json.error || json.errorMsg || "Unknown error"));
+                      }
+                    } catch (e) {
+                      console.error("Top-up error", e);
+                      alert("❌ Failed to perform top-up.");
+                    }
+                  }}
+                  className="cursor-pointer"
+                >
+                  <PricingCard
+                    name={pkg.name}
+                    description={pkg.description || ""}
+                    price={pkg.retailPrice}
+                    data={(pkg.volume / 1024 / 1024).toFixed(1) + "MB"}
+                    duration={`${pkg.duration} ${pkg.durationUnit || "Days"}`}
+                    supportTopUpType={pkg.supportTopUpType || 0}
+                    locations={[]}
+                    coverage={0}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-6">
+              <button
+                onClick={() => setTopupModal({ open: false, iccid: "", tranNo: "" })}
+                className="text-blue-600 underline"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
