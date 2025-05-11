@@ -260,17 +260,27 @@ const MySims = () => {
         })}
       </div>
       {topupModal.open && (
-        <div className="absolute inset-0 z-40 bg-[#0B1434] bg-opacity-90 p-4 overflow-y-auto">
-          <div className="bg-[#10193F] text-white rounded-2xl shadow-lg max-w-2xl w-full mx-auto p-4">
-            <h2 className="text-xl font-bold mb-4 text-center">💳 Select Top-Up Package</h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto">
-              {topupPackages.map((pkg) => (
-                <div
-                  key={pkg.packageCode}
+      <div className="absolute inset-0 z-40 bg-[#0B1434] bg-opacity-90 p-4 overflow-y-auto">
+        <div className="bg-[#10193F] text-white rounded-2xl shadow-lg max-w-2xl w-full mx-auto p-4">
+          <h2 className="text-xl font-bold mb-4 text-center">💳 Select Top-Up Package</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto">
+            {topupPackages.map((pkg) => (
+              <div className="relative" key={pkg.packageCode}>
+                <PricingCard
+                  name={pkg.name}
+                  description={pkg.description || ""}
+                  price={pkg.retailPrice}
+                  data={(pkg.volume / 1024 / 1024).toFixed(1) + "MB"}
+                  duration={`${pkg.duration} ${pkg.durationUnit || "Days"}`}
+                  supportTopUpType={pkg.supportTopUpType || 0}
+                  locations={[]}
+                  coverage={0}
+                />
+                <button
+                  className="absolute inset-0 z-10 w-full h-full bg-transparent"
                   onClick={async (event) => {
-                    event.stopPropagation();
                     event.preventDefault();
+                    event.stopPropagation();
                     try {
                       const res = await fetch("https://mini.torounlimitedvpn.com/esim/topup", {
                         method: "POST",
@@ -282,11 +292,10 @@ const MySims = () => {
                         }),
                       });
                       const json = await res.json();
-
                       if (json.success) {
                         alert("✅ Top-up successful!");
                         setTopupModal({ open: false, iccid: "", tranNo: "" });
-                        fetchEsims(); // Refresh
+                        fetchEsims(); // refresh list
                       } else {
                         alert("❌ Top-up failed: " + (json.error || json.errorMsg || "Unknown error"));
                       }
@@ -295,33 +304,21 @@ const MySims = () => {
                       alert("❌ Failed to perform top-up.");
                     }
                   }}
-                  className="cursor-pointer"
-                >
-                  <PricingCard
-                    name={pkg.name}
-                    description={pkg.description || ""}
-                    price={pkg.retailPrice}
-                    data={(pkg.volume / 1024 / 1024).toFixed(1) + "MB"}
-                    duration={`${pkg.duration} ${pkg.durationUnit || "Days"}`}
-                    supportTopUpType={pkg.supportTopUpType || 0}
-                    locations={[]}
-                    coverage={0}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="text-center mt-6">
-              <button
-                onClick={() => setTopupModal({ open: false, iccid: "", tranNo: "" })}
-                className="text-blue-400 underline"
-              >
-                Cancel
-              </button>
-            </div>
+                />
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-6">
+            <button
+              onClick={() => setTopupModal({ open: false, iccid: "", tranNo: "" })}
+              className="text-blue-400 underline"
+            >
+              Cancel
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
     </div>
   );
 };
