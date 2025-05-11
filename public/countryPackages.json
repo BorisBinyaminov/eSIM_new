@@ -35155,5 +35155,320 @@
                 ]
             }
         ]
+    },
+    {
+        "packageCode": "PZ594KWLT",
+        "slug": "CN_3_Daily_nonhkip",
+        "name": "China mainland 3GB/Day (nonhkip)",
+        "price": 23800,
+        "currencyCode": "USD",
+        "volume": 3221225472,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "CN",
+        "description": "China mainland 3GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 47600,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "China mainland",
+                "locationLogo": "/img/flags/cn.png",
+                "locationCode": "CN",
+                "operatorList": [
+                    {
+                        "operatorName": "China Mobile",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "P468CPENH",
+        "slug": "CN_5_Daily_nonhkip",
+        "name": "China mainland 5GB/Day (nonhkip)",
+        "price": 35200,
+        "currencyCode": "USD",
+        "volume": 5368709120,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "CN",
+        "description": "China mainland 5GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 70400,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "China mainland",
+                "locationLogo": "/img/flags/cn.png",
+                "locationCode": "CN",
+                "operatorList": [
+                    {
+                        "operatorName": "China Mobile",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "P6U5JSNS2",
+        "slug": "CN_10_Daily_nonhkip",
+        "name": "China mainland 10GB/Day (nonhkip)",
+        "price": 48400,
+        "currencyCode": "USD",
+        "volume": 10737418240,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "CN",
+        "description": "China mainland 10GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 96800,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "China mainland",
+                "locationLogo": "/img/flags/cn.png",
+                "locationCode": "CN",
+                "operatorList": [
+                    {
+                        "operatorName": "China Mobile",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "PZ1MZLM46",
+        "slug": "JP_3_Daily_nonhkip",
+        "name": "Japan 3GB/Day (nonhkip)",
+        "price": 23800,
+        "currencyCode": "USD",
+        "volume": 3221225472,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "JP",
+        "description": "Japan 3GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 47600,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "Japan",
+                "locationLogo": "/img/flags/jp.png",
+                "locationCode": "JP",
+                "operatorList": [
+                    {
+                        "operatorName": "KDDI",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "PK51LBYG2",
+        "slug": "JP_5_Daily_nonhkip",
+        "name": "Japan 5GB/Day (nonhkip)",
+        "price": 35200,
+        "currencyCode": "USD",
+        "volume": 5368709120,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "JP",
+        "description": "Japan 5GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 70400,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "Japan",
+                "locationLogo": "/img/flags/jp.png",
+                "locationCode": "JP",
+                "operatorList": [
+                    {
+                        "operatorName": "KDDI",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "PNYCXG870",
+        "slug": "JP_10_Daily_nonhkip",
+        "name": "Japan 10GB/Day (nonhkip)",
+        "price": 48400,
+        "currencyCode": "USD",
+        "volume": 10737418240,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "JP",
+        "description": "Japan 10GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 96800,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "Japan",
+                "locationLogo": "/img/flags/jp.png",
+                "locationCode": "JP",
+                "operatorList": [
+                    {
+                        "operatorName": "KDDI",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "PZ1XRA5P8",
+        "slug": "KR_5_Daily_nonhkip",
+        "name": "South Korea 5GB/Day (nonhkip)",
+        "price": 30800,
+        "currencyCode": "USD",
+        "volume": 5368709120,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "KR",
+        "description": "South Korea 5GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 61600,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "South Korea",
+                "locationLogo": "/img/flags/kr.png",
+                "locationCode": "KR",
+                "operatorList": [
+                    {
+                        "operatorName": "SKTelecom",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "P3N7QMR2R",
+        "slug": "KR_10_Daily_nonhkip",
+        "name": "South Korea 10GB/Day (nonhkip)",
+        "price": 48400,
+        "currencyCode": "USD",
+        "volume": 10737418240,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "KR",
+        "description": "South Korea 10GB/Day (nonhkip)",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 96800,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "South Korea",
+                "locationLogo": "/img/flags/kr.png",
+                "locationCode": "KR",
+                "operatorList": [
+                    {
+                        "operatorName": "SKTelecom",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "packageCode": "PDTNE7W56",
+        "slug": "HK_5_Daily",
+        "name": "Hong Kong 5GB/Day",
+        "price": 35000,
+        "currencyCode": "USD",
+        "volume": 5368709120,
+        "smsStatus": 0,
+        "dataType": 2,
+        "unusedValidTime": 180,
+        "duration": 1,
+        "durationUnit": "DAY",
+        "location": "HK",
+        "description": "Hong Kong 5GB/Day",
+        "activeType": 2,
+        "favorite": false,
+        "retailPrice": 70000,
+        "speed": "3G/4G/5G",
+        "ipExport": "",
+        "supportTopUpType": 1,
+        "fupPolicy": "",
+        "locationNetworkList": [
+            {
+                "locationName": "Hong Kong (China)",
+                "locationLogo": "/img/flags/hk.png",
+                "locationCode": "HK",
+                "operatorList": [
+                    {
+                        "operatorName": "csl",
+                        "networkType": "5G"
+                    }
+                ]
+            }
+        ]
     }
 ]

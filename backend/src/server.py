@@ -66,7 +66,7 @@ app.add_middleware(
 
 # Include auth router for mini app authentication
 app.include_router(auth_router)
-app.include_router(esim_router)
+app.include_router(esim_router, prefix="/esim")
 
 # Create tables if they do not already exist
 Base.metadata.create_all(bind=engine)

@@ -449,7 +449,12 @@
         "cancel": "Cancel",
         "top-up": "Top-up",
         "refresh": "Refresh",
-        "delete": "Delete"
+        "delete": "Delete",
+        "new": "New",
+        "in-use": "In Use",
+        "onboard": "Onboard",
+        "depleted": "Depleted",
+        "deleted": "Deleted"
     },
     "payment":{
         "select": "Select a payment method",

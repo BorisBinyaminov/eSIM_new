@@ -27,49 +27,51 @@ const MySims = () => {
   const [sims, setSims] = useState<EsimData[]>([]);
   const t = useTranslations("myeSim");
 
+  const fetchEsims = async () => {
+    const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
+    if (!userId) return;
+    try {
+      const res = await fetch("https://mini.torounlimitedvpn.com/esim/my-esims", {
+        headers: { 'X-User-ID': String(userId) },
+      });
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        const sorted = sortEsimsPriority(json.data);
+        setSims(sorted);
+      }
+    } catch (err) {
+      console.error("Error fetching eSIMs", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchEsims = async () => {
-      const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
-
-      if (!userId) {
-        console.warn("❌ No user ID found in Telegram WebApp initData");
-        return;
-      }
-
-      try {
-        const res = await fetch("https://mini.torounlimitedvpn.com/my-esims", {
-          headers: {
-            'X-User-ID': String(userId),
-          },
-        });
-        const json = await res.json();
-        if (json.success && Array.isArray(json.data)) {
-          const sorted = sortEsimsPriority(json.data);
-          setSims(sorted);
-        } else {
-          console.error("Failed to fetch eSIMs", json.error);
-        }
-      } catch (err) {
-        console.error("Error fetching eSIMs", err);
-      }
-    };
-
     fetchEsims();
   }, []);
 
   const canCancel = (statusLabel: string) => ["New", "Onboard"].includes(statusLabel);
 
   const canTopUp = (data: any) => {
-    const supportTopUp = data.packageList?.[0]?.supportTopUpType === 2;
+    const supportTopUp = data.supportTopUpType === 2;
     const smdp = data.smdpStatus;
     const status = data.esimStatus;
+  
+    console.log("🔍 Top-Up Check", {
+      iccid: data.iccid,
+      supportTopUpType: data.supportTopUpType,
+      smdp,
+      status,
+      canTopUp: supportTopUp &&
+        ["RELEASED", "ENABLED"].includes(smdp) &&
+        ["GOT_RESOURCE", "IN_USE"].includes(status)
+    });
+  
     return (
       supportTopUp &&
       ["RELEASED", "ENABLED"].includes(smdp) &&
       ["GOT_RESOURCE", "IN_USE"].includes(status)
     );
   };
-
+  
   const canRefresh = (statusLabel: string) => statusLabel === "In Use";
 
   const canDelete = (statusLabel: string) => !["New", "Onboard", "In Use"].includes(statusLabel);
@@ -80,7 +82,48 @@ const MySims = () => {
     if (smdp === "ENABLED" && status === "GOT_RESOURCE") return "Onboard";
     if (status === "USED_UP") return "Depleted";
     if (status === "DELETED") return "Deleted";
-    return "Unknown";
+    return "Inactive";
+  };
+
+  const handleAction = async (action: string, sim: EsimData) => {
+    let prompt = `Are you sure you want to ${action} this eSIM?`;
+    if (action === "delete") {
+      prompt = `⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?`;
+    }
+    const userConfirmed = confirm(prompt);
+    if (!userConfirmed) return;
+
+    const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
+    if (!userId) return;
+
+    try {
+      if (action === "cancel") {
+        const payload = { iccid: sim.iccid, tran_no: sim.data.esimTranNo };
+        await fetch("https://mini.torounlimitedvpn.com/esim/cancel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        alert("✅ eSIM cancellation requested.");
+      } else if (action === "delete") {
+        const payload = { iccid: sim.iccid };
+        await fetch("https://mini.torounlimitedvpn.com/esim/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        alert("🗑 eSIM deleted successfully.");
+      } else if (action === "refresh") {
+        alert("🔄 Refreshing usage...");
+      } else if (action === "topup") {
+        alert("💳 Top-up logic will display available packages in next step.");
+      }
+
+      await fetchEsims();
+    } catch (err) {
+      console.error(`${action} failed`, err);
+      alert(`❌ ${action} failed. Please try again.`);
+    }
   };
 
   return (
@@ -107,10 +150,10 @@ const MySims = () => {
                 <div className="text-sm text-white/60 mb-1">{t("packageName")}</div>
                 <span
                   className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                    status === 'ACTIVE' ? 'bg-green-600' : 'bg-red-600'
+                    statusLabel === 'In Use' ? 'bg-green-600' : 'bg-red-600'
                   }`}
                 >
-                  {status === 'ACTIVE' ? t("active") : t("inactive")}
+                  {t(statusLabel.toLowerCase().replace(/ /g, "-") as any)}
                 </span>
               </div>
               <div className="text-xl font-bold text-white mb-4">{packageName}</div>
@@ -121,20 +164,21 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-white rounded-[16px] text-white"
+                    onClick={() => handleAction("cancel", sim)}
                   >
                     {t("cancel")}
                   </motion.button>
                 )}
 
                 {canTopUp(sim.data) && (
-                  <motion.div
+                  <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] px-4 py-2 text-center font-bold text-white"
+                    onClick={() => handleAction("topup", sim)}
                   >
-                    <div className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] px-4 py-2 text-center font-bold text-white">
-                      {t("top-up")}
-                    </div>
-                  </motion.div>
+                    {t("top-up")}
+                  </motion.button>
                 )}
 
                 {canRefresh(statusLabel) && (
@@ -142,6 +186,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-yellow-500 text-yellow-300 rounded-[16px]"
+                    onClick={() => handleAction("refresh", sim)}
                   >
                     🔄 {t("refresh")}
                   </motion.button>
@@ -152,6 +197,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-red-500 text-red-400 rounded-[16px]"
+                    onClick={() => handleAction("delete", sim)}
                   >
                     🗑 {t("delete")}
                   </motion.button>
