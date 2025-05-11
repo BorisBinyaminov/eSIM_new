@@ -2,9 +2,9 @@
     "MainPage": {
         "Stay-Connected-Anywhere": "Stay Connected Anywhere",
         "with": "with",
-        "eSim Unlimited": "eSim Unlimited",
+        "eSim Unlimited": "eSIM Unlimited",
         "High-speed": "High-speed internet in 150+ countries. No roaming fees, no hidden charges, and no physical SIM required",
-        "Buy eSim": "Buy eSim",
+        "Buy eSim": "Buy eSIM",
         "Our Advantages": "Our Advantages",
         "advantages": {
             "twoWay": { 
@@ -69,14 +69,14 @@
     },
     "Navbar":{
         "home": "Home",
-        "buyeSim": "Buy eSim",
-        "myeSim": "My eSim"
+        "buyeSim": "Buy eSIM",
+        "myeSim": "My eSIM"
     },
     "buyeSim": {
         "title": "Choose eSIM",
         "Select a Country": "Select a Country",
         "Select a Region": "Select a Region",
-        "Select a Global eSim Package": "Select a Global eSim Package",
+        "Select a Global eSim Package": "Select a Global eSIM Package",
         "Search":"Search...",
         "Show more": "Show more",
         "Show less": "Show less",
@@ -462,7 +462,7 @@
         "crypto": "Cryptocurrency"
     },
     "bank": {
-        "Replenishment eSim": "Replenishment eSim",
+        "Replenishment eSim": "Replenishment eSIM",
         "total": "total",
         "Card number": "Card number",
         "Term": "Term",
@@ -476,10 +476,10 @@
         "Form sending": "Form sending"
     },
     "crypto": {
-        "Replenishment eSim": "Replenishment eSim",
+        "Replenishment eSim": "Replenishment eSIM",
         "Connect wallet": "Connect wallet",
         "Min replenishment amount": "Min. replenishment amount",
-        "When paying, please indicate eSim id": "When paying, please indicate eSim id",
+        "When paying, please indicate eSim id": "When paying, please indicate eSIM id",
         "QR - for payment": "QR - for payment",
         "Address": "Address",
         "Required Comment": "Required Comment",
@@ -487,7 +487,7 @@
         "The promo code must contain exactly 4 digits": "The promo code must contain exactly 4 digits."
     },
     "sms": {
-        "Replenishment eSim": "Replenishment eSim",
+        "Replenishment eSim": "Replenishment eSIM",
         "SMS from your phone": "SMS from your phone",
         "Send SMS again": "Send SMS again",
         "Confirm": "Confirm"

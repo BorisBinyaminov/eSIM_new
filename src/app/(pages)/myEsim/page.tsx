@@ -89,16 +89,15 @@ const MySims = () => {
     return "Inactive";
   };
 
-  const handleAction = async (action: string, sim: EsimData) => {
-    let prompt = `Are you sure you want to ${action} this eSIM?`;
-    if (action === "delete") {
-      prompt = `⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?`;
+  const handleAction = async (action: string, sim: EsimData, prompt: boolean = true) => {
+    if (prompt) {
+      let message = `Are you sure you want to ${action} this eSIM?`;
+      if (action === "delete") {
+        message = `⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?`;
+      }
+      const confirmed = confirm(message);
+      if (!confirmed) return;
     }
-    const userConfirmed = confirm(prompt);
-    if (!userConfirmed) return;
-
-    const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
-    if (!userId) return;
 
     try {
       if (action === "cancel") {
@@ -192,7 +191,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-white rounded-[16px] text-white"
-                    onClick={() => handleAction("cancel", sim)}
+                    onClick={() => handleAction("cancel", sim, true)}
                   >
                     {t("cancel")}
                   </motion.button>
@@ -203,7 +202,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] px-4 py-2 text-center font-bold text-white"
-                    onClick={() => handleAction("topup", sim)}
+                    onClick={() => handleAction("topup", sim, false)}
                   >
                     {t("top-up")}
                   </motion.button>
@@ -214,7 +213,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-yellow-500 text-yellow-300 rounded-[16px]"
-                    onClick={() => handleAction("refresh", sim)}
+                    onClick={() => handleAction("refresh", sim, false)}
                   >
                     🔄 {t("refresh")}
                   </motion.button>
@@ -225,7 +224,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-red-500 text-red-400 rounded-[16px]"
-                    onClick={() => handleAction("delete", sim)}
+                    onClick={() => handleAction("delete", sim, true)}
                   >
                     🗑 {t("delete")}
                   </motion.button>
@@ -270,7 +269,7 @@ const MySims = () => {
                   name={pkg.name}
                   description={pkg.description || ""}
                   price={pkg.retailPrice}
-                  data={(pkg.volume / 1024 / 1024).toFixed(1) + "MB"}
+                  data={(pkg.volume / 1024 / 1024 /1024).toFixed(1) + "GB"}
                   duration={`${pkg.duration} ${pkg.durationUnit || "Days"}`}
                   supportTopUpType={pkg.supportTopUpType || 0}
                   locations={[]}
@@ -295,7 +294,7 @@ const MySims = () => {
                       if (json.success) {
                         alert("✅ Top-up successful!");
                         setTopupModal({ open: false, iccid: "", tranNo: "" });
-                        fetchEsims(); // refresh list
+                        fetchEsims();
                       } else {
                         alert("❌ Top-up failed: " + (json.error || json.errorMsg || "Unknown error"));
                       }
@@ -325,7 +324,7 @@ const MySims = () => {
 
 function formatUsage(bytes?: number): string {
   if (!bytes) return '0 MB';
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  return `${(bytes / 1024 / 1024 /1024).toFixed(1)} GB`;
 }
 
 function formatDate(dateStr?: string): string {
