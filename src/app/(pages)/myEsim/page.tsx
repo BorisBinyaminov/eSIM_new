@@ -76,7 +76,8 @@ const MySims = () => {
     );
   };
   
-  const canRefresh = (statusLabel: string) => statusLabel === "In Use";
+  const canRefresh = (statusLabel: string) =>
+  ["In Use", "New"].includes(statusLabel);
 
   const canDelete = (statusLabel: string) => !["New", "Onboard", "In Use"].includes(statusLabel);
 
