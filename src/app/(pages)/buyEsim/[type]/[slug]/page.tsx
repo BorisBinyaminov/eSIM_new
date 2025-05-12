@@ -48,13 +48,18 @@ interface Package {
   volumeGB?: string;
 }
 
-const { user } = useAuth();
+
 
 export default function CountryPage() {
   const { type, slug } = useParams() as { type: string; slug: string };
   const displayType = type.charAt(0).toUpperCase() + type.slice(1);
   const [packagesData, setPackagesData] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const { user, loading: authLoading } = useAuth();
+  if (authLoading) return <div className="text-white text-center mt-10">🔐 Authorizing...</div>;
+  if (!user) return <div className="text-white text-center mt-10">❌ User not found. Please reopen the mini app.</div>;
+  console.log("🧾 Submitting order for user:", user?.id);
 
   // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
   const convertVolumeToGB = (volume: number) => {
