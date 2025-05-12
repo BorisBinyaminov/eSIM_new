@@ -126,6 +126,10 @@ const MySims = () => {
           body: JSON.stringify(payload),
         });
         const json = await res.json();
+        console.log("🔍 Refresh Response", {
+            status: res.status,
+            raw: json
+          });
         if (json.success) {
           alert("✅ Usage refreshed successfully.");
         } else {
