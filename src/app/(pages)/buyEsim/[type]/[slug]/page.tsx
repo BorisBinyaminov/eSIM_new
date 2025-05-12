@@ -7,6 +7,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { useParams } from 'next/navigation';
 import 'swiper/css';
 import { useTranslations } from 'next-intl';
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
+
 
 interface Operator {
   operatorName: string;
@@ -45,6 +47,8 @@ interface Package {
   // Дополнительное поле для отформатированного объёма (для local)
   volumeGB?: string;
 }
+
+const { user } = useAuth();
 
 export default function CountryPage() {
   const { type, slug } = useParams() as { type: string; slug: string };
@@ -129,7 +133,7 @@ export default function CountryPage() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-User-ID": localStorage.getItem("user_id") || "test"
+        "X-User-ID": String(user?.id || ""),
       },
       body: JSON.stringify({
         package_code: pkg.packageCode,
