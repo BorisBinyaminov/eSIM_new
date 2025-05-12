@@ -14,6 +14,7 @@ const PricingCard = ({
   coverage = 0,
   supportTopUpType,
   locations,
+  onBuy,
 }: {
   name?: string;
   description?: string;
@@ -24,7 +25,8 @@ const PricingCard = ({
   supportTopUpType: number;
   locations?: string[];
   packageName?: string;
-  type?: string
+  type?: string;
+  onBuy?: () => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
   const t = useTranslations("buyeSim");
@@ -45,12 +47,12 @@ const PricingCard = ({
           whileTap={{ scale: 0.95 }}
           className="text-center w-full mt-[18px] max-w-[328px]"
         >
-          <Link 
-            href="/buyEsim" 
+          <button
+            onClick={onBuy} 
             className="w-full max-w-[328px] block bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] py-[10px] text-[24px] font-bold text-white"
           >
            {t("Buy now")}
-          </Link>
+          </button>
         </motion.div>
       <div className="mt-4 space-y-2">
         <div className="flex justify-between items-center text-sm bg-mainbg p-2 rounded-[16px]">

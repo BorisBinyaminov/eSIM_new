@@ -120,6 +120,33 @@ export default function CountryPage() {
   const t = useTranslations("buyeSim");
   
 
+  const handleBuyNow = async (pkg: Package) => {
+  try {
+    const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-ID": localStorage.getItem("user_id") || "test"
+      },
+      body: JSON.stringify({
+        packageCode: pkg.packageCode,
+        count: 1,
+        periodNum: pkg.duration === 1 ? 7 : 1
+      })
+    });
+
+    const json = await res.json();
+    if (json.success) {
+      alert("✅ Purchase successful!");
+    } else {
+      alert("❌ Purchase failed: " + (json.error || "Unknown error"));
+    }
+  } catch (err) {
+    alert("❌ Network error. Please try again.");
+    console.error(err);
+  }
+  };
+
   return (
     <div className="container mx-auto p-4 bg-mainbg">
       <div className="flex items-center text-center gap-1">
@@ -159,6 +186,7 @@ export default function CountryPage() {
                   locations={packagesData[0].locationNetworkList.map((network) => network.locationName)}
                   type={type}
                   coverage={packagesData[0].locationNetworkList.map((network) => network.locationName).length}
+                  onBuy={() => handleBuyNow(packagesData[0])}
                 />
                 <h2 className="text-lg text-white font-semibold">{t("All tariffs")}</h2>
                 <div className="w-full max-w-5xl overflow-hidden px-4">
@@ -189,6 +217,7 @@ export default function CountryPage() {
                           supportTopUpType={pkg.supportTopUpType}
                           locations={pkg.locationNetworkList.map((network) => network.locationName)}
                           coverage={pkg.locationNetworkList.map((network) => network.locationName).length}
+                          onBuy={() => handleBuyNow(pkg)}
                         />
                       </SwiperSlide>
                     ))}
