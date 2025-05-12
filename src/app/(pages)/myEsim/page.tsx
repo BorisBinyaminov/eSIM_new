@@ -118,7 +118,6 @@ const MySims = () => {
         });
         alert("🗑 eSIM deleted successfully.");
       } else if (action === "refresh") {
-        //alert("🔄 Refreshing usage...");
         const payload = { iccid: sim.iccid };
         const res = await fetch("https://mini.torounlimitedvpn.com/esim/refresh", {
           method: "POST",
