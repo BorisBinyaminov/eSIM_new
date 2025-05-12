@@ -93,8 +93,8 @@ async def refresh_usage(request: Request):
             api_data = await query_esim_by_iccid(iccid)
             smdp = api_data.get("smdpStatus", "")
             status = api_data.get("esimStatus", "")
-            if smdp != "ENABLED" or status != "IN_USE":
-                return {"success": False, "error": "Usage data only available for 'In Use' eSIMs"}
+           # if smdp != "ENABLED" or status != "IN_USE":
+           #     return {"success": False, "error": "Usage data only available for 'In Use' eSIMs"}
 
             usage = await query_usage(tran_no)
             if not usage:
