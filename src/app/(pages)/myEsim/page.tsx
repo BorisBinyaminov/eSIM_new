@@ -144,12 +144,14 @@ const MySims = () => {
             raw: json
           });
 
-          const packages = json.data || json.packages;
-          if (!json.success || !Array.isArray(packages) || packages.length === 0) {
+          const packages = [...(json.data || json.packages || [])].sort((a, b) => {
+            return Number(a.retailPrice) - Number(b.retailPrice);
+          });
+
+          if (!json.success || packages.length === 0) {
             alert("❌ No top-up packages available.");
             return;
           }
-      
           setTopupPackages(packages);
           setTopupModal({
             open: true,
