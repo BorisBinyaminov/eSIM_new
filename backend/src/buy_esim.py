@@ -472,6 +472,7 @@ async def query_usage(esim_tran_no: str) -> dict:
     """
     Query data usage from eSIMAccess API for a single transaction number.
     """
+    logger.info(f"[Usage] entry 1")
     url = f"{BASE_URL}/esim/usage/query"
     payload = {
         "esimTranNoList": [esim_tran_no]
@@ -479,6 +480,7 @@ async def query_usage(esim_tran_no: str) -> dict:
 
     try:
         result = await api_post(url, payload)
+        logger.info(f"[Usage] entry 2 {result}")
         if result.get("success") and result.get("obj", {}).get("esimUsageList"):
             return result["obj"]["esimUsageList"][0]
     except Exception as e:
