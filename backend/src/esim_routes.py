@@ -5,7 +5,7 @@ from database import SessionLocal
 from models import Order
 import json
 import logging
-from buy_esim import my_esim, cancel_esim, get_topup_packages, topup_esim, query_esim_by_iccid, update_usage_by_iccid, query_usage
+from buy_esim import my_esim, cancel_esim, get_topup_packages, topup_esim, query_esim_by_iccid, update_usage_by_iccid, query_usage, process_purchase
 
 router = APIRouter()
 
@@ -106,3 +106,30 @@ async def refresh_usage(request: Request):
     except Exception as e:
         logging.exception("Refresh usage failed")
         return {"success": False, "error": "Unexpected error during refresh"}
+
+@router.post("/buy")
+async def buy_esim(request: Request):
+    payload = await request.json()
+    user_id = request.headers.get("X-User-ID")
+
+    package_code = payload.get("package_code")
+    order_price = payload.get("order_price")
+    retail_price = payload.get("retail_price")
+    count = payload.get("count", 1)
+    period_num = payload.get("period_num")
+
+    if not user_id or not package_code or not order_price or not retail_price:
+        return JSONResponse(status_code=400, content={"success": False, "error": "Missing required parameters"})
+
+    try:
+        result = await process_purchase(
+            package_code=package_code,
+            user_id=user_id,
+            order_price=order_price,
+            retail_price=retail_price,
+            count=count,
+            period_num=period_num
+        )
+        return JSONResponse(status_code=200, content={"success": True, "data": result})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
