@@ -71,7 +71,14 @@ export default function CountryPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data: Package[] = [];
+        // auth user load from local storage
+        let data: Package[] = [];const auth = useAuth();
+        const user = auth?.user;
+        if (!user || !user.id) {
+          console.warn("User not authenticated.");
+          return;
+        }
+
         if (type === 'local') {
           const res = await fetch('/countryPackages.json');
           data = await res.json();
