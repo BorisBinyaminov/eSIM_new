@@ -2,7 +2,7 @@
     "MainPage": {
         "Stay-Connected-Anywhere": "Оставайтесь на связи везде",
         "with": "вместе с",
-        "eSim Unlimited": "eSim Unlimited",
+        "eSim Unlimited": "eSIM Unlimited",
         "High-speed": "Высокоскоростной интернет в 150+ странах. Без роуминга, скрытых платежей и физической SIM-карты",
         "Buy eSim": "Купить eSIM",
         "Our Advantages": "Наши преимущества",
@@ -58,7 +58,7 @@
         "Get mobile data": "Подключить мобильный интернет"
     },
     "Header": {
-        "title": "eSim Unlimited",
+        "title": "eSIM Unlimited",
         "guides": "Руководства",
         "faq": "Частые вопросы",
         "supportDevices": "Поддерживаемые устройства",
@@ -460,7 +460,7 @@
         "crypto": "Криптовалюта"
     },
     "bank": {
-    "Replenishment eSim": "Пополнение eSim",
+    "Replenishment eSim": "Пополнение eSIM",
     "total": "итого",
     "Card number": "Номер карты",
     "Term": "Срок",
@@ -474,10 +474,10 @@
     "Form sending": "Отправка формы"
 },
 "crypto": {
-    "Replenishment eSim": "Пополнение eSim",
+    "Replenishment eSim": "Пополнение eSIM",
     "Connect wallet": "Подключить кошелёк",
     "Min replenishment amount": "Мин. сумма пополнения",
-    "When paying, please indicate eSim id": "При оплате укажите ID eSim",
+    "When paying, please indicate eSim id": "При оплате укажите ID eSIM",
     "QR - for payment": "QR - для оплаты",
     "Address": "Адрес",
     "Required Comment": "Обязательный комментарий",
@@ -485,7 +485,7 @@
     "The promo code must contain exactly 4 digits": "Промокод должен содержать ровно 4 цифры."
 },
 "sms": {
-    "Replenishment eSim": "Пополнение eSim",
+    "Replenishment eSim": "Пополнение eSIM",
     "SMS from your phone": "СМС с вашего телефона",
     "Send SMS again": "Отправить СМС снова",
     "Confirm": "Подтвердить"

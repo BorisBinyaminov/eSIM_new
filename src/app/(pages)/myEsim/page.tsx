@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import React, { useEffect, useState } from 'react';
 import { FaDatabase, FaClock, FaRegCalendarAlt } from 'react-icons/fa';
+import PricingCard from "@/components/PricingCard/ui/PricingCard";
 
 interface EsimData {
   iccid: string;
@@ -23,9 +24,12 @@ const sortEsimsPriority = (esims: EsimData[]): EsimData[] => {
   return [...esims].sort((a, b) => getPriority(b) - getPriority(a));
 };
 
+
 const MySims = () => {
   const [sims, setSims] = useState<EsimData[]>([]);
   const t = useTranslations("myeSim");
+  const [topupModal, setTopupModal] = useState({ open: false, iccid: "", tranNo: "" });
+  const [topupPackages, setTopupPackages] = useState<any[]>([]);
 
   const fetchEsims = async () => {
     const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
@@ -72,7 +76,8 @@ const MySims = () => {
     );
   };
   
-  const canRefresh = (statusLabel: string) => statusLabel === "In Use";
+  const canRefresh = (statusLabel: string) =>
+  ["In Use", "New"].includes(statusLabel);
 
   const canDelete = (statusLabel: string) => !["New", "Onboard", "In Use"].includes(statusLabel);
 
@@ -85,16 +90,15 @@ const MySims = () => {
     return "Inactive";
   };
 
-  const handleAction = async (action: string, sim: EsimData) => {
-    let prompt = `Are you sure you want to ${action} this eSIM?`;
-    if (action === "delete") {
-      prompt = `⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?`;
+  const handleAction = async (action: string, sim: EsimData, prompt: boolean = true) => {
+    if (prompt) {
+      let message = `Are you sure you want to ${action} this eSIM?`;
+      if (action === "delete") {
+        message = `⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?`;
+      }
+      const confirmed = confirm(message);
+      if (!confirmed) return;
     }
-    const userConfirmed = confirm(prompt);
-    if (!userConfirmed) return;
-
-    const userId = JSON.parse(localStorage.getItem("telegram_user") || "{}")?.id;
-    if (!userId) return;
 
     try {
       if (action === "cancel") {
@@ -114,10 +118,51 @@ const MySims = () => {
         });
         alert("🗑 eSIM deleted successfully.");
       } else if (action === "refresh") {
-        alert("🔄 Refreshing usage...");
+        const payload = { iccid: sim.iccid };
+        const res = await fetch("https://mini.torounlimitedvpn.com/esim/refresh", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const json = await res.json();
+        console.log("🔍 Refresh Response", {
+            status: res.status,
+            raw: json
+          });
+        if (json.success) {
+          alert("✅ Usage refreshed successfully.");
+        } else {
+          alert("❌ Refresh failed: " + (json.error || "Unknown error"));
+        }
       } else if (action === "topup") {
-        alert("💳 Top-up logic will display available packages in next step.");
-      }
+        try {
+          const res = await fetch(`https://mini.torounlimitedvpn.com/esim/topup-packages?iccid=${sim.iccid}`);
+          const json = await res.json();
+
+          console.log("🔍 Top-Up Fetch Response", {
+            status: res.status,
+            raw: json
+          });
+
+          const packages = [...(json.data || json.packages || [])].sort((a, b) => {
+            return Number(a.retailPrice) - Number(b.retailPrice);
+          });
+
+          if (!json.success || packages.length === 0) {
+            alert("❌ No top-up packages available.");
+            return;
+          }
+          setTopupPackages(packages);
+          setTopupModal({
+            open: true,
+            iccid: sim.iccid,
+            tranNo: sim.data.esimTranNo,
+          });
+        } catch (err) {
+          alert("❌ Failed to fetch top-up packages.");
+          console.error("Top-up fetch error:", err);
+        }
+      }  
 
       await fetchEsims();
     } catch (err) {
@@ -164,7 +209,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-white rounded-[16px] text-white"
-                    onClick={() => handleAction("cancel", sim)}
+                    onClick={() => handleAction("cancel", sim, true)}
                   >
                     {t("cancel")}
                   </motion.button>
@@ -175,7 +220,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="bg-gradient-to-r from-[#27A6E1] to-[#4381EB] rounded-[16px] px-4 py-2 text-center font-bold text-white"
-                    onClick={() => handleAction("topup", sim)}
+                    onClick={() => handleAction("topup", sim, false)}
                   >
                     {t("top-up")}
                   </motion.button>
@@ -186,7 +231,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-yellow-500 text-yellow-300 rounded-[16px]"
-                    onClick={() => handleAction("refresh", sim)}
+                    onClick={() => handleAction("refresh", sim, false)}
                   >
                     🔄 {t("refresh")}
                   </motion.button>
@@ -197,7 +242,7 @@ const MySims = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-4 py-2 border border-red-500 text-red-400 rounded-[16px]"
-                    onClick={() => handleAction("delete", sim)}
+                    onClick={() => handleAction("delete", sim, true)}
                   >
                     🗑 {t("delete")}
                   </motion.button>
@@ -231,13 +276,73 @@ const MySims = () => {
           );
         })}
       </div>
+      {topupModal.open && (
+      <div className="absolute inset-0 z-40 bg-[#0B1434] bg-opacity-90 p-4 overflow-y-auto">
+        <div className="bg-[#10193F] text-white rounded-2xl shadow-lg max-w-2xl w-full mx-auto p-4">
+          <h2 className="text-xl font-bold mb-4 text-center">💳 Select Top-Up Package</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto">
+            {topupPackages.map((pkg) => (
+              <div className="relative" key={pkg.packageCode}>
+                <PricingCard
+                  name={pkg.name}
+                  description={pkg.description || ""}
+                  price={pkg.retailPrice}
+                  data={(pkg.volume / 1024 / 1024 /1024).toFixed(1) + "GB"}
+                  duration={`${pkg.duration} ${pkg.durationUnit || "Days"}`}
+                  supportTopUpType={pkg.supportTopUpType || 0}
+                  locations={[]}
+                  coverage={0}
+                />
+                <button
+                  className="absolute inset-0 z-10 w-full h-full bg-transparent"
+                  onClick={async (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    try {
+                      const res = await fetch("https://mini.torounlimitedvpn.com/esim/topup", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          tran_no: topupModal.tranNo,
+                          package_code: pkg.packageCode,
+                          amount: pkg.price,
+                        }),
+                      });
+                      const json = await res.json();
+                      if (json.success) {
+                        alert("✅ Top-up successful!");
+                        setTopupModal({ open: false, iccid: "", tranNo: "" });
+                        fetchEsims();
+                      } else {
+                        alert("❌ Top-up failed: " + (json.error || json.errorMsg || "Unknown error"));
+                      }
+                    } catch (e) {
+                      console.error("Top-up error", e);
+                      alert("❌ Failed to perform top-up.");
+                    }
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-6">
+            <button
+              onClick={() => setTopupModal({ open: false, iccid: "", tranNo: "" })}
+              className="text-blue-400 underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };
 
 function formatUsage(bytes?: number): string {
   if (!bytes) return '0 MB';
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  return `${(bytes / 1024 / 1024 /1024).toFixed(1)} GB`;
 }
 
 function formatDate(dateStr?: string): string {

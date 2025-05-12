@@ -3,7 +3,9 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import Order
-from buy_esim import my_esim, cancel_esim, get_topup_packages, topup_esim
+import json
+import logging
+from buy_esim import my_esim, cancel_esim, get_topup_packages, topup_esim, query_esim_by_iccid, update_usage_by_iccid, query_usage
 
 router = APIRouter()
 
@@ -65,3 +67,42 @@ async def delete_esim(request: Request):
             return JSONResponse(content={"success": True, "message": "eSIM deleted from database."})
     except Exception as e:
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
+
+@router.post("/refresh")
+async def refresh_usage(request: Request):
+    body = await request.json()
+    iccid = body.get("iccid")
+    if not iccid:
+        return {"success": False, "error": "Missing ICCID"}
+
+    try:
+        with SessionLocal() as session:
+            order = session.query(Order).filter(Order.iccid == iccid).first()
+            if not order:
+                return {"success": False, "error": "Order not found"}
+
+            try:
+                esim_list = json.loads(order.esim_list or "[]")
+                tran_no = esim_list[0].get("esimTranNo") if esim_list else None
+                if not tran_no:
+                    return {"success": False, "error": "Missing esimTranNo"}
+            except Exception as e:
+                return {"success": False, "error": "Failed to parse esim_list"}
+
+            # Check if it's 'In Use'
+            api_data = await query_esim_by_iccid(iccid)
+            smdp = api_data.get("smdpStatus", "")
+            status = api_data.get("esimStatus", "")
+            if smdp != "ENABLED" or status != "IN_USE":
+                return {"success": False, "error": "Usage data only available for 'In Use' eSIMs"}
+
+            usage = await query_usage(tran_no)
+            if not usage:
+                return {"success": False, "error": "Failed to fetch usage"}
+
+            updated = update_usage_by_iccid(session, iccid, usage)
+            return {"success": updated}
+
+    except Exception as e:
+        logging.exception("Refresh usage failed")
+        return {"success": False, "error": "Unexpected error during refresh"}

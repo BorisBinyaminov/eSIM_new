@@ -467,3 +467,21 @@ async def get_iccid_from_tranno(tran_no: str) -> Optional[str]:
         if profile.get("esimTranNo") == tran_no:
             return profile.get("iccid")
     return None
+
+async def query_usage(esim_tran_no: str) -> dict:
+    """
+    Query data usage from eSIMAccess API for a single transaction number.
+    """
+    url = f"{BASE_URL}/esim/usage/query"
+    payload = {
+        "esimTranNoList": [esim_tran_no]
+    }
+
+    try:
+        result = await api_post(url, payload)
+        if result.get("success") and result.get("obj", {}).get("esimUsageList"):
+            return result["obj"]["esimUsageList"][0]
+    except Exception as e:
+        logger.warning(f"[Usage] Query failed: {e}")
+
+    return {}
