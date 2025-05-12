@@ -120,8 +120,8 @@ export default function CountryPage() {
   const t = useTranslations("buyeSim");
   
 
-  const handleBuyNow = async (pkg: Package) => {
-  console.log("🔍 Top-Up Fetch Response", {
+  const handleBuyNow = async (pkg: any) => {
+  console.log("🔍 Buy process pkg details:", {
             package: pkg
           });
   try {
@@ -132,13 +132,16 @@ export default function CountryPage() {
         "X-User-ID": localStorage.getItem("user_id") || "test"
       },
       body: JSON.stringify({
-        packageCode: pkg.packageCode,
+        package_code: pkg.packageCode,
+        order_price: pkg.price,
+        retail_price: pkg.retailPrice,
         count: 1,
-        periodNum: pkg.duration
+        period_num: 1
       })
     });
 
     const json = await res.json();
+
     if (json.success) {
       alert("✅ Purchase successful!");
     } else {
@@ -149,6 +152,7 @@ export default function CountryPage() {
     console.error(err);
   }
 };
+
 
   return (
     <div className="container mx-auto p-4 bg-mainbg">
