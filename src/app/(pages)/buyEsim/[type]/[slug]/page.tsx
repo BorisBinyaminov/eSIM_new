@@ -121,6 +121,9 @@ export default function CountryPage() {
   
 
   const handleBuyNow = async (pkg: Package) => {
+  console.log("🔍 Top-Up Fetch Response", {
+            package: pkg
+          });
   try {
     const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
       method: "POST",
@@ -131,7 +134,7 @@ export default function CountryPage() {
       body: JSON.stringify({
         packageCode: pkg.packageCode,
         count: 1,
-        periodNum: pkg.duration === 1 ? 7 : 1
+        periodNum: pkg.duration
       })
     });
 
@@ -145,7 +148,7 @@ export default function CountryPage() {
     alert("❌ Network error. Please try again.");
     console.error(err);
   }
-  };
+};
 
   return (
     <div className="container mx-auto p-4 bg-mainbg">
