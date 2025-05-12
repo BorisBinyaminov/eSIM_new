@@ -55,11 +55,10 @@ export default function CountryPage() {
   const displayType = type.charAt(0).toUpperCase() + type.slice(1);
   const [packagesData, setPackagesData] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
-  
   const { user, loading: authLoading } = useAuth();
+
   if (authLoading) return <div className="text-white text-center mt-10">🔐 Authorizing...</div>;
   if (!user) return <div className="text-white text-center mt-10">❌ User not found. Please reopen the mini app.</div>;
-  console.log("🧾 Submitting order for user:", user?.id);
 
   // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
   const convertVolumeToGB = (volume: number) => {
@@ -71,14 +70,7 @@ export default function CountryPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // auth user load from local storage
-        let data: Package[] = [];const auth = useAuth();
-        const user = auth?.user;
-        if (!user || !user.id) {
-          console.warn("User not authenticated.");
-          return;
-        }
-
+        let data: Package[] = [];
         if (type === 'local') {
           const res = await fetch('/countryPackages.json');
           data = await res.json();
