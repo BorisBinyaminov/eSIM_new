@@ -7,6 +7,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { useParams } from 'next/navigation';
 import 'swiper/css';
 import { useTranslations } from 'next-intl';
+import { useAuth } from "@/components/AuthProvider/AuthProvider";
+
 
 interface Operator {
   operatorName: string;
@@ -46,11 +48,17 @@ interface Package {
   volumeGB?: string;
 }
 
+
+
 export default function CountryPage() {
   const { type, slug } = useParams() as { type: string; slug: string };
   const displayType = type.charAt(0).toUpperCase() + type.slice(1);
   const [packagesData, setPackagesData] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user, loading: authLoading } = useAuth();
+
+  if (authLoading) return <div className="text-white text-center mt-10">🔐 Authorizing...</div>;
+  if (!user) return <div className="text-white text-center mt-10">❌ User not found. Please reopen the mini app.</div>;
 
   // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
   const convertVolumeToGB = (volume: number) => {
@@ -120,6 +128,40 @@ export default function CountryPage() {
   const t = useTranslations("buyeSim");
   
 
+  const handleBuyNow = async (pkg: any) => {
+  console.log("🔍 Buy process pkg details:", {
+            package: pkg
+          });
+  try {
+    const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-User-ID": String(user?.id || ""),
+      },
+      body: JSON.stringify({
+        package_code: pkg.packageCode,
+        order_price: pkg.price,
+        retail_price: pkg.retailPrice,
+        count: 1,
+        period_num: 1
+      })
+    });
+
+    const json = await res.json();
+
+    if (json.success) {
+      alert("✅ Purchase successful!");
+    } else {
+      alert("❌ Purchase failed: " + (json.error || "Unknown error"));
+    }
+  } catch (err) {
+    alert("❌ Network error. Please try again.");
+    console.error(err);
+  }
+};
+
+
   return (
     <div className="container mx-auto p-4 bg-mainbg">
       <div className="flex items-center text-center gap-1">
@@ -159,6 +201,7 @@ export default function CountryPage() {
                   locations={packagesData[0].locationNetworkList.map((network) => network.locationName)}
                   type={type}
                   coverage={packagesData[0].locationNetworkList.map((network) => network.locationName).length}
+                  onBuy={() => handleBuyNow(packagesData[0])}
                 />
                 <h2 className="text-lg text-white font-semibold">{t("All tariffs")}</h2>
                 <div className="w-full max-w-5xl overflow-hidden px-4">
@@ -189,6 +232,7 @@ export default function CountryPage() {
                           supportTopUpType={pkg.supportTopUpType}
                           locations={pkg.locationNetworkList.map((network) => network.locationName)}
                           coverage={pkg.locationNetworkList.map((network) => network.locationName).length}
+                          onBuy={() => handleBuyNow(pkg)}
                         />
                       </SwiperSlide>
                     ))}
