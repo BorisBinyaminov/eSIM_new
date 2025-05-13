@@ -140,14 +140,11 @@ export default function CountryPage() {
       period_num = isNaN(days) || days < 1 ? 1 : days;
       count = 1
     } else {
-      // multi-day plan → ask for number of eSIMs
-      const cntStr = window.prompt("📱 How many eSIMs would you like to purchase?", "1");
-      if (cntStr === null) return;
-      count = parseInt(cntStr, 10) || 1;
+      count = 1;
       period_num = 1;
     }
     // To be removed
-    console.info("mini app buy pkg info", pkg, count, period_num);
+    console.info("mini app buy pkg info", pkg, period_num, count);
 
     try {
       const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
