@@ -233,7 +233,7 @@ const MySims = () => {
                     className="px-4 py-2 border border-yellow-500 text-yellow-300 rounded-[16px]"
                     onClick={() => handleAction("refresh", sim, false)}
                   >
-                    🔄 {t("refresh")}
+                    {t("refresh")}
                   </motion.button>
                 )}
 
