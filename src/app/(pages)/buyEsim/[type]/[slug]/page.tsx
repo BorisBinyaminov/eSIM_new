@@ -145,6 +145,8 @@ export default function CountryPage() {
       count = parseInt(cntStr, 10) || 1;
       period_num = pkg.duration;
     }
+    // To be removed
+    console.info("mini app buy pkg info", pkg, count, period_num);
 
     try {
       const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
@@ -157,8 +159,8 @@ export default function CountryPage() {
           package_code: pkg.packageCode,
           order_price: pkg.price,
           retail_price: pkg.retailPrice,
-          count,
           period_num,
+          count,
         }),
       });
 
