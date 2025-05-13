@@ -129,24 +129,38 @@ export default function CountryPage() {
   
 
   const handleBuyNow = async (pkg: any) => {
-  console.log("🔍 Buy process pkg details:", {
-            package: pkg
-          });
-  try {
-    const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-User-ID": String(user?.id || ""),
-      },
-      body: JSON.stringify({
-        package_code: pkg.packageCode,
-        order_price: pkg.price,
-        retail_price: pkg.retailPrice,
-        count: 1,
-        period_num: 1
-      })
-    });
+    let count = 1;
+    let period_num: number;
+
+    if (pkg.duration === 1) {
+      // daily plan → ask for number of days
+      const daysStr = window.prompt("🕓 This is a daily plan. How many days do you need?", "1");
+      if (daysStr === null) return;                     // user cancelled
+      const days = parseInt(daysStr, 10);
+      period_num = isNaN(days) || days < 1 ? 1 : days;
+    } else {
+      // multi-day plan → ask for number of eSIMs
+      const cntStr = window.prompt("📱 How many eSIMs would you like to purchase?", "1");
+      if (cntStr === null) return;
+      count = parseInt(cntStr, 10) || 1;
+      period_num = pkg.duration;
+    }
+
+    try {
+      const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-User-ID": String(user?.id || ""),
+        },
+        body: JSON.stringify({
+          package_code: pkg.packageCode,
+          order_price: pkg.price,
+          retail_price: pkg.retailPrice,
+          count,
+          period_num,
+        }),
+      });
 
     const json = await res.json();
 
@@ -160,8 +174,6 @@ export default function CountryPage() {
     console.error(err);
   }
 };
-
-
   return (
     <div className="container mx-auto p-4 bg-mainbg">
       <div className="flex items-center text-center gap-1">

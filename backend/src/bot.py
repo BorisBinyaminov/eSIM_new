@@ -276,7 +276,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     await asyncio.to_thread(sync_db_task)
 
     await update.message.reply_text(
-        "Welcome to eSIM Unlimited! Choose an option:",
+        "(Under Construction - do not use yet) Welcome to eSIM Unlimited! Choose an option:",
         reply_markup=main_menu_keyboard()
     )
 
