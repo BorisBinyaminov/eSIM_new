@@ -138,12 +138,13 @@ export default function CountryPage() {
       if (daysStr === null) return;                     // user cancelled
       const days = parseInt(daysStr, 10);
       period_num = isNaN(days) || days < 1 ? 1 : days;
+      count = 1
     } else {
       // multi-day plan → ask for number of eSIMs
       const cntStr = window.prompt("📱 How many eSIMs would you like to purchase?", "1");
       if (cntStr === null) return;
       count = parseInt(cntStr, 10) || 1;
-      period_num = pkg.duration;
+      period_num = 1;
     }
     // To be removed
     console.info("mini app buy pkg info", pkg, count, period_num);
