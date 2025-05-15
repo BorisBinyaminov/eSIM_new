@@ -92,10 +92,14 @@ const MySims = () => {
 
   const handleAction = async (action: string, sim: EsimData, prompt: boolean = true) => {
     if (prompt) {
-      let message = `Are you sure you want to ${action} this eSIM?`;
+      let message = t("confirmAction", {
+        action: t(`actions.${action}`)
+      });
+
       if (action === "delete") {
-        message = `⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?`;
+        message = t("confirmDelete");
       }
+
       const confirmed = confirm(message);
       if (!confirmed) return;
     }
@@ -149,7 +153,7 @@ const MySims = () => {
           });
 
           if (!json.success || packages.length === 0) {
-            alert("❌ No top-up packages available.");
+            alert(t("noTopupAvailable"));
             return;
           }
           setTopupPackages(packages);
@@ -279,7 +283,7 @@ const MySims = () => {
       {topupModal.open && (
       <div className="absolute inset-0 z-40 bg-[#0B1434] bg-opacity-90 p-4 overflow-y-auto">
         <div className="bg-[#10193F] text-white rounded-2xl shadow-lg max-w-2xl w-full mx-auto p-4">
-          <h2 className="text-xl font-bold mb-4 text-center">💳 Select Top-Up Package</h2>
+          <h2 className="text-xl font-bold mb-4 text-center">{t("selectTopupPackage")}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto">
             {topupPackages.map((pkg) => (
               <div className="relative" key={pkg.packageCode}>
@@ -310,7 +314,7 @@ const MySims = () => {
                       });
                       const json = await res.json();
                       if (json.success) {
-                        alert("✅ Top-up successful!");
+                        alert(t("topupSuccess"));
                         setTopupModal({ open: false, iccid: "", tranNo: "" });
                         fetchEsims();
                       } else {
@@ -318,7 +322,7 @@ const MySims = () => {
                       }
                     } catch (e) {
                       console.error("Top-up error", e);
-                      alert("❌ Failed to perform top-up.");
+                      alert(t("topupFailed"));
                     }
                   }}
                 />
@@ -330,7 +334,7 @@ const MySims = () => {
               onClick={() => setTopupModal({ open: false, iccid: "", tranNo: "" })}
               className="text-blue-400 underline"
             >
-              Cancel
+              {t("cancelModal")}
             </button>
           </div>
         </div>

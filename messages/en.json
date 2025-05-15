@@ -132,7 +132,7 @@
             "esimCount": "📱 How many eSIMs would you like to purchase?"
             },
         "alerts": {
-            "purchaseSuccess": "✅ Purchase successful! Your new eSIM is now available in the “My eSIMs” tab.",
+            "purchaseSuccess": "✅ Purchase successful! Your new eSIM is now available in the “My eSIM” tab.",
             "purchaseFailed": "❌ Purchase failed: ",
             "networkError": "❌ Network error. Please try again."
             }
@@ -470,7 +470,19 @@
         "in-use": "In Use",
         "onboard": "Onboard",
         "depleted": "Depleted",
-        "deleted": "Deleted"
+        "deleted": "Deleted",
+        "selectTopupPackage": "💳 Select Top-Up Package",
+        "cancelModal": "Cancel",
+        "topupSuccess": "✅ Top-up successful!",
+        "noTopupAvailable": "❌ No top-up packages available.",
+        "topupFailed": "❌ Failed to perform top-up.",
+        "confirmAction": "Are you sure you want to {action} this eSIM?",
+        "confirmDelete": "⚠️ This will permanently delete the eSIM from the database and cannot be undone. Continue?",
+        "actions": {
+            "cancel": "cancel",
+            "top-up": "top up",
+            "delete": "delete"
+        }
     },
     "payment":{
         "select": "Select a payment method",
