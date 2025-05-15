@@ -48,9 +48,10 @@ interface Package {
   volumeGB?: string;
 }
 
-const t = useTranslations("buyeSim");
+
 
 export default function CountryPage() {
+  const t = useTranslations("buyeSim");
   const { type, slug } = useParams() as { type: string; slug: string };
   const displayType = type.charAt(0).toUpperCase() + type.slice(1);
   const [packagesData, setPackagesData] = useState<Package[]>([]);
