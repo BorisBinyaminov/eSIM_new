@@ -57,8 +57,8 @@ export default function CountryPage() {
   const [loading, setLoading] = useState(true);
   const { user, loading: authLoading } = useAuth();
 
-  if (authLoading) return <div className="text-white text-center mt-10"> {t('authorizing')}</div>;
-  if (!user) return <div className="text-white text-center mt-10">{t('userNotFound')}</div>;
+  if (authLoading) return <div className="text-white text-center mt-10"> {t('common.authorizing')}</div>;
+  if (!user) return <div className="text-white text-center mt-10">{t('common.userNotFound')}</div>;
 
   // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
   const convertVolumeToGB = (volume: number) => {
@@ -131,7 +131,7 @@ export default function CountryPage() {
 
     if (pkg.duration === 1) {
       // daily plan → ask for number of days
-      const daysStr = window.prompt( t('dailyPlan'), "1");
+      const daysStr = window.prompt( t('prompts.dailyPlan'), "1");
       if (daysStr === null) return;                     // user cancelled
       const days = parseInt(daysStr, 10);
       period_num = isNaN(days) || days < 1 ? 1 : days;
@@ -160,12 +160,12 @@ export default function CountryPage() {
     const json = await res.json();
 
     if (json.success) {
-      alert(t('purchaseSuccess'));
+      alert(t('alerts.purchaseSuccess'));
     } else {
-      alert(t('purchaseFailed' + (json.error || "Unknown error")));
+      alert(t('alerts.purchaseFailed' + (json.error || "Unknown error")));
     }
   } catch (err) {
-    alert(t('networkError'));
+    alert(t('alerts.networkError'));
     console.error(err);
   }
 };
@@ -187,13 +187,13 @@ export default function CountryPage() {
           </h1>
         : 
           <h1 className="text-[16px] font-bold text-white">
-            {t("Available Packages for")} {loading ? t('loading') : packagesData[0].name.split(/[\s(]/)[0]}
+            {t("Available Packages for")} {loading ? t('common.loading') : packagesData[0].name.split(/[\s(]/)[0]}
           </h1>
         }
       </div>
       <div className="mt-6">
         {loading ? (
-          <p className="text-white">{t('loadingPackages')}</p>
+          <p className="text-white">{t('common.loadingPackages')}</p>
         ) : (
           <div className="flex flex-col items-center space-y-6 bg-mainbg min-h-screen p-6">
             {packagesData.length > 0 ? (
@@ -247,7 +247,7 @@ export default function CountryPage() {
                 </div>
               </>
             ) : (
-              <p className="text-white"> {t('noPackages', { slug })}</p>
+              <p className="text-white"> {t('common.noPackages', { slug })}</p>
             )}
           </div>
         )}
