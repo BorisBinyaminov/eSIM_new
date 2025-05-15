@@ -48,7 +48,7 @@ interface Package {
   volumeGB?: string;
 }
 
-
+const t = useTranslations("buyeSim");
 
 export default function CountryPage() {
   const { type, slug } = useParams() as { type: string; slug: string };
@@ -57,8 +57,8 @@ export default function CountryPage() {
   const [loading, setLoading] = useState(true);
   const { user, loading: authLoading } = useAuth();
 
-  if (authLoading) return <div className="text-white text-center mt-10">🔐 Authorizing...</div>;
-  if (!user) return <div className="text-white text-center mt-10">❌ User not found. Please reopen the mini app.</div>;
+  if (authLoading) return <div className="text-white text-center mt-10"> {t('authorizing')}</div>;
+  if (!user) return <div className="text-white text-center mt-10">{t('userNotFound')}</div>;
 
   // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
   const convertVolumeToGB = (volume: number) => {
@@ -125,16 +125,13 @@ export default function CountryPage() {
     return () => clearInterval(interval);
   }, [type, slug]);
 
-  const t = useTranslations("buyeSim");
-  
-
   const handleBuyNow = async (pkg: any) => {
     let count = 1;
     let period_num: number;
 
     if (pkg.duration === 1) {
       // daily plan → ask for number of days
-      const daysStr = window.prompt("🕓 This is a daily plan. How many days do you need?", "1");
+      const daysStr = window.prompt( t('dailyPlan'), "1");
       if (daysStr === null) return;                     // user cancelled
       const days = parseInt(daysStr, 10);
       period_num = isNaN(days) || days < 1 ? 1 : days;
@@ -143,8 +140,6 @@ export default function CountryPage() {
       count = 1;
       period_num = 1;
     }
-    // To be removed
-    console.info("mini app buy pkg info", pkg, period_num, count);
 
     try {
       const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
@@ -165,12 +160,12 @@ export default function CountryPage() {
     const json = await res.json();
 
     if (json.success) {
-      alert("✅ Purchase successful!");
+      alert(t('purchaseSuccess'));
     } else {
-      alert("❌ Purchase failed: " + (json.error || "Unknown error"));
+      alert(t('purchaseFailed' + (json.error || "Unknown error")));
     }
   } catch (err) {
-    alert("❌ Network error. Please try again.");
+    alert(t('networkError'));
     console.error(err);
   }
 };
@@ -192,13 +187,13 @@ export default function CountryPage() {
           </h1>
         : 
           <h1 className="text-[16px] font-bold text-white">
-            {t("Available Packages for")} {loading ? "Loading" : packagesData[0].name.split(/[\s(]/)[0]}
+            {t("Available Packages for")} {loading ? t('loading') : packagesData[0].name.split(/[\s(]/)[0]}
           </h1>
         }
       </div>
       <div className="mt-6">
         {loading ? (
-          <p className="text-white">Loading packages...</p>
+          <p className="text-white">{t('loadingPackages')}</p>
         ) : (
           <div className="flex flex-col items-center space-y-6 bg-mainbg min-h-screen p-6">
             {packagesData.length > 0 ? (
@@ -252,7 +247,7 @@ export default function CountryPage() {
                 </div>
               </>
             ) : (
-              <p className="text-white">No packages available for {slug}</p>
+              <p className="text-white"> {t('noPackages', { slug })}</p>
             )}
           </div>
         )}

@@ -119,7 +119,23 @@
             "5gb": "Global Package 5GB",
             "10gb": "Global Package 10GB",
             "20gb": "Global Package 20GB"
-        }
+        },
+        "common": {
+            "authorizing": "🔐 Authorizing...",
+            "userNotFound": "❌ User not found. Please reopen the mini app.",
+            "loading": "Loading...",
+            "loadingPackages": "Loading packages...",
+            "noPackages": "No packages available for "
+            },
+        "prompts": {
+            "dailyPlan": "🕓 This is a daily plan. How many days do you need?",
+            "esimCount": "📱 How many eSIMs would you like to purchase?"
+            },
+        "alerts": {
+            "purchaseSuccess": "✅ Purchase successful! Your new eSIM is now available in the “My eSIMs” tab.",
+            "purchaseFailed": "❌ Purchase failed: ",
+            "networkError": "❌ Network error. Please try again."
+            }
     },
     "faq": {
         "FAQ": "FAQ",
