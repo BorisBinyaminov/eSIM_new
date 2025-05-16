@@ -287,7 +287,7 @@ async def start(update: Update, context: CallbackContext) -> None:
                 caption="🤖 Telegram Bot"
             ),
             InputMediaPhoto(
-                media=f"{WEBAPP_URL}/images/miniapp-ui.jpg",
+                media=f"{WEBAPP_URL}/images/miniappUI.jpg",
                 caption="🧩 Mini App"
             ),
         ]
