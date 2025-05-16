@@ -281,8 +281,8 @@ async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(
         "👋 <b>Welcome to eSIM Unlimited</b>\n\n"
         "You can choose how you'd like to use the service:\n"
-        "🔸 <b>Mini App</b> — full modern interface inside Telegram\n"
-        "🔸 <b>Telegram Bot</b> — classic text command experience\n\n"
+        "🔸 <b>Mini App</b> — full modern interface\n"
+        "🔸 <b>Telegram Bot</b> — classic text command\n\n"
         "Let’s explore both options 👇",
         parse_mode="HTML"
     )
@@ -290,7 +290,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     # 2. Mini App image + features
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        photo=f"{WEBAPP_URL}/images/miniappUI.jpg",
+        photo=f"{WEBAPP_URL}/images/miniapp-UI.jpg",
         caption=(
             "🧩 <b>Mini App</b>\n"
             "✅ Full interactive UI\n"
@@ -303,7 +303,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     # 3. Telegram Bot image + features
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        photo=f"{WEBAPP_URL}/images/telegram-bot-ui.jpg",
+        photo=f"{WEBAPP_URL}/images/telegrambotui.jpg",
         caption=(
             "🤖 <b>Telegram Bot</b>\n"
             "✅ Simple text commands\n"
