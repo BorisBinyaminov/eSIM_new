@@ -263,7 +263,6 @@ async def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     logger.info(f"🔥 /start from {user.id} (@{user.username})")
 
-    # Save user in DB (background thread)
     def sync_db_task():
         db = SessionLocal()
         try:
@@ -278,34 +277,48 @@ async def start(update: Update, context: CallbackContext) -> None:
 
     await asyncio.to_thread(sync_db_task)
 
-    # 1. Send two images (replace filenames if needed)
-    await context.bot.send_media_group(
-        chat_id=update.effective_chat.id,
-        media=[
-            InputMediaPhoto(
-                media=f"{WEBAPP_URL}/images/telegram-bot-ui.jpg",
-                caption="🤖 Telegram Bot"
-            ),
-            InputMediaPhoto(
-                media=f"{WEBAPP_URL}/images/miniappUI.jpg",
-                caption="🧩 Mini App"
-            ),
-        ]
+    # 1. Welcome message with intro
+    await update.message.reply_text(
+        "👋 <b>Welcome to eSIM Unlimited</b>\n\n"
+        "You can choose how you'd like to use the service:\n"
+        "🔸 <b>Mini App</b> — full modern interface inside Telegram\n"
+        "🔸 <b>Telegram Bot</b> — classic text command experience\n\n"
+        "Let’s explore both options 👇",
+        parse_mode="HTML"
     )
 
-    # 2. Send comparison message with buttons
+    # 2. Mini App image + features
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=f"{WEBAPP_URL}/images/miniappUI.jpg",
+        caption=(
+            "🧩 <b>Mini App</b>\n"
+            "✅ Full interactive UI\n"
+            "✅ One-tap purchasing\n"
+            "✅ Best for newcomers"
+        ),
+        parse_mode="HTML"
+    )
+
+    # 3. Telegram Bot image + features
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=f"{WEBAPP_URL}/images/telegram-bot-ui.jpg",
+        caption=(
+            "🤖 <b>Telegram Bot</b>\n"
+            "✅ Simple text commands\n"
+            "✅ Works without WebApp\n"
+            "✅ Great for power users"
+        ),
+        parse_mode="HTML"
+    )
+
+    # 4. Present action buttons
     await update.message.reply_text(
-        "<b>🤖 Telegram Bot</b>\n"
-        "✅ Simple text commands\n"
-        "✅ Works without WebApp\n"
-        "✅ Great for power users\n\n"
-        "<b>🧩 Mini App</b>\n"
-        "✅ Full interactive UI\n"
-        "✅ One-tap purchasing\n"
-        "✅ Best for newcomers",
-        parse_mode="HTML",
+        "👇 Select how you’d like to continue:",
         reply_markup=main_menu_keyboard()
     )
+
 
 # Standard Message Handling
 # -------------------------------
