@@ -8,6 +8,8 @@ from models import User, Order
 import buy_esim
 from typing import Optional
 from database import SessionLocal, engine, Base, upsert_user
+from telegram import InputMediaPhoto
+from telegram import InputMediaPhoto
 
 from pathlib import Path
 from telegram import (
@@ -257,15 +259,11 @@ def format_esim_info(data: dict, db_entry: Optional[Order] = None) -> str:
 # -------------------------------
 logger = logging.getLogger(__name__)
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
-
-from telegram import InputMediaPhoto
-
 async def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     logger.info(f"🔥 /start from {user.id} (@{user.username})")
 
-    # Sync user to database
+    # Save user in DB (background thread)
     def sync_db_task():
         db = SessionLocal()
         try:
@@ -280,7 +278,7 @@ async def start(update: Update, context: CallbackContext) -> None:
 
     await asyncio.to_thread(sync_db_task)
 
-    # 1. Send image previews of both interfaces
+    # 1. Send two images (replace filenames if needed)
     await context.bot.send_media_group(
         chat_id=update.effective_chat.id,
         media=[
@@ -294,13 +292,17 @@ async def start(update: Update, context: CallbackContext) -> None:
             ),
         ]
     )
-    # 2. Send the comparison message + existing main menu buttons
+
+    # 2. Send comparison message with buttons
     await update.message.reply_text(
-        "🤖 <b>Telegram Bot</b>           |     🧩 <b>Mini App</b>\n"
-        "───────────────             ───────────────\n"
-        "✔ Simple text commands      |  ✔ Full interactive UI\n"
-        "✔ Works without WebApp      |  ✔ One-tap purchasing\n"
-        "✔ Great for power users     |  ✔ Best for newcomers\n",
+        "<b>🤖 Telegram Bot</b>\n"
+        "✅ Simple text commands\n"
+        "✅ Works without WebApp\n"
+        "✅ Great for power users\n\n"
+        "<b>🧩 Mini App</b>\n"
+        "✅ Full interactive UI\n"
+        "✅ One-tap purchasing\n"
+        "✅ Best for newcomers",
         parse_mode="HTML",
         reply_markup=main_menu_keyboard()
     )
