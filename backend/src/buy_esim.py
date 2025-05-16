@@ -194,7 +194,8 @@ async def process_purchase(
     transaction_id = await user_payment()
     logger.info(f"Simulated transaction ID: {transaction_id}")
 
-    order_response = await place_order(package_code, order_price, transaction_id, period_num=period_num, count=count)
+    #order_response = await place_order(package_code, order_price, transaction_id, period_num=period_num, count=count)
+    order_response = "failed"
     if not order_response or not isinstance(order_response, dict):
         raise Exception("Order request failed or returned unexpected result.")
     logger.info(f"Order response: {order_response}")
