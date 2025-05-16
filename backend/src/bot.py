@@ -257,26 +257,51 @@ def format_esim_info(data: dict, db_entry: Optional[Order] = None) -> str:
 # -------------------------------
 logger = logging.getLogger(__name__)
 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto
+
+from telegram import InputMediaPhoto
+
 async def start(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     logger.info(f"🔥 /start from {user.id} (@{user.username})")
 
+    # Sync user to database
     def sync_db_task():
         db = SessionLocal()
         try:
             upsert_user(db, {
                 "id": user.id,
-                "telegram_id": str(user.id),  # Make sure to match DB type (string)
+                "telegram_id": str(user.id),
                 "username": user.username,
-                "photo_url": None,  # Replace with real photo_url if available
+                "photo_url": None,
             })
         finally:
             db.close()
 
     await asyncio.to_thread(sync_db_task)
 
+    # 1. Send image previews of both interfaces
+    await context.bot.send_media_group(
+        chat_id=update.effective_chat.id,
+        media=[
+            InputMediaPhoto(
+                media=f"{WEBAPP_URL}/images/telegram-bot-ui.jpg",
+                caption="🤖 Telegram Bot"
+            ),
+            InputMediaPhoto(
+                media=f"{WEBAPP_URL}/images/miniapp-ui.jpg",
+                caption="🧩 Mini App"
+            ),
+        ]
+    )
+    # 2. Send the comparison message + existing main menu buttons
     await update.message.reply_text(
-        "(Under Construction - do not use yet) Welcome to eSIM Unlimited! Choose an option:",
+        "🤖 <b>Telegram Bot</b>           |     🧩 <b>Mini App</b>\n"
+        "───────────────             ───────────────\n"
+        "✔ Simple text commands      |  ✔ Full interactive UI\n"
+        "✔ Works without WebApp      |  ✔ One-tap purchasing\n"
+        "✔ Great for power users     |  ✔ Best for newcomers\n",
+        parse_mode="HTML",
         reply_markup=main_menu_keyboard()
     )
 
