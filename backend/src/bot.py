@@ -280,7 +280,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     # Send visual comparison image
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        photo=f"{WEBAPP_URL}/images/s_page.jpg",
+        photo=f"{WEBAPP_URL}/images/s_page2.jpg",
         parse_mode="HTML",
         reply_markup=main_menu_keyboard()
     )
