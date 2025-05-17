@@ -277,48 +277,14 @@ async def start(update: Update, context: CallbackContext) -> None:
 
     await asyncio.to_thread(sync_db_task)
 
-    # 1. Welcome message with intro
-    await update.message.reply_text(
-        "👋 <b>Welcome to eSIM Unlimited</b>\n\n"
-        "You can choose how you'd like to use the service:\n"
-        "🔸 <b>Mini App</b> — full modern interface\n"
-        "🔸 <b>Telegram Bot</b> — classic text command\n\n"
-        "Let’s explore both options 👇",
-        parse_mode="HTML"
-    )
-
-    # 2. Mini App image + features
+    # Send visual comparison image
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        photo=f"{WEBAPP_URL}/images/miniapp-UI.jpg",
-        caption=(
-            "🧩 <b>Mini App</b>\n"
-            "✅ Full interactive UI\n"
-            "✅ One-tap purchasing\n"
-            "✅ Best for newcomers"
-        ),
-        parse_mode="HTML"
-    )
-
-    # 3. Telegram Bot image + features
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=f"{WEBAPP_URL}/images/telegrambotui.jpg",
-        caption=(
-            "🤖 <b>Telegram Bot</b>\n"
-            "✅ Simple text commands\n"
-            "✅ Works without WebApp\n"
-            "✅ Great for power users"
-        ),
-        parse_mode="HTML"
-    )
-
-    # 4. Present action buttons
-    await update.message.reply_text(
-        "👇 Select how you’d like to continue:",
+        photo=f"{WEBAPP_URL}/images/start-image.jpg",
+        caption="👇 Choose how you’d like to continue:",
+        parse_mode="HTML",
         reply_markup=main_menu_keyboard()
     )
-
 
 # Standard Message Handling
 # -------------------------------
