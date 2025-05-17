@@ -285,6 +285,7 @@ async def start(update: Update, context: CallbackContext) -> None:
         parse_mode="HTML",
         reply_markup=main_menu_keyboard()
     )
+    
 
 # Standard Message Handling
 # -------------------------------
