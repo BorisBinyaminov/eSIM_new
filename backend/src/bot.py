@@ -281,7 +281,6 @@ async def start(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(
         chat_id=update.effective_chat.id,
         photo=f"{WEBAPP_URL}/images/s_page.jpg",
-        caption="👇 Choose how you’d like to continue:",
         parse_mode="HTML",
         reply_markup=main_menu_keyboard()
     )
