@@ -50,10 +50,6 @@ interface Package {
   volumeGB?: string;
 }
 
-
-const router = useRouter()
-const setSelectedPackage = usePurchaseStore(state => state.setSelectedPackage)
-
 export default function CountryPage() {
   const t = useTranslations("buyeSim");
   const { type, slug } = useParams() as { type: string; slug: string };
@@ -61,6 +57,9 @@ export default function CountryPage() {
   const [packagesData, setPackagesData] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const { user, loading: authLoading } = useAuth();
+  const router = useRouter()
+  const setSelectedPackage = usePurchaseStore(state => state.setSelectedPackage)
+
 
   if (authLoading) return <div className="text-white text-center mt-10"> {t('common.authorizing')}</div>;
   if (!user) return <div className="text-white text-center mt-10">{t('common.userNotFound')}</div>;
