@@ -8,6 +8,8 @@ import { useParams } from 'next/navigation';
 import 'swiper/css';
 import { useTranslations } from 'next-intl';
 import { useAuth } from "@/components/AuthProvider/AuthProvider";
+import { usePurchaseStore } from '@/store/usePurchaseStore'
+import { useRouter } from 'next/navigation'
 
 
 interface Operator {
@@ -49,6 +51,8 @@ interface Package {
 }
 
 
+const router = useRouter()
+const setSelectedPackage = usePurchaseStore(state => state.setSelectedPackage)
 
 export default function CountryPage() {
   const t = useTranslations("buyeSim");
@@ -127,49 +131,21 @@ export default function CountryPage() {
   }, [type, slug]);
 
   const handleBuyNow = async (pkg: any) => {
-    let count = 1;
-    let period_num: number;
+  let count = 1
+  let period_num: number
 
-    if (pkg.duration === 1) {
-      // daily plan → ask for number of days
-      const daysStr = window.prompt( t('prompts.dailyPlan'), "1");
-      if (daysStr === null) return;                     // user cancelled
-      const days = parseInt(daysStr, 10);
-      period_num = isNaN(days) || days < 1 ? 1 : days;
-      count = 1
-    } else {
-      count = 1;
-      period_num = 1;
-    }
-
-    try {
-      const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-ID": String(user?.id || ""),
-        },
-        body: JSON.stringify({
-          package_code: pkg.packageCode,
-          order_price: pkg.price,
-          retail_price: pkg.retailPrice,
-          period_num,
-          count,
-        }),
-      });
-
-    const json = await res.json();
-
-    if (json.success) {
-      alert(t('alerts.purchaseSuccess'));
-    } else {
-      alert(t('alerts.purchaseFailed' + (json.error || "Unknown error")));
-    }
-  } catch (err) {
-    alert(t('alerts.networkError'));
-    console.error(err);
+  if (pkg.duration === 1) {
+    const daysStr = window.prompt("How many days?", "1")
+    if (daysStr === null) return
+    const days = parseInt(daysStr, 10)
+    period_num = isNaN(days) || days < 1 ? 1 : days
+  } else {
+    period_num = 1
   }
-};
+
+  setSelectedPackage({ ...pkg, count, period_num })
+  router.push('/paymentMethod')
+}
   return (
     <div className="container mx-auto p-4 bg-mainbg">
       <div className="flex items-center text-center gap-1">
