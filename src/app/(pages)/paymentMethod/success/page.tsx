@@ -9,6 +9,7 @@ export default function PaymentSuccessPage() {
   const { user } = useAuth()
   const selectedPackage = usePurchaseStore(state => state.selectedPackage)
   const [message, setMessage] = useState("Finalizing your purchase...")
+  const [showSpinner, setShowSpinner] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -36,10 +37,11 @@ export default function PaymentSuccessPage() {
 
         const json = await res.json()
         if (json.success) {
-        setMessage("✅ eSIM purchase complete! You can now view it in My eSIM.")
-        setTimeout(() => {
-        router.push('/myEsim')
-        }, 2000)
+          setMessage("✅ eSIM purchase complete! Redirecting to My eSIM page...")
+          setShowSpinner(true)
+          setTimeout(() => {
+            router.push('/myEsim')
+          }, 2500)
         } else {
           setMessage("❌ eSIM purchase failed: " + (json.error || "Unknown error"))
         }
@@ -53,9 +55,11 @@ export default function PaymentSuccessPage() {
   }, [user, selectedPackage])
 
   return (
-    <div className="p-6 text-white bg-[#05081A] min-h-screen">
-      <h1 className="text-xl font-semibold mb-4">Payment Successful</h1>
-      <p>{message}</p>
+    <div className="p-6 text-white bg-[#05081A] min-h-screen flex flex-col justify-center items-center text-center gap-4">
+      <h1 className="text-xl font-semibold">{message}</h1>
+      {showSpinner && (
+        <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+      )}
     </div>
   )
 }
