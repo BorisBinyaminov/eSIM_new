@@ -36,8 +36,10 @@ export default function PaymentSuccessPage() {
 
         const json = await res.json()
         if (json.success) {
-          setMessage("✅ eSIM purchase complete! You can now view it in My eSIM.")
-          router.push('/myEsim')
+        setMessage("✅ eSIM purchase complete! You can now view it in My eSIM.")
+        setTimeout(() => {
+        router.push('/myEsim')
+        }, 2000)
         } else {
           setMessage("❌ eSIM purchase failed: " + (json.error || "Unknown error"))
         }
