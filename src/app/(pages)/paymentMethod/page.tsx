@@ -16,7 +16,7 @@ const Page = () => {
   }
 
   const handlePayment = (method: 'bank' | 'crypto') => {
-    const isPaymentSuccessful = false // 🔧 fake result for now
+    const isPaymentSuccessful = true // 🔧 fake result for now
 
     if (isPaymentSuccessful) {
       router.push('/paymentMethod/success')
