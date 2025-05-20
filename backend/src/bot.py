@@ -8,6 +8,8 @@ from models import User, Order
 import buy_esim
 from typing import Optional
 from database import SessionLocal, engine, Base, upsert_user
+from telegram import InputMediaPhoto
+from telegram import InputMediaPhoto
 
 from pathlib import Path
 from telegram import (
@@ -266,19 +268,23 @@ async def start(update: Update, context: CallbackContext) -> None:
         try:
             upsert_user(db, {
                 "id": user.id,
-                "telegram_id": str(user.id),  # Make sure to match DB type (string)
+                "telegram_id": str(user.id),
                 "username": user.username,
-                "photo_url": None,  # Replace with real photo_url if available
+                "photo_url": None,
             })
         finally:
             db.close()
 
     await asyncio.to_thread(sync_db_task)
 
-    await update.message.reply_text(
-        "Welcome to eSIM Unlimited! Choose an option:",
+    # Send visual comparison image
+    await context.bot.send_photo(
+        chat_id=update.effective_chat.id,
+        photo=f"{WEBAPP_URL}/images/s_page2.jpg",
+        parse_mode="HTML",
         reply_markup=main_menu_keyboard()
     )
+    
 
 # Standard Message Handling
 # -------------------------------

@@ -51,14 +51,15 @@ interface Package {
 
 
 export default function CountryPage() {
+  const t = useTranslations("buyeSim");
   const { type, slug } = useParams() as { type: string; slug: string };
   const displayType = type.charAt(0).toUpperCase() + type.slice(1);
   const [packagesData, setPackagesData] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
   const { user, loading: authLoading } = useAuth();
 
-  if (authLoading) return <div className="text-white text-center mt-10">🔐 Authorizing...</div>;
-  if (!user) return <div className="text-white text-center mt-10">❌ User not found. Please reopen the mini app.</div>;
+  if (authLoading) return <div className="text-white text-center mt-10"> {t('common.authorizing')}</div>;
+  if (!user) return <div className="text-white text-center mt-10">{t('common.userNotFound')}</div>;
 
   // Функция для преобразования объёма в гигабайты (с округлением и минимумом 0.5GB)
   const convertVolumeToGB = (volume: number) => {
@@ -125,43 +126,50 @@ export default function CountryPage() {
     return () => clearInterval(interval);
   }, [type, slug]);
 
-  const t = useTranslations("buyeSim");
-  
-
   const handleBuyNow = async (pkg: any) => {
-  console.log("🔍 Buy process pkg details:", {
-            package: pkg
-          });
-  try {
-    const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-User-ID": String(user?.id || ""),
-      },
-      body: JSON.stringify({
-        package_code: pkg.packageCode,
-        order_price: pkg.price,
-        retail_price: pkg.retailPrice,
-        count: 1,
-        period_num: 1
-      })
-    });
+    let count = 1;
+    let period_num: number;
+
+    if (pkg.duration === 1) {
+      // daily plan → ask for number of days
+      const daysStr = window.prompt( t('prompts.dailyPlan'), "1");
+      if (daysStr === null) return;                     // user cancelled
+      const days = parseInt(daysStr, 10);
+      period_num = isNaN(days) || days < 1 ? 1 : days;
+      count = 1
+    } else {
+      count = 1;
+      period_num = 1;
+    }
+
+    try {
+      const res = await fetch("https://mini.torounlimitedvpn.com/esim/buy", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-User-ID": String(user?.id || ""),
+        },
+        body: JSON.stringify({
+          package_code: pkg.packageCode,
+          order_price: pkg.price,
+          retail_price: pkg.retailPrice,
+          period_num,
+          count,
+        }),
+      });
 
     const json = await res.json();
 
     if (json.success) {
-      alert("✅ Purchase successful!");
+      alert(t('alerts.purchaseSuccess'));
     } else {
-      alert("❌ Purchase failed: " + (json.error || "Unknown error"));
+      alert(t('alerts.purchaseFailed' + (json.error || "Unknown error")));
     }
   } catch (err) {
-    alert("❌ Network error. Please try again.");
+    alert(t('alerts.networkError'));
     console.error(err);
   }
 };
-
-
   return (
     <div className="container mx-auto p-4 bg-mainbg">
       <div className="flex items-center text-center gap-1">
@@ -180,13 +188,13 @@ export default function CountryPage() {
           </h1>
         : 
           <h1 className="text-[16px] font-bold text-white">
-            {t("Available Packages for")} {loading ? "Loading" : packagesData[0].name.split(/[\s(]/)[0]}
+            {t("Available Packages for")} {loading ? t('common.loading') : packagesData[0].name.split(/[\s(]/)[0]}
           </h1>
         }
       </div>
       <div className="mt-6">
         {loading ? (
-          <p className="text-white">Loading packages...</p>
+          <p className="text-white">{t('common.loadingPackages')}</p>
         ) : (
           <div className="flex flex-col items-center space-y-6 bg-mainbg min-h-screen p-6">
             {packagesData.length > 0 ? (
@@ -240,7 +248,7 @@ export default function CountryPage() {
                 </div>
               </>
             ) : (
-              <p className="text-white">No packages available for {slug}</p>
+              <p className="text-white"> {t('common.noPackages', { slug })}</p>
             )}
           </div>
         )}
