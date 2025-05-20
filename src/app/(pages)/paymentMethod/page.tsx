@@ -41,7 +41,7 @@ const Page = () => {
           <Image src="/images/supportedDevice/arrowL.svg" width={12} height={24} alt="arrow" className='w-[12px] h-[24px]'/>
         </motion.button>
         <motion.h1 
-          className="text-[16px] font-bold"
+          className="text-[16px] font-bold text-white"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
