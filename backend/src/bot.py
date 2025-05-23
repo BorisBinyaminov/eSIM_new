@@ -8,8 +8,8 @@ from models import User, Order
 import buy_esim
 from typing import Optional
 from database import SessionLocal, engine, Base, upsert_user
-from telegram import InputMediaPhoto
-from telegram import InputMediaPhoto
+from payments.cryptoBot import create_crypto_invoice
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 
 from pathlib import Path
 from telegram import (
@@ -302,36 +302,52 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
             return
 
         purchase = context.chat_data.pop("pending_purchase")
-        try:
-            result = await buy_esim.process_purchase(
-                package_code=purchase["package_code"],
-                user_id=str(update.effective_user.id),
-                order_price=purchase["order_price"],
-                retail_price=purchase["retail_price"],
-                count=1 if purchase["duration"] == 1 else quantity,
-                period_num=quantity if purchase["duration"] == 1 else None
+
+        if purchase.get("method") == "crypto":
+            amount = round(purchase["retail_price"] / 10000 * quantity, 2)
+            invoice = await create_crypto_invoice(
+                amount=amount,
+                description=f"eSIM {purchase['package_code']} x {quantity}"
             )
-            qr_codes = result.get("qrCodes")
-            if isinstance(qr_codes, list) and len(qr_codes) > 1:
-                await update.message.reply_text(
-                    f"✅ You purchased {len(qr_codes)} eSIMs. Here are your QR codes:"
-                )
-                for idx, qr in enumerate(qr_codes, 1):
-                    await update.message.reply_text(f"eSIM #{idx}:\n{qr}")
-            elif qr_codes:
-                await update.message.reply_text(
-                    f"✅ Purchase successful! Your QR code:\n{qr_codes[0]}"
-                )
-            else:
-                await update.message.reply_text(
-                    "✅ Purchase completed, but no QR code was returned."
-                )
-        except Exception as e:
-            logger.exception("Purchase processing failed:")
+
+            context.chat_data["awaiting_payment"] = {
+                "package_code": purchase["package_code"],
+                "order_price": purchase["order_price"],
+                "retail_price": purchase["retail_price"],
+                "count": 1 if purchase["duration"] == 1 else quantity,
+                "period_num": quantity if purchase["duration"] == 1 else None,
+                "method": "crypto",
+                "invoice_id": invoice.invoice_id
+            }
+
             await update.message.reply_text(
-                "❌ An error occurred while processing your purchase. Please try again later."
+                f"💰 Please complete your payment:\n👉 [Pay Now]({invoice.bot_invoice_url})",
+                parse_mode="Markdown",
+                reply_markup=InlineKeyboardMarkup([[
+                    InlineKeyboardButton("🔄 I’ve Paid", callback_data=f"checkcrypto_{invoice.invoice_id}")
+                ]])
             )
-        return
+            return
+
+        elif purchase.get("method") == "bank":
+            # TODO: Replace this with Freekassa invoice generation
+            context.chat_data["awaiting_payment"] = {
+                "package_code": purchase["package_code"],
+                "order_price": purchase["order_price"],
+                "retail_price": purchase["retail_price"],
+                "count": 1 if purchase["duration"] == 1 else quantity,
+                "period_num": quantity if purchase["duration"] == 1 else None,
+                "method": "bank",
+                "invoice_id": None
+            }
+
+            await update.message.reply_text(
+                "💳 Bank payment selected. [TODO] Freekassa invoice will be shown here.",
+                reply_markup=InlineKeyboardMarkup([[
+                    InlineKeyboardButton("🔄 I’ve Paid", callback_data=f"checkbank_{purchase['package_code']}")
+                ]])
+            )
+            return
 
     # -- 2) Awaiting Country Search
     if context.chat_data.get("awaiting_country_search"):
@@ -736,37 +752,115 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             f"<b>Coverage:</b> {coverage} Countries\n"
             f"<b>Supported Countries:</b> {supported_countries_str}"
         )
-        buy_button = InlineKeyboardButton("Buy", callback_data=f"buypkg_{package_code}")
-        keyboard = InlineKeyboardMarkup([[buy_button]])
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("💳 Buy with Card", callback_data=f"buybank_{package_code}")],
+            [InlineKeyboardButton("💰 Buy with Crypto", callback_data=f"buycrypto_{package_code}")]
+        ])
         await query.message.reply_text(
             detailed_message,
             parse_mode="HTML",
             reply_markup=keyboard
         )
 
-    elif data.startswith("buypkg_"):
+    elif data.startswith("buybank_"): 
+        context.chat_data.pop("pending_purchase", None)
+        context.chat_data.pop("awaiting_payment", None)
         package_code = data.split("_", 1)[1]
-        user_id = str(update.effective_user.id)
         package = next((p for p in all_country_packages if p.get("packageCode") == package_code), None)
         if not package:
             package = next((p for p in all_regional_packages if p.get("packageCode") == package_code), None)
         if not package:
             package = next((p for p in all_global_packages if p.get("packageCode") == package_code), None)
         if not package:
-            await query.message.reply_text("Package not found.")
+            await query.message.reply_text("❌ Package not found.")
             return
 
-        duration = package.get("duration", 1)
+        duration = package.get("duration", 0)
+
         context.chat_data["pending_purchase"] = {
             "package_code": package_code,
             "order_price": package.get("price", 0),
             "retail_price": package.get("retailPrice", 0),
-            "duration": duration
+            "duration": duration,
+            "method": "bank"
         }
+
         if duration == 1:
-            await query.message.reply_text("🕓 This is a daily plan. How many days do you need?")
+            await query.message.reply_text("🕓 Daily plan selected. How many days?")
         else:
             await query.message.reply_text("📱 How many eSIMs would you like to purchase?")
+
+    elif data.startswith("checkbank_"):
+        # TODO: implement Freekassa invoice status check
+        # Retrieve context.chat_data["awaiting_payment"] here
+        await query.message.reply_text("💳 Bank payment checking is not yet implemented.")
+
+    elif data.startswith("buycrypto_"):
+        context.chat_data.pop("pending_purchase", None)
+        context.chat_data.pop("awaiting_payment", None)
+        package_code = data.split("_", 1)[1]
+        package = next((p for p in all_country_packages if p.get("packageCode") == package_code), None)
+        if not package:
+            package = next((p for p in all_regional_packages if p.get("packageCode") == package_code), None)
+        if not package:
+            package = next((p for p in all_global_packages if p.get("packageCode") == package_code), None)
+        if not package:
+            await query.message.reply_text("❌ Package not found.")
+            return
+
+        duration = package.get("duration", 0)
+
+        context.chat_data["pending_purchase"] = {
+            "package_code": package_code,
+            "order_price": package.get("price", 0),
+            "retail_price": package.get("retailPrice", 0),
+            "duration": duration,
+            "method": "crypto"
+        }
+
+        if duration == 1:
+            await query.message.reply_text("🕓 Daily plan selected. How many days?")
+        else:
+            await query.message.reply_text("📱 How many eSIMs would you like to purchase?")
+
+    elif data.startswith("checkcrypto_"):
+        invoice_id = int(data.split("_", 1)[1])
+        from aiocryptopay import AioCryptoPay, Networks
+
+        async with AioCryptoPay(token=os.getenv("CRYPTO_BOT_TOKEN"), network=Networks.MAIN_NET) as cpay:
+            invoice = await cpay.get_invoices(invoice_ids=invoice_id)
+
+        if invoice and invoice.status == "paid":
+            purchase = context.chat_data.pop("awaiting_payment", None)
+            if not purchase:
+                await query.message.reply_text("⚠️ Payment found, but no pending purchase data.")
+                return
+
+            try:
+                result = await buy_esim.process_purchase(
+                    package_code=purchase["package_code"],
+                    user_id=str(query.from_user.id),
+                    order_price=purchase["order_price"],
+                    retail_price=purchase["retail_price"],
+                    count=purchase["count"],
+                    period_num=purchase["period_num"]
+                )
+                qr_codes = result.get("qrCodes")
+                if isinstance(qr_codes, list) and len(qr_codes) > 1:
+                    await query.message.reply_text(f"✅ {len(qr_codes)} eSIMs purchased:")
+                    for idx, qr in enumerate(qr_codes, 1):
+                        await query.message.reply_text(f"eSIM #{idx}:\n{qr}")
+                elif qr_codes:
+                    await query.message.reply_text(f"✅ Your eSIM QR:\n{qr_codes[0]}")
+                else:
+                    await query.message.reply_text("✅ Purchase complete — no QR returned.")
+            except Exception as e:
+                logger.exception("Crypto payment post-processing failed:")
+                await query.message.reply_text("❌ Error after payment. Contact support.")
+        elif invoice and invoice.status == "active":
+            await query.message.reply_text("⏳ Payment is still pending. Please try again later.")
+        else:
+            await query.message.reply_text("❌ Invoice not found or expired.")
 
     # -------------------------
     # Cancel Flow
@@ -1018,7 +1112,7 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             logger.exception("Refresh usage failed:")
             await query.message.reply_text("❌ An unexpected error occurred while refreshing usage.")
     else:
-        await query.message.reply_text("Unknown action.")
+        await query.message.reply_text("Unknown action. Please start again")
 
 # -------------------------------
 # Error Handling
