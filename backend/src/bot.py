@@ -45,12 +45,13 @@ GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
 
 # Load environment variables
 load_dotenv()
-TELEGRAM_TOKEN = "8073824494:AAEfSGYAnUe4Pv8MV24dWIPcbHhDW2JMjJc"
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 WEBAPP_URL = os.getenv("WEBAPP_URL")
 DATABASE_URL = os.getenv("DATABASE_URL")
 SUPPORT_BOT = os.getenv("SUPPORT_BOT")
 NEWS_CHANNEL = os.getenv("NEWS_CHANNEL")
 WEBAPP_FAQ_URL = os.getenv("WEBAPP_FAQ_URL")
+WEBAPP_SUPPORT_DEVICES_URL=os.getenv("WEBAPP_SUPPORT_DEVICES_URL")
 WEBAPP_GUIDES_URL = os.getenv("WEBAPP_GUIDES_URL")
 
 logger = logging.getLogger("bot")
@@ -148,7 +149,7 @@ def main_menu_keyboard():
     keyboard = [
         ["🖥️ Open Mini App"],
         ["🛒 Buy eSIM", "🔑 My eSIMs"],
-        ["❓ FAQ", "📌 Guides"],
+        ["❓ FAQ", "📌 Guides", "📱 Supported Devices"],
         ["🆕 Project News", "💬 Support"]
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
@@ -397,6 +398,10 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
         faq_button = InlineKeyboardButton("Open FAQ", web_app=WebAppInfo(url=WEBAPP_FAQ_URL))
         keyboard = InlineKeyboardMarkup([[faq_button]])
         await update.message.reply_text("Click here to open FAQ:", reply_markup=keyboard)
+    elif text == "📱 Supported Devices":
+        support_devices_button = InlineKeyboardButton("Open Supported Devices", web_app=WebAppInfo(url=WEBAPP_SUPPORT_DEVICES_URL))
+        keyboard = InlineKeyboardMarkup([[support_devices_button]])
+        await update.message.reply_text("Click here to open Supported Devices:", reply_markup=keyboard)    
     elif text == "📌 Guides":
         guides_button = InlineKeyboardButton("Open Guides", web_app=WebAppInfo(url=WEBAPP_GUIDES_URL))
         keyboard = InlineKeyboardMarkup([[guides_button]])
