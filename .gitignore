@@ -40,3 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 *.pyc
+
+# python
+venv/
+env/
+__pycache__/
+.env
+public/*.json
+public/lastUpdate.txt

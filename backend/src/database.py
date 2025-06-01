@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from sqlalchemy.orm import Session
-from models import User
+from models import Base, User
 
 load_dotenv()
 
@@ -15,8 +15,6 @@ if not DATABASE_URL:
 
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True for SQL logging
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
 
 def upsert_user(db: Session, user_data: dict) -> User:
     telegram_id = str(user_data.get("id"))

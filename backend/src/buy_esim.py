@@ -194,7 +194,7 @@ async def process_purchase(
     transaction_id = await user_payment()
     logger.info(f"Simulated transaction ID: {transaction_id}")
     # временное, чтобы никто кроме меня не мог покупать, для тестирования
-    if user_id=='5102625060':
+    if user_id in ['5102625060', '650138987']:
         order_response = await place_order(package_code, order_price, transaction_id, period_num=period_num, count=count)
     else:
         order_response = "failed"

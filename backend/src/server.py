@@ -6,6 +6,7 @@ import time
 import threading
 import traceback
 import asyncio
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -37,6 +38,7 @@ LOCAL_PKGS_F    = PUBLIC_DIR / 'countryPackages.json'
 REGIONAL_PKGS_F = PUBLIC_DIR / 'regionalPackages.json'
 GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
 ALL_PKGS_F      = PUBLIC_DIR / 'allPackages.json'
+CURRENCY_F = PUBLIC_DIR / 'currency.json'
 BACKEND_DIR = SRC_DIR.parent                         # …/eSIM_new/backend
 ROOT_DIR    = BACKEND_DIR.parent                     # …/eSIM_new
 PUBLIC_DIR  = ROOT_DIR / 'public'                    # …/eSIM_new/public
@@ -109,6 +111,8 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
+
+
 # Setup retry session
 session = requests.Session()
 retries = Retry(
@@ -178,16 +182,35 @@ def fetch_packages():
     with open(f"{PUBLIC_DIR}/lastUpdate.txt", "w", encoding="utf-8") as f:
         f.write(last_update_time)
 
+    fetch_currency_data()
+
     print(f"\n✅ Packages updated at: {last_update_time}", flush=True)
+
+def fetch_currency_data():
+    try:
+        url = 'https://www.cbr-xml-daily.ru/daily_json.js'
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(CURRENCY_F, 'w', encoding='utf-8') as file:
+            json.dump(response.json(), file)
+        print(f"✅ Currency JSON saved successfully", flush=True)
+    except:
+        print(f"⚠️ Failed to save Currenct JSON saved successfully", flush=True)
+        logger = logging.getLogger(__name__)
+        logger.exception('error fetching currency data')
+
+
 
 # ✅ Fetch packages immediately on startup
 fetch_packages()
+
 
 # ✅ Periodic update of JSON files every 6 hours
 def schedule_package_updates():
     while True:
         time.sleep(3600)
         fetch_packages()
+        fetch_currency_data()
 
 def run_support_bot():
     print("🤖 Starting integrated Support Bot.")

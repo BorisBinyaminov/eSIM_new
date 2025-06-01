@@ -3,13 +3,15 @@ import logging
 import asyncio
 import os
 import json
+from uuid import uuid4
 from dotenv import load_dotenv
 from models import User, Order
 import buy_esim
 from typing import Optional
+import aiohttp
 from database import SessionLocal, engine, Base, upsert_user
 from payments.cryptoBot import create_crypto_invoice
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, LabeledPrice
 
 from pathlib import Path
 from telegram import (
@@ -26,6 +28,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
     CallbackQueryHandler,
+    PreCheckoutQueryHandler
 )
 
 # путь к папке src: .../eSIM_new/backend/src
@@ -42,6 +45,10 @@ COUNTRIES_F     = PUBLIC_DIR / 'countries.json'
 LOCAL_PKGS_F    = PUBLIC_DIR / 'countryPackages.json'
 REGIONAL_PKGS_F = PUBLIC_DIR / 'regionalPackages.json'
 GLOBAL_PKGS_F   = PUBLIC_DIR / 'globalPackages.json'
+CURRENCY_F = PUBLIC_DIR / 'currency.json'
+
+BACKEND_IP = "127.0.0.1"
+BACKEND_PORT = 5000
 
 # Load environment variables
 load_dotenv()
@@ -127,6 +134,20 @@ logging.basicConfig(
 )
 
 USER_SESSIONS = {}
+
+async def fetch_rate(currency: str):
+    # url = f'http://{BACKEND_IP}:{BACKEND_PORT}/currency.json'
+    # async with aiohttp.ClientSession() as session:
+    #     async with session.get(url) as response:
+    #         response.raise_for_status()
+    #         data = await response.json()
+    #         currency_rate = data['Valute'][currency]['Value']
+    #         return currency_rate
+    with open(CURRENCY_F, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        currency_rate = data['Valute'][currency]['Value']
+        return currency_rate     
+    
 
 # -------------------------------
 # Keyboards & UI
@@ -286,12 +307,51 @@ async def start(update: Update, context: CallbackContext) -> None:
         reply_markup=main_menu_keyboard()
     )
     
+# precheckout handling
+async def handle_precheckout(update: Update, context: CallbackContext) -> None:
+    await update.pre_checkout_query.answer(ok=True, error_message='Error pre-processing payment. Contact support')
+
+
+# successfult telegram payment handler
+async def handle_successful_payment(update: Update, context: CallbackContext) -> None:
+    purchase = context.chat_data.pop("awaiting_payment", None)
+    logging.info(f'processing successful payment: {repr(update.message.successful_payment)} from chat {update.message.chat_id} with purchase data: {purchase}')
+    print(f'processing successful payment: {repr(update.message.successful_payment)} from chat {update.message.chat_id} with purchase data: {purchase}')
+   
+    if not purchase:
+        await update.message.reply_text("⚠️ Payment found, but no pending purchase data.")
+        return
+
+    try:
+        result = await buy_esim.process_purchase(
+            package_code=purchase["package_code"],
+            user_id=str(update.message.chat_id),
+            order_price=purchase["order_price"],
+            retail_price=purchase["retail_price"],
+            count=purchase["count"],
+            period_num=purchase["period_num"]
+        )
+        qr_codes = result.get("qrCodes")
+        if isinstance(qr_codes, list) and len(qr_codes) > 1:
+            await update.message.reply_text(f"✅ {len(qr_codes)} eSIMs purchased:")
+            for idx, qr in enumerate(qr_codes, 1):
+                await update.message.reply_text(f"eSIM #{idx}:\n{qr}")
+        elif qr_codes:
+            await update.message.reply_text(f"✅ Your eSIM QR:\n{qr_codes[0]}")
+        else:
+            await update.message.reply_text("✅ Purchase complete — no QR returned.")
+    except Exception as e:
+        logger.exception("Telegram payment post-processing failed:")
+        await update.message.reply_text("❌ Error after payment. Contact support.")
+
+
+
 
 # Standard Message Handling
 # -------------------------------
 async def handle_message(update: Update, context: CallbackContext) -> None:
     text = update.message.text
-
+    
     # -- 1) Pending Purchase (Quantity Input)
     if "pending_purchase" in context.chat_data:
         try:
@@ -302,53 +362,102 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
             await update.message.reply_text("Please enter a valid positive number.")
             return
 
+        
         purchase = context.chat_data.pop("pending_purchase")
+        match purchase.get("method"):
+            case "crypto":
+                amount = round(purchase["retail_price"] / 10000 * quantity, 2)
+                invoice = await create_crypto_invoice(
+                    amount=amount,
+                    description=f"eSIM {purchase['package_code']} x {quantity}"
+                )
 
-        if purchase.get("method") == "crypto":
-            amount = round(purchase["retail_price"] / 10000 * quantity, 2)
-            invoice = await create_crypto_invoice(
-                amount=amount,
-                description=f"eSIM {purchase['package_code']} x {quantity}"
-            )
+                context.chat_data["awaiting_payment"] = {
+                    "package_code": purchase["package_code"],
+                    "order_price": purchase["order_price"],
+                    "retail_price": purchase["retail_price"],
+                    "count": 1 if purchase["duration"] == 1 else quantity,
+                    "period_num": quantity if purchase["duration"] == 1 else None,
+                    "method": "crypto",
+                    "invoice_id": invoice.invoice_id
+                }
 
-            context.chat_data["awaiting_payment"] = {
-                "package_code": purchase["package_code"],
-                "order_price": purchase["order_price"],
-                "retail_price": purchase["retail_price"],
-                "count": 1 if purchase["duration"] == 1 else quantity,
-                "period_num": quantity if purchase["duration"] == 1 else None,
-                "method": "crypto",
-                "invoice_id": invoice.invoice_id
-            }
+                await update.message.reply_text(
+                    f"💰 Please complete your payment:\n👉 [Pay Now]({invoice.bot_invoice_url})",
+                    parse_mode="Markdown",
+                    reply_markup=InlineKeyboardMarkup([[
+                        InlineKeyboardButton("🔄 I’ve Paid", callback_data=f"checkcrypto_{invoice.invoice_id}")
+                    ]])
+                )
+                return
+            case "bank":
+                invoice_id = str(uuid4())
+                dollar_rate = await fetch_rate('USD')
+                amount = round(purchase["retail_price"] / 10000 * quantity * dollar_rate * 1.05, 2)
+                tariff_string = f"eSIM {purchase['package_code']} x {quantity}"
+                provider_data = {
+                "receipt": {
+                    "items": [
+                        {
+                            "description": tariff_string,
+                            "quantity": f'{int(quantity)}.00' if purchase["duration"] == 1 else "1.00",
+                            "amount": {
+                                "value": f"{amount}",
+                                "currency": "RUB"
+                            },
+                            "vat_code": 1
+                        }
+                    ]
+                }
+                }
 
-            await update.message.reply_text(
-                f"💰 Please complete your payment:\n👉 [Pay Now]({invoice.bot_invoice_url})",
-                parse_mode="Markdown",
-                reply_markup=InlineKeyboardMarkup([[
-                    InlineKeyboardButton("🔄 I’ve Paid", callback_data=f"checkcrypto_{invoice.invoice_id}")
-                ]])
-            )
-            return
-
-        elif purchase.get("method") == "bank":
-            # TODO: Replace this with Freekassa invoice generation
-            context.chat_data["awaiting_payment"] = {
-                "package_code": purchase["package_code"],
-                "order_price": purchase["order_price"],
-                "retail_price": purchase["retail_price"],
-                "count": 1 if purchase["duration"] == 1 else quantity,
-                "period_num": quantity if purchase["duration"] == 1 else None,
-                "method": "bank",
-                "invoice_id": None
-            }
-
-            await update.message.reply_text(
-                "💳 Bank payment selected. [TODO] Freekassa invoice will be shown here.",
-                reply_markup=InlineKeyboardMarkup([[
-                    InlineKeyboardButton("🔄 I’ve Paid", callback_data=f"checkbank_{purchase['package_code']}")
-                ]])
-            )
-            return
+                context.chat_data["awaiting_payment"] = {
+                    "package_code": purchase["package_code"],
+                    "order_price": purchase["order_price"],
+                    "retail_price": purchase["retail_price"],
+                    "count": 1 if purchase["duration"] == 1 else quantity,
+                    "period_num": quantity if purchase["duration"] == 1 else None,
+                    "method": "bank",
+                    "invoice_id": None
+                }
+                
+                await update.message.reply_invoice(
+                    title=tariff_string,
+                    description=tariff_string,
+                    payload=invoice_id,
+                    need_email=True,
+                    provider_token=os.environ.get('YOOKASSA_TOKEN'),
+                    currency='rub',
+                    prices=[LabeledPrice(purchase['package_code'], int(amount*100))],
+                    start_parameter='start',
+                    provider_data=provider_data,
+                    send_email_to_provider=True,
+                )
+                return
+            case "star":
+                invoice_id = str(uuid4())
+                amount = round(purchase["retail_price"] / 10000 * quantity * 100, 2)
+                tariff_string = f"eSIM {purchase['package_code']} x {quantity}"
+                context.chat_data["awaiting_payment"] = {
+                    "package_code": purchase["package_code"],
+                    "order_price": purchase["order_price"],
+                    "retail_price": purchase["retail_price"],
+                    "count": 1 if purchase["duration"] == 1 else quantity,
+                    "period_num": quantity if purchase["duration"] == 1 else None,
+                    "method": "star",
+                    "invoice_id": None
+                }
+                
+                await update.message.reply_invoice(
+                    title=tariff_string,
+                    description=tariff_string,
+                    payload=invoice_id,
+                    provider_token='',
+                    currency='XTR',
+                    prices=[LabeledPrice(purchase['package_code'], int(amount))],
+                    start_parameter='start',
+                )
+                return
 
     # -- 2) Awaiting Country Search
     if context.chat_data.get("awaiting_country_search"):
@@ -758,8 +867,10 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             f"<b>Supported Countries:</b> {supported_countries_str}"
         )
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("💳 Buy with Card", callback_data=f"buybank_{package_code}")],
-            [InlineKeyboardButton("💰 Buy with Crypto", callback_data=f"buycrypto_{package_code}")]
+            [InlineKeyboardButton("💳 Buy with bank card (Russia)", callback_data=f"buybank_{package_code}")],
+            [InlineKeyboardButton("💰 Buy with Crypto", callback_data=f"buycrypto_{package_code}")],
+            [InlineKeyboardButton("⭐️ Buy with Telegram Stars", callback_data=f"buystar_{package_code}")],
+            
         ])
         await query.message.reply_text(
             detailed_message,
@@ -799,6 +910,35 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
         # TODO: implement Freekassa invoice status check
         # Retrieve context.chat_data["awaiting_payment"] here
         await query.message.reply_text("💳 Bank payment checking is not yet implemented.")
+
+    elif data.startswith("buystar_"): 
+        context.chat_data.pop("pending_purchase", None)
+        context.chat_data.pop("awaiting_payment", None)
+        package_code = data.split("_", 1)[1]
+        package = next((p for p in all_country_packages if p.get("packageCode") == package_code), None)
+        if not package:
+            package = next((p for p in all_regional_packages if p.get("packageCode") == package_code), None)
+        if not package:
+            package = next((p for p in all_global_packages if p.get("packageCode") == package_code), None)
+        if not package:
+            await query.message.reply_text("❌ Package not found.")
+            return
+
+        duration = package.get("duration", 0)
+
+        context.chat_data["pending_purchase"] = {
+            "package_code": package_code,
+            "order_price": package.get("price", 0),
+            "retail_price": package.get("retailPrice", 0),
+            "duration": duration,
+            "method": "star"
+        }
+
+        if duration == 1:
+            await query.message.reply_text("🕓 Daily plan selected. How many days?")
+        else:
+            await query.message.reply_text("📱 How many eSIMs would you like to purchase?")
+
 
     elif data.startswith("buycrypto_"):
         context.chat_data.pop("pending_purchase", None)
@@ -1138,8 +1278,15 @@ if __name__ == "__main__":
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     application = Application.builder().token(TELEGRAM_TOKEN).build()
+    
+    application.add_handler(PreCheckoutQueryHandler(handle_precheckout))
+    application.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, handle_successful_payment))
+   
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message_wrapper))
+   
     application.add_handler(CallbackQueryHandler(button_handler))
+   
     application.add_error_handler(error_handler)
+    
     application.run_polling()
