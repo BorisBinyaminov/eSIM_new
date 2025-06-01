@@ -191,7 +191,8 @@ async def process_purchase(
     if available_balance < order_price * count:
         logger.error(f"Insufficient funds: available {available_balance}, required {order_price * count}")
         raise Exception("Insufficient funds to place the order.")
-
+    
+    transaction_id = await user_payment()
     logger.info(f"Transaction ID: {transaction_id}")
     # временное, чтобы никто кроме меня не мог покупать, для тестирования
     if user_id in ['5102625060', '650138987']:
