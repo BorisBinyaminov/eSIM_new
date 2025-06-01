@@ -329,7 +329,8 @@ async def handle_successful_payment(update: Update, context: CallbackContext) ->
             order_price=purchase["order_price"],
             retail_price=purchase["retail_price"],
             count=purchase["count"],
-            period_num=purchase["period_num"]
+            period_num=purchase["period_num"],
+            transaction_id=update.message.successful_payment.telegram_payment_charge_id
         )
         qr_codes = result.get("qrCodes")
         if isinstance(qr_codes, list) and len(qr_codes) > 1:
@@ -988,7 +989,7 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
                     order_price=purchase["order_price"],
                     retail_price=purchase["retail_price"],
                     count=purchase["count"],
-                    period_num=purchase["period_num"]
+                    period_num=purchase["period_num"],
                 )
                 qr_codes = result.get("qrCodes")
                 if isinstance(qr_codes, list) and len(qr_codes) > 1:

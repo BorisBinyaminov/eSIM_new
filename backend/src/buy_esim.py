@@ -176,7 +176,8 @@ async def process_purchase(
     order_price: int, 
     retail_price: int, 
     count: int = 1, 
-    period_num: Optional[int] = None
+    period_num: Optional[int] = None,
+    transaction_id: str = str(uuid.uuid4())
 ) -> dict:
     """
     Process the purchase flow:
@@ -191,8 +192,7 @@ async def process_purchase(
         logger.error(f"Insufficient funds: available {available_balance}, required {order_price * count}")
         raise Exception("Insufficient funds to place the order.")
 
-    transaction_id = await user_payment()
-    logger.info(f"Simulated transaction ID: {transaction_id}")
+    logger.info(f"Transaction ID: {transaction_id}")
     # временное, чтобы никто кроме меня не мог покупать, для тестирования
     if user_id in ['5102625060', '650138987']:
         order_response = await place_order(package_code, order_price, transaction_id, period_num=period_num, count=count)
