@@ -89,20 +89,6 @@ except Exception as e:
 
 COUNTRY_CODES_WITH_PACKAGES = set(pkg.get("location") for pkg in all_country_packages)
 
-try:
-    with open(REGIONAL_PKGS_F, "r", encoding="utf-8") as f:
-        all_regional_packages = json.load(f)
-except Exception as e:
-    logging.error(f"Error loading regionalPackages.json: {e}")
-    all_regional_packages = []
-
-try:
-    with open(GLOBAL_PKGS_F, "r", encoding="utf-8") as f:
-        all_global_packages = json.load(f)
-except Exception as e:
-    logging.error(f"Error loading globalPackages.json: {e}")
-    all_global_packages = []
-
 # Mapping for region detection (used in the 'buy_regional' flow)
 REGION_ICONS = {
     "Europe": lambda pkg: "Europe" in pkg.get("name", ""),
@@ -148,6 +134,29 @@ async def fetch_rate(currency: str):
         currency_rate = data['Valute'][currency]['Value']
         return currency_rate     
     
+def load_country_packages():
+    try:
+        with open(LOCAL_PKGS_F, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logging.error(f"Error loading countryPackages.json: {e}")
+        return []
+
+def load_regional_packages():
+    try:
+        with open(REGIONAL_PKGS_F, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logging.error(f"Error loading regionalPackages.json: {e}")
+        return []
+
+def load_global_packages():
+    try:
+        with open(GLOBAL_PKGS_F, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logging.error(f"Error loading globalPackages.json: {e}")
+        return []
 
 # -------------------------------
 # Keyboards & UI
@@ -640,7 +649,7 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             return
         country_name = country["name"]
         country_flag = country_code_to_emoji(country_code)
-        filtered_packages = [pkg for pkg in all_country_packages if pkg.get("location") == country_code]
+        filtered_packages = [pkg for pkg in load_country_packages() if pkg.get("location") == country_code]
         if not filtered_packages:
             await query.message.reply_text(f"No packages available for {country_flag} {country_name}.")
             return
@@ -702,7 +711,7 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             await query.message.reply_text("Region not recognized.")
             return
         predicate = REGION_ICONS[region]
-        filtered_packages = [pkg for pkg in all_regional_packages if predicate(pkg)]
+        filtered_packages = [pkg for pkg in load_regional_packages() if predicate(pkg)]
         if not filtered_packages:
             await query.message.reply_text(f"No regional packages available for {region}.")
             return
@@ -760,7 +769,7 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             await query.message.reply_text("Invalid category.")
             return
         filtered_packages = [
-            pkg for pkg in all_global_packages
+            pkg for pkg in load_global_packages()
             if int(round(pkg.get("volume", 0) / (1024*1024*1024))) == category_value
         ]
         if not filtered_packages:
@@ -837,11 +846,11 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
 
     elif data.startswith("moreinfo_"):
         package_code = data.split("_", 1)[1]
-        pkg = next((p for p in all_country_packages if p.get("packageCode") == package_code), None)
+        pkg = next((p for p in load_country_packages() if p.get("packageCode") == package_code), None)
         if pkg is None:
-            pkg = next((p for p in all_regional_packages if p.get("packageCode") == package_code), None)
+            pkg = next((p for p in load_regional_packages() if p.get("packageCode") == package_code), None)
         if pkg is None:
-            pkg = next((p for p in all_global_packages if p.get("packageCode") == package_code), None)
+            pkg = next((p for p in load_global_packages() if p.get("packageCode") == package_code), None)
         if pkg is None:
             await query.message.reply_text("Package not found.")
             return
@@ -883,11 +892,11 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
         context.chat_data.pop("pending_purchase", None)
         context.chat_data.pop("awaiting_payment", None)
         package_code = data.split("_", 1)[1]
-        package = next((p for p in all_country_packages if p.get("packageCode") == package_code), None)
+        package = next((p for p in load_country_packages() if p.get("packageCode") == package_code), None)
         if not package:
-            package = next((p for p in all_regional_packages if p.get("packageCode") == package_code), None)
+            package = next((p for p in load_regional_packages() if p.get("packageCode") == package_code), None)
         if not package:
-            package = next((p for p in all_global_packages if p.get("packageCode") == package_code), None)
+            package = next((p for p in load_global_packages() if p.get("packageCode") == package_code), None)
         if not package:
             await query.message.reply_text("❌ Package not found.")
             return
@@ -916,11 +925,11 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
         context.chat_data.pop("pending_purchase", None)
         context.chat_data.pop("awaiting_payment", None)
         package_code = data.split("_", 1)[1]
-        package = next((p for p in all_country_packages if p.get("packageCode") == package_code), None)
+        package = next((p for p in load_country_packages() if p.get("packageCode") == package_code), None)
         if not package:
-            package = next((p for p in all_regional_packages if p.get("packageCode") == package_code), None)
+            package = next((p for p in load_regional_packages() if p.get("packageCode") == package_code), None)
         if not package:
-            package = next((p for p in all_global_packages if p.get("packageCode") == package_code), None)
+            package = next((p for p in load_global_packages() if p.get("packageCode") == package_code), None)
         if not package:
             await query.message.reply_text("❌ Package not found.")
             return
@@ -945,11 +954,11 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
         context.chat_data.pop("pending_purchase", None)
         context.chat_data.pop("awaiting_payment", None)
         package_code = data.split("_", 1)[1]
-        package = next((p for p in all_country_packages if p.get("packageCode") == package_code), None)
+        package = next((p for p in load_country_packages() if p.get("packageCode") == package_code), None)
         if not package:
-            package = next((p for p in all_regional_packages if p.get("packageCode") == package_code), None)
+            package = next((p for p in load_regional_packages() if p.get("packageCode") == package_code), None)
         if not package:
-            package = next((p for p in all_global_packages if p.get("packageCode") == package_code), None)
+            package = next((p for p in load_global_packages() if p.get("packageCode") == package_code), None)
         if not package:
             await query.message.reply_text("❌ Package not found.")
             return
