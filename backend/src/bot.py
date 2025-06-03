@@ -355,8 +355,6 @@ async def handle_successful_payment(update: Update, context: CallbackContext) ->
         await update.message.reply_text("❌ Error after payment. Contact support.")
 
 
-
-
 # Standard Message Handling
 # -------------------------------
 async def handle_message(update: Update, context: CallbackContext) -> None:
@@ -877,8 +875,9 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             f"<b>Supported Countries:</b> {supported_countries_str}"
         )
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("💳 Buy with bank card (Russia)", callback_data=f"buybank_{package_code}")],
-            [InlineKeyboardButton("💰 Buy with Crypto", callback_data=f"buycrypto_{package_code}")],
+            #[InlineKeyboardButton("💳 Buy with bank card (Russia)", callback_data=f"buybank_{package_code}")],
+            [InlineKeyboardButton("💰 Buy with Crypto Bot", callback_data=f"buycrypto_{package_code}")],
+            #[InlineKeyboardButton("💳 Buy with Telegram Wallet", callback_data=f"buyton_{package_code}")],
             [InlineKeyboardButton("⭐️ Buy with Telegram Stars", callback_data=f"buystar_{package_code}")],
             
         ])
@@ -949,7 +948,6 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
         else:
             await query.message.reply_text("📱 How many eSIMs would you like to purchase?")
 
-
     elif data.startswith("buycrypto_"):
         context.chat_data.pop("pending_purchase", None)
         context.chat_data.pop("awaiting_payment", None)
@@ -1016,6 +1014,7 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             await query.message.reply_text("⏳ Payment is still pending. Please try again later.")
         else:
             await query.message.reply_text("❌ Invoice not found or expired.")
+
 
     # -------------------------
     # Cancel Flow
@@ -1290,6 +1289,7 @@ if __name__ == "__main__":
     application = Application.builder().token(TELEGRAM_TOKEN).build()
     
     application.add_handler(PreCheckoutQueryHandler(handle_precheckout))
+
     application.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, handle_successful_payment))
    
     application.add_handler(CommandHandler("start", start))
