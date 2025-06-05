@@ -186,6 +186,7 @@ async def process_purchase(
       - Place order and poll for profile allocation
       - Save order data in the database
     """
+    logger.info("process_purchase check_balance")
     balance_data = await check_balance()
     available_balance = balance_data.get("obj", {}).get("balance", 0)
     if available_balance < order_price * count:
@@ -196,16 +197,20 @@ async def process_purchase(
     logger.info(f"Transaction ID: {transaction_id}")
     # временное, чтобы никто кроме меня не мог покупать, для тестирования
     if user_id in ['5102625060', '650138987']:
+        logger.info("process_purchase place_order")
         order_response = await place_order(package_code, order_price, transaction_id, period_num=period_num, count=count)
     else:
         order_response = "failed"
     if not order_response or not isinstance(order_response, dict):
+        logger.info("process_purchase: Order request failed or returned unexpected result.")
         raise Exception("Order request failed or returned unexpected result.")
     logger.info(f"Order response: {order_response}")
     if not order_response.get("success"):
+        logger.info("process_purchase Order failed:")
         raise Exception(f"Order failed: {order_response.get('errorMsg')}")
     order_no = order_response.get("obj", {}).get("orderNo")
     if not order_no:
+        logger.info("process_purchase Order API did not return an orderNo")
         raise Exception("Order API did not return an orderNo.")
 
     query_response = await poll_profile(order_no, timeout=30, interval=5)
@@ -254,8 +259,10 @@ async def process_purchase(
             session.add(new_order)
             orders_created.append(qr_code)
         try:
+            logger.info("process_purchase before session commit")
             session.commit()
         except Exception as e:
+            logger.info("process_purchase Database error: ")
             session.rollback()
             raise Exception(f"Database error: {str(e)}")
 

@@ -117,7 +117,7 @@ async def buy_esim(request: Request):
     retail_price = payload.get("retail_price")
     count = payload.get("count", 1)
     period_num = payload.get("period_num", 1)
-
+    logging.info("/buy before process_purchase")
     if not user_id or not package_code or not order_price or not retail_price:
         return JSONResponse(status_code=400, content={"success": False, "error": "Missing required parameters"})
 
@@ -132,4 +132,5 @@ async def buy_esim(request: Request):
         )
         return JSONResponse(status_code=200, content={"success": True, "data": result})
     except Exception as e:
+        logging.info("/buy after process_purchase")
         return JSONResponse(status_code=500, content={"success": False, "error": str(e)})
