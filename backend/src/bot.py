@@ -180,7 +180,7 @@ def main_menu_keyboard():
         ["🖥️ Open Mini App"],
         ["🛒 Buy eSIM", "🔑 My eSIMs"],
         ["❓ FAQ", "📌 Guides", "📱 Supported Devices"],
-        ["🆕 Project News", "💬 Support"]
+        ["🆕 Project News", "💬 Support", "📄 Legal Info"]
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
 
@@ -518,7 +518,15 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
     elif text == "📱 Supported Devices":
         support_devices_button = InlineKeyboardButton("Open Supported Devices", web_app=WebAppInfo(url=WEBAPP_SUPPORT_DEVICES_URL))
         keyboard = InlineKeyboardMarkup([[support_devices_button]])
-        await update.message.reply_text("Click here to open Supported Devices:", reply_markup=keyboard)    
+        await update.message.reply_text("Click here to open Supported Devices:", reply_markup=keyboard) 
+    elif text == "📄 Legal Info":
+        await update.message.reply_text(
+            "Please choose a language:",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("🇷🇺 Russian", callback_data="legal_ru")],
+                [InlineKeyboardButton("🇬🇧 English", callback_data="legal_en")]
+            ])
+        )       
     elif text == "📌 Guides":
         guides_button = InlineKeyboardButton("Open Guides", web_app=WebAppInfo(url=WEBAPP_GUIDES_URL))
         keyboard = InlineKeyboardMarkup([[guides_button]])
@@ -1014,6 +1022,20 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             await query.message.reply_text("⏳ Payment is still pending. Please try again later.")
         else:
             await query.message.reply_text("❌ Invoice not found or expired.")
+
+    elif data == "legal_ru":
+        await query.message.reply_document(
+            document=open(os.path.join(PUBLIC_DIR, "/legal/legal_ru.pdf"), "rb"),
+            filename="legal_ru.pdf",
+            caption="📄 Официальная оферта"
+        )
+
+    elif data == "legal_en":
+        await query.message.reply_document(
+            document=open(os.path.join(PUBLIC_DIR, "/legal/legal_en.pdf"), "rb"),
+            filename="legal_en.pdf",
+            caption="📄 Official Terms of Service"
+        )
 
 
     # -------------------------
