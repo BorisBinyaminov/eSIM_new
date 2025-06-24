@@ -1025,16 +1025,20 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
 
     elif data == "legal_ru":
         await query.message.reply_document(
-            document=open(os.path.join(PUBLIC_DIR, "/legal/legal_ru.pdf"), "rb"),
-            filename="legal_ru.pdf",
-            caption="📄 Официальная оферта"
+            document=open(os.path.join(PUBLIC_DIR, "legal", "legal_ru.pdf"), "rb"),
+            filename="Terms_RU.pdf",
+            caption="📄 Официальная оферта\n\nВы можете просмотреть документ прямо здесь.",
+            parse_mode="HTML",
+            disable_content_type_detection=False
         )
 
     elif data == "legal_en":
         await query.message.reply_document(
-            document=open(os.path.join(PUBLIC_DIR, "/legal/legal_en.pdf"), "rb"),
-            filename="legal_en.pdf",
-            caption="📄 Official Terms of Service"
+            document=open(os.path.join(PUBLIC_DIR, "legal", "legal_en.pdf"), "rb"),
+            filename="Terms_EN.pdf",
+            caption="📄 Official Terms of Service\n\nYou can preview the document here.",
+            parse_mode="HTML",
+            disable_content_type_detection=False
         )
 
 
