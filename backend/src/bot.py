@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 from models import User, Order
 import buy_esim
 from typing import Optional
-import aiohttp
 from database import SessionLocal, engine, Base, upsert_user
 from payments.cryptoBot import create_crypto_invoice
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, LabeledPrice
@@ -883,9 +882,8 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             f"<b>Supported Countries:</b> {supported_countries_str}"
         )
         keyboard = InlineKeyboardMarkup([
-            #[InlineKeyboardButton("💳 Buy with bank card (Russia)", callback_data=f"buybank_{package_code}")],
+            #[InlineKeyboardButton("💳 Buy with card", callback_data=f"buybank_{package_code}")],
             [InlineKeyboardButton("💰 Buy with Crypto Bot", callback_data=f"buycrypto_{package_code}")],
-            #[InlineKeyboardButton("💳 Buy with Telegram Wallet", callback_data=f"buyton_{package_code}")],
             [InlineKeyboardButton("⭐️ Buy with Telegram Stars", callback_data=f"buystar_{package_code}")],
             
         ])
@@ -894,6 +892,14 @@ async def button_handler(update: Update, context: CallbackContext) -> None:
             parse_mode="HTML",
             reply_markup=keyboard
         )
+        from buy_esim import check_balance
+        logger.info("process_purchase check_balance")
+        balance_data = await check_balance()
+        available_balance = balance_data.get("obj", {}).get("balance", 0)
+        if available_balance/10000 < price:
+            await query.message.reply_text("The payment system is temporarily unavailable. Please try again later.")
+            logger.error(f"Insufficient funds: available {available_balance}, required {price}")
+            raise Exception("Insufficient funds to place the order.")
 
     elif data.startswith("buybank_"): 
         context.chat_data.pop("pending_purchase", None)
