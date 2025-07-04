@@ -174,6 +174,15 @@ async def forward_to_support(update: Update, context: CallbackContext):
     if 'conversation' not in context.chat_data:
         context.chat_data['conversation'] = []
 
+    # ✅ Show intro message if it's the first user message
+    if not context.chat_data['conversation']:
+        intro_message = (
+            "👋 Hi! I’m your eSIM Assistant.\n\n"
+            "Feel free to describe your issue, and I’ll do my best to help.\n"
+            "If at any point you'd prefer to talk to a human, just type something like *'talk to human'* or *'I need help from support'*, and I’ll connect you."
+        )
+        await update.message.reply_text(intro_message, parse_mode="Markdown")    
+
     if global_human_sessions.get(user_id):
         if update.message.photo:
             photo = update.message.photo[-1]
