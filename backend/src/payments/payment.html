@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>eSIM Unlimited Payment</title>
+    <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
+</head>
+<body style="background-color:#0d0d2b; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="text-align: center;">
+        <h2>🔐 Secure Payment</h2>
+        <p>You're paying for <strong>eSIM Unlimited</strong></p>
+        <button onclick="pay()" style="padding: 12px 24px; font-size: 16px; border: none; border-radius: 8px; background-color: #4CAF50; color: white;">💳 Pay $9.99</button>
+    </div>
+
+    <script>
+		function pay() {
+		  let widget = new cp.CloudPayments({ language: "en-US" });
+
+		  widget.charge({ // or widget.pay() for 2-step
+			publicId: "pk_e4d285669dd566e961b2f3082b475", // replace with your real publicId
+			description: "eSIM Unlimited Plan",
+			amount: 9.99,
+			currency: "USD",
+			invoiceId: "1234567", // Optional
+			accountId: "user@example.com", // Required
+			email: "user@example.com",
+			skin: "classic",
+			data: {
+			  myProp: "myValue"
+			}
+		  },
+		  function (options) { // Success
+			alert("Payment successful!");
+		  },
+		  function (reason, options) { // Fail
+			alert("Payment failed: " + reason);
+		  });
+		}
+	  </script>
+</body>
+</html>

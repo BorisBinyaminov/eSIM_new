@@ -208,7 +208,7 @@ async def forward_to_support(update: Update, context: CallbackContext):
 
     if await check_escalation_intent(msg):
         log = "\n\n".join(context.chat_data['conversation'])
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"user_conv_logs/{user.username or user.id}_{timestamp}.log"
         os.makedirs("user_conv_logs", exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
